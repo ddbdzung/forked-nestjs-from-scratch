@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["*"]
+    },
+    "target": "ESNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "resolveJsonModule": true, // This is the important part for the import statement to work correctly in Node.js with JSON files
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    // "noEmit": true,
+    "declaration": true,
+    "noFallthroughCasesInSwitch": true, // Enforce a check for fallthrough cases in switch statements
+    "noImplicitOverride": true, // Ensure overriding members in derived classes are marked with an override modifier
+    // Ensure that Babel can safely transpile files in the TypeScript project
+    "isolatedModules": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
+}

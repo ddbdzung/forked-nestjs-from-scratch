@@ -3,10 +3,26 @@
 
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
-const prettierConfig = require('eslint-config-prettier');
 
-module.exports = tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  prettierConfig,
-);
+module.exports = tseslint.config({
+  files: ['**/*.ts', '**/*.tsx'],
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  ignores: [
+    'node_modules',
+    'dist',
+    'coverage',
+    'public',
+    'static',
+    'vendor',
+    'babel.config.js',
+  ],
+  languageOptions: {
+    parserOptions: {
+      project: './tsconfig.json',
+    },
+  },
+});

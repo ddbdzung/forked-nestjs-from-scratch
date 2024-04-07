@@ -11,15 +11,7 @@ module.exports = tseslint.config({
     ...tseslint.configs.recommended,
     ...tseslint.configs.stylisticTypeChecked,
   ],
-  ignores: [
-    'node_modules',
-    'dist',
-    'coverage',
-    'public',
-    'static',
-    'vendor',
-    'babel.config.js',
-  ],
+  ignores: ['node_modules', 'dist', 'coverage', 'public', 'static', 'vendor'],
   languageOptions: {
     parserOptions: {
       project: './tsconfig.json',

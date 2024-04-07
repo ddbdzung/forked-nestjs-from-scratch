@@ -5,8 +5,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start:dev": "nodemon dist/index.js --exitcrash",
-    "start:prod": "tsc --noEmit && swc src -d dist --strip-leading-paths && nodemon dist/index.js --exitcrash",
+    "start:dev": "nodemon dist/index.js",
+    "start:prod": "swc src -d dist --strip-leading-paths && nodemon dist/index.js --exitcrash",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",

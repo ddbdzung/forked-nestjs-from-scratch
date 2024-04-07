@@ -4,6 +4,7 @@
       "@/*": ["*"]
     },
     "target": "ESNext",
+    "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./src",
@@ -17,17 +18,15 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "allowJs": true,
     "resolveJsonModule": true, // This is the important part for the import statement to work correctly in Node.js with JSON files
     "alwaysStrict": true,
     "noUnusedLocals": true,
-    // "noEmit": true,
     "declaration": true,
     "noFallthroughCasesInSwitch": true, // Enforce a check for fallthrough cases in switch statements
     "noImplicitOverride": true, // Ensure overriding members in derived classes are marked with an override modifier
     // Ensure that Babel can safely transpile files in the TypeScript project
     "isolatedModules": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts", "babel.config.js", "eslint.config.js"],
+  "exclude": ["node_modules", "dist"]
 }

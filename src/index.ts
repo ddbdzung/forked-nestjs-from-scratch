@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 const main = (a: string) => {
   try {
     console.log('[DEBUG][DzungDang] a:', a);
@@ -7,4 +8,4 @@ const main = (a: string) => {
     // process.exit(1);
   }
 };
-main('helo');
+main('helo1');

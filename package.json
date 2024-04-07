@@ -10,6 +10,8 @@
     "type-check:watch": "tsc --noEmit -w",
     "build": "babel src -d dist --extensions '.ts,.tsx'",
     "build:watch": "babel src -d dist --extensions '.ts,.tsx' -w",
+    "build-v2": "swc src -d dist --strip-leading-paths",
+    "build-v2:watch": "swc src -d dist --watch --strip-leading-paths",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
@@ -24,18 +26,19 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.24.1",
-    "@babel/core": "^7.24.3",
-    "@babel/plugin-transform-typescript": "^7.24.1",
-    "@babel/preset-env": "^7.24.3",
+    "@babel/core": "^7.24.4",
+    "@babel/plugin-transform-typescript": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
     "@babel/preset-typescript": "^7.24.1",
-    "@types/node": "^20.11.30",
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.4.12",
+    "@types/node": "^20.12.5",
     "babel-plugin-source-map-support": "^2.2.0",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.3",
-    "typescript-eslint": "^7.4.0"
+    "typescript": "^5.4.4",
+    "typescript-eslint": "^7.5.0"
   },
   "dependencies": {
     "source-map-support": "^0.5.21"

@@ -25,7 +25,7 @@
     "noFallthroughCasesInSwitch": true, // Enforce a check for fallthrough cases in switch statements
     "noImplicitOverride": true, // Ensure overriding members in derived classes are marked with an override modifier
     // Ensure that Babel can safely transpile files in the TypeScript project
-    "isolatedModules": true
+    "isolatedModules": true,
   },
   "include": ["src/**/*.ts", "babel.config.js", "eslint.config.js"],
   "exclude": ["node_modules", "dist"]

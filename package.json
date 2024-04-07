@@ -15,7 +15,7 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "prepare": "node .husky/install.mjs"
+    "prepare": "node --experimental-modules .husky/install.mjs"
   },
   "husky": {
     "hooks": {
@@ -34,12 +34,12 @@
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
-    "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.4",
     "typescript-eslint": "^7.5.0"
   },
   "dependencies": {
+    "nodemon": "^3.1.0",
+    "typescript": "^5.4.4",
     "@swc/cli": "^0.3.12",
     "@swc/core": "^1.4.12",
     "source-map-support": "^0.5.21"

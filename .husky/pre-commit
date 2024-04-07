@@ -1,3 +1,2 @@
 npm run type-check
-npm run lint:fix
-npm run format
+npx lint-staged

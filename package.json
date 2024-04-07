@@ -17,6 +17,17 @@
     "format:check": "prettier --check src",
     "prepare": "node .husky/install.mjs"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "keywords": [
     "typescript",
     "eslint",
@@ -29,6 +40,7 @@
     "@types/node": "^20.12.5",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.4",

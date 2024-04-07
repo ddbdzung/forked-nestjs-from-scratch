@@ -5,8 +5,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start:dev": "nodemon dist/index.js",
-    "start:prod": "tsc --noEmit && swc src -d dist --strip-leading-paths && node dist/index.js",
+    "start:dev": "nodemon dist/index.js --exitcrash",
+    "start:prod": "tsc --noEmit && swc src -d dist --strip-leading-paths && nodemon dist/index.js --exitcrash",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",
@@ -28,11 +28,6 @@
       "prettier --write"
     ]
   },
-  "keywords": [
-    "typescript",
-    "eslint",
-    "prettier"
-  ],
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.12.5",

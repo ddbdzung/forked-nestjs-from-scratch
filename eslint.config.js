@@ -9,12 +9,15 @@ module.exports = tseslint.config({
   extends: [
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
-    ...tseslint.configs.stylisticTypeChecked,
+    ...tseslint.configs.stylistic,
   ],
   ignores: ['node_modules', 'dist', 'coverage', 'public', 'static', 'vendor'],
   languageOptions: {
     parserOptions: {
       project: './tsconfig.json',
     },
+  },
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
   },
 });

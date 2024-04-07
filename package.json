@@ -7,13 +7,15 @@
   "scripts": {
     "start:dev": "nodemon dist/index.js",
     "start:prod": "tsc --noEmit && swc src -d dist --strip-leading-paths && node dist/index.js",
+    "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",
     "build:watch": "swc src -d dist --watch --strip-leading-paths",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
-    "format:check": "prettier --check src"
+    "format:check": "prettier --check src",
+    "prepare": "node .husky/install.mjs"
   },
   "keywords": [
     "typescript",
@@ -26,6 +28,7 @@
     "@swc/core": "^1.4.12",
     "@types/node": "^20.12.5",
     "eslint": "^8.57.0",
+    "husky": "^9.0.11",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.4",

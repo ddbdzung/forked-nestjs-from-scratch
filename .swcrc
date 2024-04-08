@@ -16,7 +16,7 @@
     "strict": true,
     "strictMode": true,
     "lazy": false,
-    "noInterop": true
+    "noInterop": false
   },
   "sourceMaps": true,
   "inlineSourcesContent": true,

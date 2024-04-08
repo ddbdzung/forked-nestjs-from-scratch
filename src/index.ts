@@ -1,11 +1,13 @@
 import 'source-map-support/register';
-const main = (a: string) => {
-  try {
-    // console.log('[DEBUG][DzungDang] a:', a);
-    throw new Error('Me here to throw error');
-  } catch (error) {
-    console.error(error);
-    // process.exit(1);
-  }
-};
-main('helo1');
+
+import express from 'express';
+
+const app = express();
+const port = 3000;
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});

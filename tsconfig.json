@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["*"]
+      "@/core/*": ["core/*"],
+      "@/app/*": ["app/*"]
     },
     "target": "ESNext",
     "module": "CommonJS",
@@ -21,12 +22,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true, // This is the important part for the import statement to work correctly in Node.js with JSON files
     "alwaysStrict": true,
-    "noUnusedLocals": true,
+    "strictPropertyInitialization": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": false,
     "declaration": true,
     "noFallthroughCasesInSwitch": true, // Enforce a check for fallthrough cases in switch statements
     "noImplicitOverride": true, // Ensure overriding members in derived classes are marked with an override modifier
     // Ensure that Transpiler can safely transpile files in the TypeScript project
-    "isolatedModules": true,
+    "isolatedModules": true
   },
   "include": ["src/**/*.ts", "babel.config.js", "eslint.config.js"],
   "exclude": ["node_modules", "dist"]

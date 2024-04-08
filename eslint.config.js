@@ -1,8 +1,8 @@
 /* eslint-disable */
 // @ts-check
 
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
+const eslint = require('@eslint/js')
+const tseslint = require('typescript-eslint')
 
 module.exports = tseslint.config({
   files: ['**/*.ts', '**/*.tsx'],
@@ -20,4 +20,4 @@ module.exports = tseslint.config({
   rules: {
     '@typescript-eslint/no-unused-vars': 'off',
   },
-});
+})

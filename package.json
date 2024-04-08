@@ -5,8 +5,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start:dev": "nodemon dist/index.js",
-    "start:prod": "swc src -d dist --strip-leading-paths && nodemon dist/index.js --exitcrash",
+    "start:dev": "cp .env.* dist && cross-env NODE_ENV=development nodemon dist/index.js",
+    "start:prod": "swc src -d dist --strip-leading-paths && cross-env NODE_ENV=production nodemon dist/index.js --exitcrash",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",
@@ -16,6 +16,10 @@
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "prepare": "node --experimental-modules .husky/install.mjs"
+  },
+  "_moduleAliases": {
+    "@/core": "dist/core/",
+    "@/app": "dist/app/"
   },
   "husky": {
     "hooks": {
@@ -30,19 +34,24 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.5",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
-    "typescript-eslint": "^7.5.0"
+    "typescript-eslint": "^7.6.0"
   },
   "dependencies": {
     "@swc/cli": "^0.3.12",
     "@swc/core": "^1.4.12",
-    "core": "link:",
+    "cross-env": "^7.0.3",
+    "debug": "^4.3.4",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "express": "^4.19.2",
+    "module-alias": "^2.2.3",
     "nodemon": "^3.1.0",
     "source-map-support": "^0.5.21",
     "typescript": "^5.4.4"

@@ -1,3 +1,3 @@
 export interface IEnv {
-  envVars: EnvironmentVariable
+  envVars: EnvironmentVariable;
 }

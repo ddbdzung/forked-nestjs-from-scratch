@@ -5,17 +5,17 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start:dev": "cp .env.* dist && cross-env NODE_ENV=development nodemon dist/index.js",
+    "start:dev": "cp .env.* dist && cross-env NODE_ENV=development DEBUG=app:sys:* nodemon dist/index.js",
     "start:prod": "swc src -d dist --strip-leading-paths && cross-env NODE_ENV=production nodemon dist/index.js --exitcrash",
-    "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit -w",
+    "type-check": "tsc -p ./tsconfig.json --noEmit",
+    "type-check:watch": "tsc -p ./tsconfig.json --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",
     "build:watch": "swc src -d dist --watch --strip-leading-paths",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
-    "prepare": "node --experimental-modules .husky/install.mjs"
+    "prepare": "husky || true"
   },
   "_moduleAliases": {
     "@/core": "dist/core/",
@@ -26,16 +26,16 @@
       "pre-commit": "lint-staged"
     }
   },
-  "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
+  "dist": {
+    "dir": "dist"
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
     "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.5",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
@@ -46,13 +46,22 @@
   "dependencies": {
     "@swc/cli": "^0.3.12",
     "@swc/core": "^1.4.12",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "express": "^4.19.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "helmet": "^7.1.0",
     "module-alias": "^2.2.3",
+    "mongoose": "^8.3.3",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
+    "reflect-metadata": "^0.2.2",
     "source-map-support": "^0.5.21",
     "typescript": "^5.4.4"
   }

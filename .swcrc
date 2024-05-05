@@ -20,5 +20,5 @@
   },
   "sourceMaps": true,
   "inlineSourcesContent": true,
-  "minify": true
+  "minify": false
 }

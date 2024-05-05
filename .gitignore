@@ -4,6 +4,9 @@ node_modules/
 dist/
 # Environment variables file
 .env
+.env.development
+.env.test
+.env.production
 # Editor/IDE specific files
 .vscode/
 .idea/

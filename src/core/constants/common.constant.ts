@@ -6,7 +6,7 @@ export const DEBUG_CODE = {
   APP_DB: 'app:db', // Debug code for DB log
   APP_WORKER: 'app:worker', // Debug code for worker log
   APP_TEST: 'app:test', // Debug code for test log
-}
+};
 
 export const ENVIRONMENT_SYSTEM = {
   DEVELOPMENT: 'development',
@@ -14,4 +14,11 @@ export const ENVIRONMENT_SYSTEM = {
   USER_ACCEPTANCE_TEST: 'uat',
   PRODUCTION: 'production',
   TEST: 'test',
-}
+};
+
+export const PROTOCOL = {
+  HTTP: 'http',
+  WEB_SOCKET: 'ws',
+};
+
+export const MAIN_MODULE_NAME = 'MainModule';

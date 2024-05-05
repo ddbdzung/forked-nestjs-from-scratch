@@ -1,69 +1,71 @@
-import { BaseEnv } from '@/core/modules/env/env.module'
-import { ValidatorClass } from './env.validator'
-import { instanceToPlain, plainToClass } from 'class-transformer'
-import { validateSync } from 'class-validator'
-import { SystemException } from '@/core/helpers/exception.helper'
-import debug from 'debug'
-import { DEBUG_CODE } from '@/core/constants/common.constant'
+import debug from 'debug';
+import { validateSync } from 'class-validator';
+import { instanceToPlain, plainToClass } from 'class-transformer';
 
-const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO)
-const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR)
+import { BaseEnv } from '@/core/modules/env/env.module';
+import { SystemException } from '@/core/helpers/exception.helper';
+import { DEBUG_CODE } from '@/core/constants/common.constant';
 
-let _instance: Env | null = null
+import { ValidatorClass } from './env.validator';
+
+const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
+
+let _instance: Env | null = null;
 export class Env extends BaseEnv {
   protected constructor() {
-    super()
+    super();
   }
   override get envVars() {
     return {
       ...this._envVars,
       ...BaseEnv.getInstance().envVars,
-    }
+    };
   }
   static override init(rawEnvVars: EnvironmentVariable) {
     if (!_instance) {
-      _instance = new Env()
-      _instance._rawEnvVars = rawEnvVars
-      sysLogInfo('[Env]: Instance initialized!')
-      return
+      _instance = new Env();
+      _instance._rawEnvVars = rawEnvVars;
+      sysLogInfo('[Env]: Instance initialized!');
+      return;
     }
 
-    sysLogError('[Env]: Instance already created')
-    throw new SystemException('[Env]: Instance already created')
+    sysLogError('[Env]: Instance already created');
+    throw new SystemException('[Env]: Instance already created');
   }
   static override getInstance(): Env {
     if (!_instance) {
-      sysLogError('[Env]: Instance not created')
-      throw new SystemException('[Env]: Instance not created')
+      sysLogError('[Env]: Instance not created');
+      throw new SystemException('[Env]: Instance not created');
     }
 
-    return _instance
+    return _instance;
   }
   public override validateEnvVars(): void {
     if (this._isValidated) {
-      sysLogError('[Env]: Environment variables already validated')
-      throw new SystemException('[Env]: Environment variables already validated')
+      sysLogError('[Env]: Environment variables already validated');
+      throw new SystemException('[Env]: Environment variables already validated');
     }
 
-    const envVars = this._rawEnvVars
+    const envVars = this._rawEnvVars;
     // Validate
-    const validatorInstance = plainToClass(ValidatorClass, envVars)
+    const validatorInstance = plainToClass(ValidatorClass, envVars);
     const errors = validateSync(validatorInstance, {
       validationError: { target: false },
-    })
+    });
     if (errors.length > 0) {
-      sysLogError('[Env]: Validation error', errors)
-      throw new SystemException('[Env]: Validation error')
+      sysLogError('[Env]: Validation error', errors);
+      throw new SystemException('[Env]: Validation error');
     }
-    ValidatorClass.isValidated = true
+    ValidatorClass.isValidated = true;
 
     // Transform
     this._envVars = instanceToPlain(validatorInstance, {
       excludeExtraneousValues: true,
       exposeDefaultValues: true,
       exposeUnsetFields: false,
-    })
-    this._isValidated = true
-    sysLogInfo('[Env]: Environment variables validated')
+    });
+    this._isValidated = true;
+    sysLogInfo('[Env]: Environment variables validated');
   }
 }

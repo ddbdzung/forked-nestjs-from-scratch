@@ -18,7 +18,8 @@ import {
 
 import { SystemException } from '@/core/helpers/exception.helper';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { IEnv } from './IEnv.interface';
+
+import { IEnv } from './env.interface';
 import { ValidatorClass } from './env.validator';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);

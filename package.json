@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "author": "Dang Duc B. Dzung (David)",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "scripts": {
-    "start:dev": "cp .env.* dist && cross-env NODE_ENV=development DEBUG=app:sys:* nodemon dist/index.js",
-    "start:prod": "swc src -d dist --strip-leading-paths && cross-env NODE_ENV=production nodemon dist/index.js --exitcrash",
+    "start:dev": "cp .env.* dist && cross-env NODE_ENV=development DEBUG=app:sys:* nodemon dist/main.js",
+    "start:prod": "swc src -d dist --strip-leading-paths && cross-env NODE_ENV=production nodemon dist/main.js --exitcrash",
     "type-check": "tsc -p ./tsconfig.json --noEmit",
     "type-check:watch": "tsc -p ./tsconfig.json --noEmit -w",
     "build": "swc src -d dist --strip-leading-paths",

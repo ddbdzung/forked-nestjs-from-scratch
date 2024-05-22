@@ -1,8 +1,10 @@
-import express, { IRouterMatcher, ErrorRequestHandler } from 'express';
 import debug from 'debug';
+import { Server } from 'http';
+import express, { IRouterMatcher, ErrorRequestHandler } from 'express';
 
 import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
+
 import { BusinessException, SystemException } from './exception.helper';
 
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
@@ -38,4 +40,31 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     const unknownError = new SystemException('Unknown error');
     return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
   }
+};
+
+export const systemErrorHandler = (server: Server | null) => {
+  const unexpectedErrorHandler = (error: Error) => {
+    sysLogError(error);
+    if (!server) {
+      sysLogError('Server closed');
+      process.exit(1);
+    }
+
+    if (server instanceof Server) {
+      server.close(() => {
+        sysLogError('Server closed');
+        process.exit(1);
+      });
+    }
+  };
+
+  process.on('uncaughtException', unexpectedErrorHandler);
+  process.on('unhandledRejection', unexpectedErrorHandler);
+  process.on('SIGTERM', () => {
+    sysLogError('SIGTERM received');
+    if (server && server instanceof Server) {
+      server.close();
+      process.exit(0);
+    }
+  });
 };

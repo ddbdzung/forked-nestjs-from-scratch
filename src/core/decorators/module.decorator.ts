@@ -2,19 +2,18 @@
 import debug from 'debug';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
+import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
-
-export const moduleRegistry: Record<string, any> = {};
-export let _isMainModuleCreated = false;
+const isMainModuleCreated = ServerFactory.isMainModuleCreated;
 
 const _verifyMainModule = (name: string) => {
-  if (name === MAIN_MODULE_NAME && _isMainModuleCreated) {
+  if (name === MAIN_MODULE_NAME && isMainModuleCreated) {
     throw new Error('Main module has been created!');
   }
 
-  if (name === MAIN_MODULE_NAME && !_isMainModuleCreated) {
-    _isMainModuleCreated = true;
+  if (name === MAIN_MODULE_NAME && !isMainModuleCreated) {
+    ServerFactory.isMainModuleCreated = true;
   }
 };
 
@@ -40,8 +39,8 @@ export default function ModuleDecoratorFactory(options: ModuleOptions = {}) {
       throw new Error(`In ${ctor.name}, registry property must be declared in MainModule!`);
     }
 
-    if (!_isMainModuleCreated && ctor.name === MAIN_MODULE_NAME) {
-      _isMainModuleCreated = true;
+    if (!isMainModuleCreated && ctor.name === MAIN_MODULE_NAME) {
+      ServerFactory.isMainModuleCreated = true;
     }
 
     if (!name) {
@@ -59,7 +58,7 @@ export default function ModuleDecoratorFactory(options: ModuleOptions = {}) {
         instance = new ctor(...args);
         sysLogInfo(`[${ctor.name}]: Module initialized!`);
 
-        moduleRegistry[ctor.name] = instance;
+        ServerFactory.moduleRegistry[ctor.name] = instance;
         return instance;
       }
     } as T;

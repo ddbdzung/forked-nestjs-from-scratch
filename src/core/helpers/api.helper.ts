@@ -1,4 +1,5 @@
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_MESSAGE } from '@/core/constants/http.constant';
+
 import { SystemException } from './exception.helper';
 
 type Data = Record<string, unknown> | Record<string, unknown>[];

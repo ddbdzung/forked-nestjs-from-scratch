@@ -73,9 +73,11 @@ export class BaseEnv implements IEnv {
 
     const accessorsArray = accessors.split('.');
     let value: unknown = this.envVars;
+
     for (const accessor of accessorsArray) {
       value = (value as EnvironmentVariable)[accessor];
     }
+
     return value as T;
   }
 
@@ -91,10 +93,12 @@ export class BaseEnv implements IEnv {
     const errors = validateSync(validatorInstance, {
       validationError: { target: false },
     });
+
     if (errors.length > 0) {
       sysLogError('[BaseEnv]: Validation error', errors);
       throw new SystemException('[BaseEnv]: Validation error');
     }
+
     ValidatorClass.isValidated = true;
 
     // Transform

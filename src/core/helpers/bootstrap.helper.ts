@@ -2,8 +2,10 @@ import dotenv from 'dotenv';
 import debug from 'debug';
 import { expand } from 'dotenv-expand';
 
-import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
 import { BaseEnv } from '@/core/modules/env/env.module';
+import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
+
 import { Env } from '@/app/modules/env/env.module';
 
 let isBootstrapBaseEnvRun = false;
@@ -71,3 +73,22 @@ export const bootstrapExtendedEnv = () => {
   envInstance.validateEnvVars();
   isBootstrapExtendedEnvRun = true;
 };
+
+export class ServerFactory {
+  static isMainModuleCreated = false;
+  static moduleRegistry: Record<string, unknown> = {};
+
+  static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
+    const moduleInstance = new ctor() as T;
+
+    const moduleName = moduleInstance.constructor.name;
+    if (moduleName !== MAIN_MODULE_NAME) {
+      throw new Error('MainModule is required when using create method!');
+    }
+
+    bootstrapBaseEnv();
+    bootstrapExtendedEnv();
+
+    return webappRegister();
+  }
+}

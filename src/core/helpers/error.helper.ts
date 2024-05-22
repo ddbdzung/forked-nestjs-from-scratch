@@ -1,0 +1,41 @@
+import express, { IRouterMatcher, ErrorRequestHandler } from 'express';
+import debug from 'debug';
+
+import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
+import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
+import { BusinessException, SystemException } from './exception.helper';
+
+const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
+
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  const isApiNotError: boolean = res.locals.isApiNotError;
+  if (isApiNotError) {
+    return next(err);
+  }
+
+  try {
+    if (!err) {
+      return next();
+    }
+
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    if (err instanceof SystemException || err instanceof BusinessException) {
+      const error = err.toJSON();
+      return res.status(error.statusCode).json(error);
+    }
+
+    if (err instanceof Error) {
+      const error = new SystemException(err.message, err).toJSON();
+      return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json({ error });
+    }
+
+    sysLogError('[errorHandler]: Unknown error', `'${err?.toString()}'`);
+    const unknownError = new SystemException('Unknown error');
+    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
+  } catch (error) {
+    sysLogError('[errorHandler]: Error when handling error', error);
+    const unknownError = new SystemException('Unknown error');
+    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
+  }
+};

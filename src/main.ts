@@ -12,6 +12,7 @@ import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 
 import { MainModule } from '@/app/main.module';
 import { Env } from '@/app/modules/env/env.module';
+import './app/modules/test';
 
 let server: Server | null = null;
 systemErrorHandler(server);

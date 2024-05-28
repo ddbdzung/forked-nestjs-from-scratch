@@ -1,4 +1,4 @@
-import Module from '@/core/decorators/module.decorator';
+import { Module } from '@/core/decorators/module.decorator';
 
-@Module({})
+// @Module({})
 export class MongooseModule {}

@@ -1,4 +1,6 @@
-import express, { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
+
+import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -11,7 +13,7 @@ import { controllerWrapper, successHandler } from '@/core/helpers/controller.hel
 import { APIResponseBuilder } from '@/core/helpers/api.helper';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 
-export const webappRegister = () => {
+export const webappRegister = (registryMap) => {
   const app = express();
 
   app.use(helmet());
@@ -24,6 +26,14 @@ export const webappRegister = () => {
   );
   app.use(mongoSanitize());
   app.use(compression());
+
+  for (const key in registryMap) {
+    const instance = registryMap[key];
+    if (instance.cb && instance.model) {
+      const route = `/api/${instance.model?.name}`;
+      app.use(route, instance.cb(app));
+    }
+  }
 
   const test1 = (req: Request, res: Response, next: NextFunction) => {
     res.status(200).send('ok');

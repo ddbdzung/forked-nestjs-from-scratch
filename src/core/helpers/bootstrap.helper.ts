@@ -7,6 +7,7 @@ import { BaseEnv } from '@/core/modules/env/env.module';
 import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 
 import { Env } from '@/app/modules/env/env.module';
+import { AbstractModule } from './module.helper';
 
 let isBootstrapBaseEnvRun = false;
 let isBootstrapExtendedEnvRun = false;
@@ -79,7 +80,10 @@ export class ServerFactory {
   static moduleRegistry: Record<string, unknown> = {};
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
-    const moduleInstance = new ctor() as T;
+    const moduleInstance = new ctor();
+    if (!(moduleInstance instanceof AbstractModule)) {
+      throw new Error('Module must be an instance of AbstractModule!');
+    }
 
     const moduleName = moduleInstance.constructor.name;
     if (moduleName !== MAIN_MODULE_NAME) {
@@ -89,6 +93,6 @@ export class ServerFactory {
     bootstrapBaseEnv();
     bootstrapExtendedEnv();
 
-    return webappRegister();
+    return webappRegister(ServerFactory.moduleRegistry);
   }
 }

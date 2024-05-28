@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import express from 'express';
 import debug from 'debug';
+import type { Express } from 'express';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
+import type { IModel, IModuleOptions } from '@/core/interfaces/common.interface';
+import { AbstractModule } from '../helpers/module.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const isMainModuleCreated = ServerFactory.isMainModuleCreated;
@@ -21,8 +25,8 @@ const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
   _verifyMainModule(ctor.name);
 };
 
-export default function ModuleDecoratorFactory(options: ModuleOptions = {}) {
-  const { name, registry } = options;
+function ModuleDecoratorFactory(options: IModuleOptions = {}) {
+  const { name, registry, model } = options;
 
   if (registry && registry.length > 0) {
     if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
@@ -30,11 +34,16 @@ export default function ModuleDecoratorFactory(options: ModuleOptions = {}) {
     }
 
     registry.forEach(_verifyModule);
-    registry.forEach((imp) => new imp());
+    registry.forEach((imp) => {
+      const instance = new imp();
+      // const res = Reflect.getMetadata('model:plugins', instance);
+      // console.log('[DEBUG][DzungDang] res:', res, instance);
+    });
   }
 
-  return <T extends new (...args: any[]) => any>(ctor: T): T => {
-    let instance: T;
+  return <T extends new (...args: any[]) => AbstractModule>(ctor: T) => {
+    let instance: InstanceType<T> | null = null;
+
     if (ctor.name !== MAIN_MODULE_NAME && Object.hasOwn(options, 'registry')) {
       throw new Error(`In ${ctor.name}, registry property must be declared in MainModule!`);
     }
@@ -49,18 +58,33 @@ export default function ModuleDecoratorFactory(options: ModuleOptions = {}) {
       };
     }
 
-    return class {
+    return class extends ctor {
+      public override model: IModel | null = null;
+
       constructor(...args: any[]) {
         if (instance) {
           return instance;
         }
 
-        instance = new ctor(...args);
+        super(...args);
+        instance = new ctor(...args) as InstanceType<T>;
         sysLogInfo(`[${ctor.name}]: Module initialized!`);
+        if (model) {
+          instance.model = model;
+          instance.cb = (app: Express) => {
+            const router = express.Router();
+            router.get('/ping', (req, res) => {
+              res.status(200).send(`pong from ${ctor.name}!`);
+            });
 
+            return router;
+          };
+        }
         ServerFactory.moduleRegistry[ctor.name] = instance;
         return instance;
       }
-    } as T;
+    };
   };
 }
+
+export { ModuleDecoratorFactory as Module };

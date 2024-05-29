@@ -1,5 +1,7 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsPort } from 'class-validator';
+
+import { parseSafeInteger } from '@/core/utils/number.util';
 
 @Exclude()
 export class ValidatorClass {
@@ -11,7 +13,18 @@ export class ValidatorClass {
 
   @Expose()
   @IsString()
-  MONGODB_URI: string;
+  DATABASE_HOST: string;
+
+  @Expose()
+  @Transform((params) => {
+    if (!ValidatorClass.isValidated) {
+      return params.value;
+    }
+
+    return parseSafeInteger(params.value);
+  })
+  @IsPort()
+  DATABASE_PORT: number;
 
   @Expose()
   @IsOptional()

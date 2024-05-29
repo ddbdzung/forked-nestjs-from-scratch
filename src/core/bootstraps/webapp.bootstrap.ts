@@ -12,8 +12,10 @@ import { BusinessException, SystemException } from '@/core/helpers/exception.hel
 import { controllerWrapper, successHandler } from '@/core/helpers/controller.helper';
 import { APIResponseBuilder } from '@/core/helpers/api.helper';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
+import { AbstractModule } from '@/core/helpers/module.helper';
+import { PREFIX_API } from '@/core/constants/common.constant';
 
-export const webappRegister = (registryMap) => {
+export const webappRegister = (registryMap: Record<string, unknown>) => {
   const app = express();
 
   app.use(helmet());
@@ -29,9 +31,10 @@ export const webappRegister = (registryMap) => {
 
   for (const key in registryMap) {
     const instance = registryMap[key];
-    if (instance.cb && instance.model) {
-      const route = `/api/${instance.model?.name}`;
-      app.use(route, instance.cb(app));
+
+    if (instance instanceof AbstractModule && instance.cb && instance.model) {
+      const basePath = `${PREFIX_API}/${instance.version}/${instance.prefix}`;
+      app.use(basePath, instance.cb(app));
     }
   }
 

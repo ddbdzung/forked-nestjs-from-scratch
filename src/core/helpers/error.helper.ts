@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { Server } from 'http';
-import express, { IRouterMatcher, ErrorRequestHandler } from 'express';
+import { IRouterMatcher, ErrorRequestHandler } from 'express';
 
 import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';

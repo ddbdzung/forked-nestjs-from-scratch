@@ -3,10 +3,11 @@ import debug from 'debug';
 import { expand } from 'dotenv-expand';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
-import { BaseEnv } from '@/core/modules/env/env.module';
+import { BaseEnv } from '@/core/modules/env/env.service';
 import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 
-import { Env } from '@/app/modules/env/env.module';
+import { Env } from '@/app/modules/env/env.service';
+
 import { AbstractModule } from './module.helper';
 
 let isBootstrapBaseEnvRun = false;
@@ -89,9 +90,6 @@ export class ServerFactory {
     if (moduleName !== MAIN_MODULE_NAME) {
       throw new Error('MainModule is required when using create method!');
     }
-
-    bootstrapBaseEnv();
-    bootstrapExtendedEnv();
 
     return webappRegister(ServerFactory.moduleRegistry);
   }

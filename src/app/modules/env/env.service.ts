@@ -2,7 +2,7 @@ import debug from 'debug';
 import { validateSync } from 'class-validator';
 import { instanceToPlain, plainToClass } from 'class-transformer';
 
-import { BaseEnv } from '@/core/modules/env/env.module';
+import { BaseEnv } from '@/core/modules/env/env.service';
 import { SystemException } from '@/core/helpers/exception.helper';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 

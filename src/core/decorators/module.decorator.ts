@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import express from 'express';
-import debug from 'debug';
 import type { Express } from 'express';
 
-import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
+import express from 'express';
+import debug from 'debug';
+
+import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import type { IModel, IModuleOptions } from '@/core/interfaces/common.interface';
-import { AbstractModule } from '../helpers/module.helper';
+import { AbstractModule } from '@/core/helpers/module.helper';
+import { modelHandler } from '@/core/helpers/model.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const isMainModuleCreated = ServerFactory.isMainModuleCreated;
@@ -16,9 +18,11 @@ const _verifyMainModule = (name: string) => {
     throw new Error('Main module has been created!');
   }
 
-  if (name === MAIN_MODULE_NAME && !isMainModuleCreated) {
-    ServerFactory.isMainModuleCreated = true;
+  if (!(name === MAIN_MODULE_NAME && !isMainModuleCreated)) {
+    return;
   }
+
+  ServerFactory.isMainModuleCreated = true;
 };
 
 const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
@@ -26,7 +30,7 @@ const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
 };
 
 function ModuleDecoratorFactory(options: IModuleOptions = {}) {
-  const { name, registry, model } = options;
+  const { name, registry, model, prefix, version } = options;
 
   if (registry && registry.length > 0) {
     if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
@@ -70,16 +74,12 @@ function ModuleDecoratorFactory(options: IModuleOptions = {}) {
         instance = new ctor(...args) as InstanceType<T>;
         sysLogInfo(`[${ctor.name}]: Module initialized!`);
         if (model) {
+          instance.prefix = prefix || model.name;
+          instance.version = version || VERSION_API.V1;
           instance.model = model;
-          instance.cb = (app: Express) => {
-            const router = express.Router();
-            router.get('/ping', (req, res) => {
-              res.status(200).send(`pong from ${ctor.name}!`);
-            });
-
-            return router;
-          };
+          instance.cb = modelHandler({ model });
         }
+
         ServerFactory.moduleRegistry[ctor.name] = instance;
         return instance;
       }

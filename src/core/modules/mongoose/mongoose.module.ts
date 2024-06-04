@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Schema, model, connect } from 'mongoose';
+import mongoose, { Schema, model, connect } from 'mongoose';
 import debug from 'debug';
 
 import { Module } from '@/core/decorators/module.decorator';
@@ -51,7 +51,12 @@ const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 @Module()
 export class MongooseModule extends AbstractDatabaseModule {
   public static register(options: IRegisterOption) {
-    const { uriBuilder } = options;
+    const { uriBuilder, isDebugMode = false } = options;
+
+    if (isDebugMode) {
+      mongoose.set('debug', true);
+    }
+
     const configuration = uriBuilder(new MongodbConfigurationBuilder());
 
     connect(configuration.uri, configuration.options)

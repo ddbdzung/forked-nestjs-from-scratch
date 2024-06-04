@@ -11,13 +11,22 @@ import { Env } from '@/app/modules/env/env.service';
   registry: [
     EnvModule.register(),
     MongooseModule.register({
+      isDebugMode: true,
       uriBuilder: (builder) => {
         const env = Env.getInstance();
         const host = env.get<string>('DATABASE_HOST');
         const port = env.get<number>('DATABASE_PORT');
         const dbName = env.get<string>('DATABASE_NAME');
 
-        return builder.setHost(host).setPort(port).setDatabaseName(dbName).build();
+        return builder
+          .setHost(host)
+          .setPort(port)
+          .setDatabaseName(dbName)
+          .withOptions({
+            connectTimeoutMS: 3000,
+            maxPoolSize: 10,
+          })
+          .build();
       },
     }),
     UserModule,

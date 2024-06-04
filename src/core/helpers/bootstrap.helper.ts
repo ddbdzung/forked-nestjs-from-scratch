@@ -1,3 +1,5 @@
+import type { Schema } from 'mongoose';
+
 import dotenv from 'dotenv';
 import debug from 'debug';
 import { expand } from 'dotenv-expand';
@@ -7,8 +9,8 @@ import { BaseEnv } from '@/core/modules/env/env.service';
 import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 
 import { Env } from '@/app/modules/env/env.service';
-
 import { AbstractModule } from './module.helper';
+import { SystemException } from './exception.helper';
 
 let isBootstrapBaseEnvRun = false;
 let isBootstrapExtendedEnvRun = false;
@@ -76,19 +78,22 @@ export const bootstrapExtendedEnv = () => {
   isBootstrapExtendedEnvRun = true;
 };
 
+type RegistryName = string;
 export class ServerFactory {
   static isMainModuleCreated = false;
-  static moduleRegistry: Record<string, unknown> = {};
+  static moduleRegistry: Record<RegistryName, unknown> = {};
+  static schemaRegistry: Record<RegistryName, Schema> = {};
+  static modelRegistry: Record<RegistryName, unknown> = {};
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
     const moduleInstance = new ctor();
     if (!(moduleInstance instanceof AbstractModule)) {
-      throw new Error('Module must be an instance of AbstractModule!');
+      throw new SystemException('Module must be an instance of AbstractModule!');
     }
 
     const moduleName = moduleInstance.constructor.name;
     if (moduleName !== MAIN_MODULE_NAME) {
-      throw new Error('MainModule is required when using create method!');
+      throw new SystemException('MainModule is required when using create method!');
     }
 
     return webappRegister(ServerFactory.moduleRegistry);

@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
-import type { IModelDecoratorOptions } from '../interfaces/common.interface';
+
+import type { IModelDecoratorOptions } from '@/core/interfaces/common.interface';
+
+import { SystemException } from '@/core/helpers/exception.helper';
 
 function ModelDecoratorFactory<T>(
   options: IModelDecoratorOptions = {
@@ -10,7 +13,7 @@ function ModelDecoratorFactory<T>(
   const { plugins } = options;
   return (target: any, propertyName: string) => {
     if (propertyName !== 'model') {
-      throw new Error('Model property must be named "model"!');
+      throw new SystemException('Model property must be named "model"!');
     }
 
     Reflect.defineMetadata(`model:plugins`, plugins, target);

@@ -2,4 +2,5 @@ import { MongodbConfiguration, MongodbConfigurationBuilder } from './mongoose.bu
 
 export interface IRegisterOption {
   uriBuilder: (b: MongodbConfigurationBuilder) => MongodbConfiguration;
+  isDebugMode: boolean;
 }

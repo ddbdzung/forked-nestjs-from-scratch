@@ -1,5 +1,7 @@
 import type { ConnectOptions } from 'mongoose';
 
+import { SystemException } from '@/core/helpers/exception.helper';
+
 class ObjectiveClass {
   /**
    * @returns {Object} Plain object of class instance properties
@@ -91,7 +93,7 @@ export class MongodbConfigurationBuilder {
 
   public setHost(host: string): MongodbConfigurationBuilder {
     if (!validIpAddressRegex.test(host) && !validHostnameRegex.test(host)) {
-      throw new Error('Host must be a valid ip address or hostname');
+      throw new SystemException('Host must be a valid ip address or hostname');
     }
 
     this._uriConfig.host = host;
@@ -100,7 +102,7 @@ export class MongodbConfigurationBuilder {
 
   public setPort(port: number): MongodbConfigurationBuilder {
     if (port < 0 || port > 65_535) {
-      throw new Error('Port must be between 0 and 65535');
+      throw new SystemException('Port must be between 0 and 65535');
     }
 
     this._uriConfig.port = port;
@@ -131,11 +133,11 @@ export class MongodbConfigurationBuilder {
 
   public build() {
     if (!this._uriConfig.host) {
-      throw new Error('Host required to build mongodb configuration');
+      throw new SystemException('Host required to build mongodb configuration');
     }
 
     if (!this._uriConfig.port) {
-      throw new Error('Port required to build mongodb configuration');
+      throw new SystemException('Port required to build mongodb configuration');
     }
 
     return new MongodbConfiguration(this);

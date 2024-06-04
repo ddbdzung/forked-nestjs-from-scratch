@@ -38,32 +38,6 @@ export const webappRegister = (registryMap: Record<string, unknown>) => {
     }
   }
 
-  const test1 = (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).send('ok');
-  };
-  const test2 = (req: Request, res: Response, next: NextFunction) => {
-    throw 'haiz';
-  };
-  const test3 = (req: Request, res: Response, next: NextFunction) => {
-    throw new SystemException('haiz1');
-  };
-  const test4 = (req: Request, res: Response, next: NextFunction) => {
-    throw new BusinessException('haiz2');
-  };
-  const test5 = (req: Request, res: Response, next: NextFunction) => {
-    return 'ok';
-  };
-  const test6 = (req: Request, res: Response, next: NextFunction) => {
-    return new APIResponseBuilder().withCode(HTTP_RESPONSE_CODE.OK).build();
-  };
-
-  app.get('/1', controllerWrapper(test1));
-  app.get('/2', controllerWrapper(test2));
-  app.get('/3', controllerWrapper(test3));
-  app.get('/4', controllerWrapper(test4));
-  app.get('/5', controllerWrapper(test5));
-  app.get('/6', controllerWrapper(test6));
-
   app.use((req, res, next) => {
     const isApiNotError: boolean = res.locals.isApiNotError;
     if (!isApiNotError) {

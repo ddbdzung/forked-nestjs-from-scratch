@@ -27,6 +27,14 @@ export class ValidatorClass {
   DATABASE_PORT: number;
 
   @Expose()
+  @IsString()
+  DATABASE_USERNAME: string;
+
+  @Expose()
+  @IsString()
+  DATABASE_PASSWORD: string;
+
+  @Expose()
   @IsOptional()
   DEBUG: string;
 }

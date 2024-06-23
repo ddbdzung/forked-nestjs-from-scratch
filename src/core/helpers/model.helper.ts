@@ -22,6 +22,7 @@ import { MONGO_ERROR, MONGO_ERROR_CODE } from '@/core/modules/mongoose/mongoose.
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
 import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.helper';
 import { ServerFactory } from './bootstrap.helper';
+import { HTTP_RESPONSE_CODE } from '../constants/http.constant';
 
 type SchemaTyping = Record<DATA_TYPE_ENUM, unknown>;
 type ConstraintTyping = Record<
@@ -389,11 +390,15 @@ export const makeModelMiddleware = async (model: IModel, schema: Schema) => {
           const field = Object.keys(keyValue)?.at(0) || '';
 
           return next(
-            new BusinessException('validate.common.duplicateKey').withMetadata({
-              type: ExceptionMetadataType.TRANSLATE,
-              fieldName: field,
-              fieldValue: keyValue[field] || null,
-            }),
+            new BusinessException('validate.common.duplicateKey')
+              .withCode(HTTP_RESPONSE_CODE.BAD_REQUEST)
+              .withMetadata([
+                {
+                  type: ExceptionMetadataType.TRANSLATE,
+                  fieldName: field,
+                  fieldValue: keyValue[field] || null,
+                },
+              ]),
           );
         }
       }

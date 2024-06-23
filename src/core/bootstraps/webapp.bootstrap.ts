@@ -13,9 +13,14 @@ import { controllerWrapper, successHandler } from '@/core/helpers/controller.hel
 import { APIResponseBuilder } from '@/core/helpers/api.helper';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 import { AbstractModule } from '@/core/helpers/module.helper';
-import { PREFIX_API } from '@/core/constants/common.constant';
 
-export const webappRegister = (registryMap: Record<string, unknown>) => {
+export const webappRegister = ({
+  registryMap,
+  prefixBaseRoute,
+}: {
+  registryMap: Record<string, unknown>;
+  prefixBaseRoute: string;
+}) => {
   const app = express();
 
   app.use(helmet());
@@ -33,7 +38,7 @@ export const webappRegister = (registryMap: Record<string, unknown>) => {
     const instance = registryMap[key];
 
     if (instance instanceof AbstractModule && instance.cb && instance.model) {
-      const basePath = `${PREFIX_API}/${instance.version}/${instance.prefix}`;
+      const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
       app.use(basePath, instance.cb(app));
     }
   }

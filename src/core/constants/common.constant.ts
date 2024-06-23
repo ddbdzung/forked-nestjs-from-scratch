@@ -36,4 +36,4 @@ export enum VERSION_API {
   V10 = 'v10',
 }
 
-export const PREFIX_API = '/api';
+export const PREFIX_API = '/rest';

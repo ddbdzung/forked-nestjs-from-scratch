@@ -8,7 +8,6 @@ import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 import { ValidatorClass } from './env.validator';
 
-const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
 let _instance: Env | null = null;
@@ -26,7 +25,7 @@ export class Env extends BaseEnv {
     if (!_instance) {
       _instance = new Env();
       _instance._rawEnvVars = rawEnvVars;
-      sysLogInfo('[Env]: Instance initialized!');
+      // sysLogInfo('[Env]: Instance initialized!');
       return;
     }
 
@@ -66,6 +65,6 @@ export class Env extends BaseEnv {
       exposeUnsetFields: false,
     });
     this._isValidated = true;
-    sysLogInfo('[Env]: Environment variables validated');
+    // sysLogInfo('[Env]: Environment variables validated');
   }
 }

@@ -14,7 +14,7 @@ interface IExceptionData {
   name?: string;
   statusCode: HttpResponseCode;
   message: string;
-  metadata?: IExceptionMetadata;
+  metadata?: IExceptionMetadata[];
 }
 
 interface IException {
@@ -76,12 +76,12 @@ export class SystemException extends BaseException {
 
 export class BusinessException extends BaseException {
   public override name = 'BusinessException';
-  public metadata: IExceptionMetadata = { type: ExceptionMetadataType.DEFAULT };
+  public metadata: IExceptionMetadata[] = [{ type: ExceptionMetadataType.DEFAULT }];
   constructor(message: string, innerError?: unknown) {
     super(message, innerError);
   }
 
-  public withMetadata(metadata: IExceptionMetadata): this {
+  public withMetadata(metadata: IExceptionMetadata[]): this {
     this.metadata = metadata;
     return this;
   }

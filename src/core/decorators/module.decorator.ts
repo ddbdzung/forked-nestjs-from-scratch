@@ -31,9 +31,9 @@ const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
 };
 
 function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
-  const { name, registry, model, prefix, version } = options;
+  const { name, registry, model, prefix, version, provider } = options;
 
-  if (registry && registry.length > 0) {
+  if (Array.isArray(registry) && registry.length > 0) {
     if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
       throw new SystemException('Main module cannot be in the registry!');
     }
@@ -59,6 +59,14 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
         }
       }
     }
+  }
+
+  if (Array.isArray(provider) && provider.length > 0) {
+    if (provider.some((imp) => imp.name === MAIN_MODULE_NAME)) {
+      throw new SystemException('Main module cannot be in the provider!');
+    }
+
+    provider.forEach((imp) => new imp());
   }
 
   return <T extends new (...args: any[]) => AbstractModule>(ctor: T) => {

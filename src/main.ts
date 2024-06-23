@@ -6,7 +6,7 @@ import type { Server } from 'http';
 
 import debug from 'debug';
 
-import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { DEBUG_CODE, PREFIX_API } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import { systemErrorHandler } from '@/core/helpers/error.helper';
 import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
@@ -20,6 +20,8 @@ systemErrorHandler(server);
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
 async function bootstrap() {
+  ServerFactory.setPrefixBaseRoute(PREFIX_API);
+
   const webapp = ServerFactory.create(MainModule);
   const envInstance = Env.getInstance();
   const appPort = envInstance.get<number>('APP_PORT');

@@ -5,12 +5,13 @@ import type { IModelDecoratorOptions } from '@/core/interfaces/common.interface'
 
 import { SystemException } from '@/core/helpers/exception.helper';
 
-function ModelDecoratorFactory<T>(
+function ModelDecoratorFactory(
   options: IModelDecoratorOptions = {
     plugins: [],
   },
 ) {
   const { plugins } = options;
+
   return (target: any, propertyName: string) => {
     if (propertyName !== 'model') {
       throw new SystemException('Model property must be named "model"!');

@@ -84,6 +84,8 @@ export class ServerFactory {
   static moduleRegistry: Record<RegistryName, unknown> = {};
   static schemaRegistry: Record<RegistryName, Schema> = {};
   static modelRegistry: Record<RegistryName, unknown> = {};
+  static repositoryRegistry: Record<RegistryName, unknown> = {};
+  static prefixBaseRoute = '';
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
     const moduleInstance = new ctor();
@@ -96,6 +98,13 @@ export class ServerFactory {
       throw new SystemException('MainModule is required when using create method!');
     }
 
-    return webappRegister(ServerFactory.moduleRegistry);
+    return webappRegister({
+      registryMap: ServerFactory.moduleRegistry,
+      prefixBaseRoute: ServerFactory.prefixBaseRoute,
+    });
+  }
+
+  static setPrefixBaseRoute(prefix: string) {
+    ServerFactory.prefixBaseRoute = prefix;
   }
 }

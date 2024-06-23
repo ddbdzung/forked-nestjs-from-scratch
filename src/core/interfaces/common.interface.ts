@@ -34,6 +34,7 @@ export interface IModuleOptions {
   model?: IModel;
   prefix?: string;
   version?: VERSION_API;
+  provider?: ConstructorType[];
 }
 
 export interface IModelDecoratorOptions {
@@ -46,4 +47,8 @@ export interface IModelHandler {
 
 export interface IContextAPI {
   modelName: string;
+}
+
+export interface IRepositoryDecoratorOptions {
+  name: string;
 }

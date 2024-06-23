@@ -1,4 +1,6 @@
-import express, { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
+
+import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -10,8 +12,15 @@ import { BusinessException, SystemException } from '@/core/helpers/exception.hel
 import { controllerWrapper, successHandler } from '@/core/helpers/controller.helper';
 import { APIResponseBuilder } from '@/core/helpers/api.helper';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
+import { AbstractModule } from '@/core/helpers/module.helper';
 
-export const webappRegister = () => {
+export const webappRegister = ({
+  registryMap,
+  prefixBaseRoute,
+}: {
+  registryMap: Record<string, unknown>;
+  prefixBaseRoute: string;
+}) => {
   const app = express();
 
   app.use(helmet());
@@ -25,31 +34,14 @@ export const webappRegister = () => {
   app.use(mongoSanitize());
   app.use(compression());
 
-  const test1 = (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).send('ok');
-  };
-  const test2 = (req: Request, res: Response, next: NextFunction) => {
-    throw 'haiz';
-  };
-  const test3 = (req: Request, res: Response, next: NextFunction) => {
-    throw new SystemException('haiz1');
-  };
-  const test4 = (req: Request, res: Response, next: NextFunction) => {
-    throw new BusinessException('haiz2');
-  };
-  const test5 = (req: Request, res: Response, next: NextFunction) => {
-    return 'ok';
-  };
-  const test6 = (req: Request, res: Response, next: NextFunction) => {
-    return new APIResponseBuilder().withCode(HTTP_RESPONSE_CODE.OK).build();
-  };
+  for (const key in registryMap) {
+    const instance = registryMap[key];
 
-  app.get('/1', controllerWrapper(test1));
-  app.get('/2', controllerWrapper(test2));
-  app.get('/3', controllerWrapper(test3));
-  app.get('/4', controllerWrapper(test4));
-  app.get('/5', controllerWrapper(test5));
-  app.get('/6', controllerWrapper(test6));
+    if (instance instanceof AbstractModule && instance.cb && instance.model) {
+      const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
+      app.use(basePath, instance.cb(app));
+    }
+  }
 
   app.use((req, res, next) => {
     const isApiNotError: boolean = res.locals.isApiNotError;

@@ -1,9 +1,20 @@
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_CODE_LIST } from '@/core/constants/http.constant';
 
+export enum ExceptionMetadataType {
+  DEFAULT = 'other',
+  TRANSLATE = 'translate',
+}
+
+interface IExceptionMetadata {
+  type: ExceptionMetadataType;
+  [key: string]: unknown;
+}
+
 interface IExceptionData {
   name?: string;
   statusCode: HttpResponseCode;
   message: string;
+  metadata?: IExceptionMetadata[];
 }
 
 interface IException {
@@ -65,14 +76,25 @@ export class SystemException extends BaseException {
 
 export class BusinessException extends BaseException {
   public override name = 'BusinessException';
+  public metadata: IExceptionMetadata[] = [{ type: ExceptionMetadataType.DEFAULT }];
   constructor(message: string, innerError?: unknown) {
     super(message, innerError);
   }
 
-  public override toJSON(): IExceptionData {
-    return {
+  public withMetadata(metadata: IExceptionMetadata[]): this {
+    this.metadata = metadata;
+    return this;
+  }
+
+  public override toJSON() {
+    const json: IExceptionData = {
       statusCode: this.statusCode,
       message: this.message,
     };
+    if (this.metadata) {
+      json.metadata = this.metadata;
+    }
+
+    return json;
   }
 }

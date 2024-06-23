@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { Server } from 'http';
-import express, { IRouterMatcher, ErrorRequestHandler } from 'express';
+import { IRouterMatcher, ErrorRequestHandler } from 'express';
 
 import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
@@ -15,6 +15,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     return next(err);
   }
 
+  const unknownError = new SystemException('Unknown error');
   try {
     if (!err) {
       return next();
@@ -33,11 +34,11 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     }
 
     sysLogError('[errorHandler]: Unknown error', `'${err?.toString()}'`);
-    const unknownError = new SystemException('Unknown error');
+
     return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
   } catch (error) {
     sysLogError('[errorHandler]: Error when handling error', error);
-    const unknownError = new SystemException('Unknown error');
+
     return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
   }
 };

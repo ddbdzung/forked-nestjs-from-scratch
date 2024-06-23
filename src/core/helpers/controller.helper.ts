@@ -1,7 +1,11 @@
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+
+import mongoose from 'mongoose';
 
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_MESSAGE } from '@/core/constants/http.constant';
+import { IContextAPI } from '@/core/interfaces/common.interface';
 
+import { Env } from '@/app/modules/env/env.service';
 import { SystemException } from './exception.helper';
 import { APIResponse } from './api.helper';
 
@@ -33,7 +37,19 @@ export const controllerWrapper = (
   };
 };
 
-export const successHandler = (req: Request, res: Response, next: NextFunction) => {
+export function bindContextApi(ctx: IContextAPI) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    res.locals.ctx = ctx;
+
+    next();
+  };
+}
+
+export function successHandler(
+  req: Request,
+  res: Response & { locals: Record<string, unknown> },
+  next: NextFunction,
+) {
   const isApiNotError: boolean = res.locals.isApiNotError;
   const response: unknown = res.locals.controllerResult;
   if (!response || !isApiNotError) {
@@ -55,4 +71,50 @@ export const successHandler = (req: Request, res: Response, next: NextFunction) 
   }
 
   return res.status(statusCode).json(responseObj);
-};
+}
+
+export class ControllerAPI {
+  static instance: ControllerAPI | null = null;
+
+  public static getInstance(): ControllerAPI {
+    if (!ControllerAPI.instance) {
+      ControllerAPI.instance = new ControllerAPI();
+    }
+
+    return ControllerAPI.instance;
+  }
+
+  async ping(req: Request, res: Response, next: NextFunction) {
+    return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
+      msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
+    });
+  }
+
+  async getList(req: Request, res: Response, next: NextFunction) {
+    const ctx = res.locals.ctx as IContextAPI | undefined;
+    if (!ctx) {
+      return next(new SystemException('[API_ERROR]: ContextAPI is required'));
+    }
+
+    const modelInstance = mongoose.model(ctx.modelName);
+    const fakeData = [
+      {
+        fullName: 'John Doe',
+        email: 'd@email.com',
+        password: '123456',
+        nickName: ['John', 'Doe'],
+        updatedAtLogList: [
+          {
+            updatedAt: new Date(),
+            logList: ['log1', 'log2'],
+          },
+        ],
+      },
+    ];
+    const dataList = await modelInstance.create(fakeData);
+
+    // const dataList = await modelInstance.find({});
+
+    return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], { data: dataList });
+  }
+}

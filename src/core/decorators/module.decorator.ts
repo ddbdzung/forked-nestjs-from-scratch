@@ -7,9 +7,10 @@ import debug from 'debug';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
-import { AbstractModule } from '@/core/helpers/module.helper';
+import { AbstractConfig, AbstractModule } from '@/core/helpers/module.helper';
 import { modelHandler } from '@/core/helpers/model.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
+import { BaseRepository } from '../repository/base.repository';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const isMainModuleCreated = ServerFactory.isMainModuleCreated;
@@ -31,7 +32,7 @@ const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
 };
 
 function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
-  const { name, registry, model, prefix, version, provider } = options;
+  const { registry, model, provider, repository } = options;
 
   if (Array.isArray(registry) && registry.length > 0) {
     if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
@@ -41,36 +42,29 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
     registry.forEach(_verifyModule);
     registry.forEach((imp) => new imp());
 
-    for (const moduleName in ServerFactory.moduleRegistry) {
-      const instance = ServerFactory.moduleRegistry[moduleName];
+    // for (const moduleName in ServerFactory.moduleRegistry) {
+    //   const instance = ServerFactory.moduleRegistry[moduleName];
 
-      if (instance instanceof AbstractModule && instance.model) {
-        const plugins: unknown[] = Reflect.getMetadata('model:plugins', instance);
+    // if (instance instanceof AbstractModule && instance.model) {
+    //   const plugins: unknown[] = Reflect.getMetadata('model:plugins', instance);
 
-        if (Array.isArray(plugins)) {
-          instance.model.plugins = plugins;
+    //   if (Array.isArray(plugins)) {
+    //     instance.model.plugins = plugins;
 
-          // Freeze plugins
-          Object.defineProperty(instance.model, 'plugins', {
-            value: plugins,
-            writable: false,
-            configurable: false,
-          });
-        }
-      }
-    }
-  }
-
-  if (Array.isArray(provider) && provider.length > 0) {
-    if (provider.some((imp) => imp.name === MAIN_MODULE_NAME)) {
-      throw new SystemException('Main module cannot be in the provider!');
-    }
-
-    provider.forEach((imp) => new imp());
+    //     // Freeze plugins
+    //     Object.defineProperty(instance.model, 'plugins', {
+    //       value: plugins,
+    //       writable: false,
+    //       configurable: false,
+    //     });
+    //   }
+    // }
+    // }
   }
 
   return <T extends new (...args: any[]) => AbstractModule>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
+    const name = options.name ? options.name : ctor.name;
 
     if (ctor.name !== MAIN_MODULE_NAME && Object.hasOwn(options, 'registry')) {
       throw new SystemException(
@@ -78,10 +72,35 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
       );
     }
 
-    if (!name) {
-      options = {
-        name: ctor.name,
+    if (repository) {
+      if (repository.name === MAIN_MODULE_NAME) {
+        throw new SystemException('Main module cannot be a repository!');
+      }
+
+      ServerFactory.repositoryRegistry[name] = {
+        ctr: repository,
       };
+    }
+
+    if (Array.isArray(provider) && provider.length > 0) {
+      if (provider.some((imp) => imp.name === MAIN_MODULE_NAME)) {
+        throw new SystemException('Main module cannot be in the provider!');
+      }
+
+      provider.forEach((imp) => {
+        const providerInstance = new imp();
+        const isInstanceOfAbstractConfig = providerInstance instanceof AbstractConfig;
+
+        if (!isInstanceOfAbstractConfig) {
+          throw new SystemException('Provider must be derived class of AbstractConfig!');
+        }
+
+        if (isInstanceOfAbstractConfig) {
+          ServerFactory.configRegistry[name] = providerInstance;
+        }
+
+        // TODO: More provider type can be added here
+      });
     }
 
     return class extends ctor {
@@ -99,10 +118,17 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
         sysLogInfo(`[${ctor.name}]: Module initialized!`);
 
         if (model) {
-          instance.prefix = prefix || model.name;
-          instance.version = version || VERSION_API.V1;
+          const instanceConfig = ServerFactory.configRegistry[name] as AbstractConfig;
+          if (model.name) {
+            throw new SystemException(
+              `Model name must be define by 'modelName' property in ${instanceConfig.name} class!`,
+            );
+          }
+
+          instance.prefix = instanceConfig.prefixModule || instanceConfig.modelName;
+          instance.version = instanceConfig.version || VERSION_API.V1;
           instance.model = model;
-          instance.cb = modelHandler({ model });
+          instance.cb = modelHandler({ model, moduleName: name });
         }
 
         ServerFactory.moduleRegistry[ctor.name] = instance;

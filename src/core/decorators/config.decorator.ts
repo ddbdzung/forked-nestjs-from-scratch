@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import debug from 'debug';
 
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
+import { AbstractConfig } from '@/core/helpers/module.helper';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-function RepositoryDecoratorFactory() {
-  return <T extends new (...args: any[]) => any>(ctor: T) => {
+function ConfigFactoryDecorator() {
+  return <T extends new (...args: any[]) => AbstractConfig>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
 
     return class extends ctor {
+      public override modelName: string;
+      public override prefixModule: string;
+
       constructor(...args: any[]) {
         if (instance) {
           return instance;
@@ -22,14 +25,15 @@ function RepositoryDecoratorFactory() {
 
         instance = new ctor(...args) as InstanceType<T>;
         if (!instance) {
-          throw new SystemException('Repository instance cannot be created!');
+          throw new SystemException('Config instance cannot be created!');
         }
 
-        sysLogInfo(`[${ctor.name}]: Repository initialized!`);
+        instance.name = ctor.name;
+        sysLogInfo(`[${ctor.name}]: Config initialized!`);
         return instance;
       }
     };
   };
 }
 
-export { RepositoryDecoratorFactory as Repository };
+export { ConfigFactoryDecorator as Config };

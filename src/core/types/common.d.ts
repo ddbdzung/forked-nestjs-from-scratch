@@ -12,3 +12,5 @@ type ElementType<T extends Iterable<any>> = T extends Iterable<infer E> ? E : ne
 type IfHasResult<T> = [null, T | T[]];
 
 type IfHasNoResult = [Error, null];
+
+type ConstructorType = new (...args: any[]) => any;

@@ -115,6 +115,17 @@ export class ControllerAPI {
 
     // const dataList = await modelInstance.find({});
 
+    // To test virtual field
+    // const dataList = await modelInstance.find({});
+    // const temp = dataList[0];
+    // const fullNameAndEmail = temp?.fullNameAndEmail;
+    // console.log('[DEBUG][DzungDang] fullNameAndEmail:', fullNameAndEmail);
+
     return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], { data: dataList });
   }
+}
+
+export abstract class AbstractController {
+  abstract ping(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
+  abstract getList(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
 }

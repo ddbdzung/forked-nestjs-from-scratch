@@ -34,6 +34,8 @@ export const webappRegister = ({
   app.use(mongoSanitize());
   app.use(compression());
 
+  // TODO: Implement general API (health check, etc.)
+
   for (const key in registryMap) {
     const instance = registryMap[key];
 

@@ -2,7 +2,7 @@ import { Document } from 'mongoose';
 
 export interface IUser extends Document {
   _id: string;
-  fullname: string;
+  fullName: string;
   email: string;
   password: string;
   nickName: string[];

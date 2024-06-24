@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
 import { VERSION_API } from '@/core/constants/common.constant';
+import { Document, Schema } from 'mongoose';
 
 type ConstructorType = new (...args: any[]) => any;
 
@@ -21,9 +22,18 @@ export interface ISchemaType extends IConstraintDetail {
   defaultValue?: unknown; // Set default value for field
 }
 
+export interface IVirtualType {
+  getter?: () => unknown; // Set getter for virtual field
+  setter?: (v: unknown) => void; // Set setter for virtual field
+}
+
 export interface IModel {
-  name: string;
+  /**
+   * Name of the model (define in *.config.ts file)
+   */
+  name?: string;
   schema: Record<string, ISchemaType>;
+  virtuals?: Record<string, IVirtualType>;
   middlewares?: unknown[]; // TODO: Implement later
   plugins?: unknown[];
 }
@@ -32,9 +42,8 @@ export interface IModuleOptions {
   registry?: ConstructorType[];
   name?: string;
   model?: IModel;
-  prefix?: string;
-  version?: VERSION_API;
   provider?: ConstructorType[];
+  repository?: ConstructorType;
 }
 
 export interface IModelDecoratorOptions {
@@ -43,12 +52,9 @@ export interface IModelDecoratorOptions {
 
 export interface IModelHandler {
   model: IModel;
+  moduleName: string;
 }
 
 export interface IContextAPI {
   modelName: string;
-}
-
-export interface IRepositoryDecoratorOptions {
-  name: string;
 }

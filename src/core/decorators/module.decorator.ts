@@ -7,7 +7,7 @@ import debug from 'debug';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
-import { AbstractConfig, AbstractModule } from '@/core/helpers/module.helper';
+import { AbstractConfig, AbstractModel, AbstractModule } from '@/core/helpers/module.helper';
 import { modelHandler } from '@/core/helpers/model.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
 import { BaseRepository } from '../repository/base.repository';
@@ -32,44 +32,46 @@ const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
 };
 
 function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
-  const { registry, model, provider, repository } = options;
-
-  if (Array.isArray(registry) && registry.length > 0) {
-    if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
-      throw new SystemException('Main module cannot be in the registry!');
-    }
-
-    registry.forEach(_verifyModule);
-    registry.forEach((imp) => new imp());
-
-    // for (const moduleName in ServerFactory.moduleRegistry) {
-    //   const instance = ServerFactory.moduleRegistry[moduleName];
-
-    // if (instance instanceof AbstractModule && instance.model) {
-    //   const plugins: unknown[] = Reflect.getMetadata('model:plugins', instance);
-
-    //   if (Array.isArray(plugins)) {
-    //     instance.model.plugins = plugins;
-
-    //     // Freeze plugins
-    //     Object.defineProperty(instance.model, 'plugins', {
-    //       value: plugins,
-    //       writable: false,
-    //       configurable: false,
-    //     });
-    //   }
-    // }
-    // }
-  }
+  const { registry, provider, repository, model, imports, exports, isGlobal } = options;
 
   return <T extends new (...args: any[]) => AbstractModule>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
+
     const name = options.name ? options.name : ctor.name;
 
     if (ctor.name !== MAIN_MODULE_NAME && Object.hasOwn(options, 'registry')) {
       throw new SystemException(
         `In ${ctor.name}, registry property must be declared in MainModule!`,
       );
+    }
+
+    if (Array.isArray(registry) && registry.length > 0) {
+      if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
+        throw new SystemException('Main module cannot be in the registry!');
+      }
+
+      registry.forEach(_verifyModule);
+      registry.forEach((imp) => new imp());
+    }
+
+    if (model && !repository) {
+      throw new SystemException('Model must be declared with repository!');
+    }
+
+    if (imports && imports?.length > 0) {
+      imports.forEach((imp) => {
+        if (imp.name === MAIN_MODULE_NAME) {
+          throw new SystemException('Main module cannot be in the imports!');
+        }
+      });
+    }
+
+    if (exports && exports?.length > 0) {
+      exports.forEach((exp) => {
+        if (exp.name === MAIN_MODULE_NAME) {
+          throw new SystemException('Main module cannot be in the exports!');
+        }
+      });
     }
 
     if (repository) {
@@ -91,21 +93,27 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
         const providerInstance = new imp();
         const isInstanceOfAbstractConfig = providerInstance instanceof AbstractConfig;
 
-        if (!isInstanceOfAbstractConfig) {
-          throw new SystemException('Provider must be derived class of AbstractConfig!');
-        }
-
         if (isInstanceOfAbstractConfig) {
           ServerFactory.configRegistry[name] = providerInstance;
+        } else {
+          throw new SystemException('Provider must be derived class of AbstractConfig!');
         }
 
         // TODO: More provider type can be added here
       });
     }
 
-    return class extends ctor {
-      public override model: IModel | null = null;
+    let modelInstance: AbstractModel | null = null;
+    if (model) {
+      modelInstance = new model(name);
+      if (!(modelInstance instanceof AbstractModel)) {
+        throw new SystemException('Model must be derived class of AbstractModel!');
+      }
 
+      ServerFactory.modelRegistry[name] = modelInstance;
+    }
+
+    return class extends ctor {
       constructor(...args: any[]) {
         if (instance) {
           return instance;
@@ -117,18 +125,25 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
         instance.name = options.name || ctor.name;
         sysLogInfo(`[${ctor.name}]: Module initialized!`);
 
-        if (model) {
-          const instanceConfig = ServerFactory.configRegistry[name] as AbstractConfig;
-          if (model.name) {
-            throw new SystemException(
-              `Model name must be define by 'modelName' property in ${instanceConfig.name} class!`,
-            );
-          }
+        const instanceConfig = ServerFactory.configRegistry[name] as AbstractConfig;
+        if (instanceConfig) {
+          const prefixModule =
+            typeof instanceConfig.prefixModule === 'string'
+              ? instanceConfig.prefixModule
+              : modelInstance?.name?.trim()?.toLowerCase();
 
-          instance.prefix = instanceConfig.prefixModule || instanceConfig.modelName;
+          instance.prefix = prefixModule;
           instance.version = instanceConfig.version || VERSION_API.V1;
-          instance.model = model;
-          instance.cb = modelHandler({ model, moduleName: name });
+
+          if (modelInstance) {
+            instance.modelHandler = modelHandler({ model: modelInstance, moduleName: name });
+            instance.modelName = modelInstance.name;
+          }
+        }
+
+        console.log('[DEBUG][DzungDang] isGlobal:', isGlobal);
+        if (isGlobal) {
+          ServerFactory.globalModuleRegistry[name] = instance;
         }
 
         ServerFactory.moduleRegistry[ctor.name] = instance;

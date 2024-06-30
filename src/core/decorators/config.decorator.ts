@@ -13,7 +13,6 @@ function ConfigFactoryDecorator() {
     let instance: InstanceType<T> | null = null;
 
     return class extends ctor {
-      public override modelName: string;
       public override prefixModule: string;
 
       constructor(...args: any[]) {

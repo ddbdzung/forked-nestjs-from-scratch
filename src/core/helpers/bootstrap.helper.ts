@@ -81,6 +81,7 @@ export const bootstrapExtendedEnv = () => {
 type RegistryName = string;
 export class ServerFactory {
   static isMainModuleCreated = false;
+  static globalModuleRegistry: Record<RegistryName, unknown> = {};
   /**
    * Key by module name
    */
@@ -90,7 +91,7 @@ export class ServerFactory {
    */
   static schemaRegistry: Record<RegistryName, Schema> = {};
   /**
-   * Key by model name
+   * Key by module name
    */
   static modelRegistry: Record<RegistryName, unknown> = {};
   /**
@@ -102,6 +103,17 @@ export class ServerFactory {
    * Key by module name
    */
   static configRegistry: Record<RegistryName, unknown> = {};
+
+  /**
+   * Key by module name
+   */
+  static dependencyRegistry: Record<RegistryName, ConstructorType[]> = {};
+
+  /**
+   * Key by module name
+   */
+  static viableComponentRegistry: Record<RegistryName, ConstructorType[]> = {};
+
   static prefixBaseRoute = '';
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {

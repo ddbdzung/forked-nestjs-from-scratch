@@ -39,9 +39,9 @@ export const webappRegister = ({
   for (const key in registryMap) {
     const instance = registryMap[key];
 
-    if (instance instanceof AbstractModule && instance.cb && instance.model) {
+    if (instance instanceof AbstractModule && instance.modelHandler) {
       const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
-      app.use(basePath, instance.cb(app));
+      app.use(basePath, instance.modelHandler(app));
     }
   }
 

@@ -2,6 +2,7 @@
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
 import { VERSION_API } from '@/core/constants/common.constant';
 import { Document, Schema } from 'mongoose';
+import { AbstractModel } from '../helpers/module.helper';
 
 type ConstructorType = new (...args: any[]) => any;
 
@@ -41,9 +42,12 @@ export interface IModel {
 export interface IModuleOptions {
   registry?: ConstructorType[];
   name?: string;
-  model?: IModel;
   provider?: ConstructorType[];
   repository?: ConstructorType;
+  model?: ConstructorType;
+  imports?: ConstructorType[];
+  exports?: ConstructorType[];
+  isGlobal?: boolean;
 }
 
 export interface IModelDecoratorOptions {
@@ -51,10 +55,22 @@ export interface IModelDecoratorOptions {
 }
 
 export interface IModelHandler {
-  model: IModel;
+  model: AbstractModel;
   moduleName: string;
 }
 
 export interface IContextAPI {
   modelName: string;
+}
+
+export interface ConstraintDefinition {
+  required: boolean;
+  unique: boolean;
+  minlength?: number;
+  maxlength?: number;
+  match?: RegExp;
+  enum?: string[] | number[];
+  min?: number;
+  max?: number;
+  default?: unknown;
 }

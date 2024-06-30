@@ -1,7 +1,7 @@
-import type { Express } from 'express';
+import type { Express, Router as RouterType } from 'express';
 import type { CallbackError, CallbackWithoutResultAndOptionalError, Model, Schema } from 'mongoose';
+import type { MongoServerError } from 'mongodb';
 
-import * as MongoDB from 'mongodb';
 import mongoose from 'mongoose';
 import { Router } from 'express';
 
@@ -33,7 +33,7 @@ type ConstraintTyping = Record<
   { validConstraint: CONSTRAINT_ENUM[]; validConstraintDetail: CONSTRAINT_DETAIL_ENUM[] }
 >;
 
-const schemaTypeMap: SchemaTyping = {
+export const schemaTypeMap: SchemaTyping = {
   [DATA_TYPE_ENUM.STRING]: String,
   [DATA_TYPE_ENUM.NUMBER]: Number,
   [DATA_TYPE_ENUM.BOOLEAN]: Boolean,
@@ -122,7 +122,7 @@ interface ConstraintDefinition {
 export const makeConstraintDef = (
   field: string,
   fieldConfig: ISchemaType,
-  metadata: { modelName: string },
+  metadata: { modelName?: string; moduleName?: string },
 ) => {
   const { constraints, type, sharp, getter, ...constraintDetail } = fieldConfig;
   const { defaultValue, enums, max, maxLength, min, minLength, pattern } = constraintDetail;
@@ -386,7 +386,7 @@ export const makeModelMiddleware = (model: IModel, schema: Schema) => {
       next: CallbackWithoutResultAndOptionalError,
     ) {
       if (error.name === MONGO_ERROR) {
-        const mongoServerError = error as MongoDB.MongoServerError;
+        const mongoServerError = error as MongoServerError;
 
         if (mongoServerError.code === MONGO_ERROR_CODE.DUPLICATE_KEY) {
           const keyValue = mongoServerError.errorResponse?.keyValue || {};
@@ -447,37 +447,32 @@ export const makeModelRepository = (
   return new ctr(model);
 };
 
-// TODO: remove app parameter IF not needed
-export const modelHandler = (payload: IModelHandler) => (app: Express) => {
-  const { model, moduleName } = payload;
-  const configInstance = ServerFactory.configRegistry[moduleName] as AbstractConfig;
-  const modelName = configInstance.modelName;
-  const ctx: IContextAPI = { modelName };
+export const modelHandler =
+  (payload: IModelHandler) =>
+  (app: Express): RouterType => {
+    const { model, moduleName } = payload;
+    const modelName = model.name;
 
-  const schema = makeSchema({ modelName })(model.schema);
+    const { model: Model, repository: repositoryInstance, schema } = model.startModel();
+    if (repositoryInstance) {
+      ServerFactory.repositoryRegistry[moduleName].instance = repositoryInstance;
+    }
 
-  makeVirtual(schema, model.virtuals);
-  makeModelMiddleware(model, schema);
-  makeModelPlugin(model, schema);
+    ServerFactory.schemaRegistry[modelName] = schema;
+    ServerFactory.modelRegistry[moduleName] = Model;
 
-  const Model = mongoose.model(modelName, schema);
+    const ctx: IContextAPI | null = modelName ? { modelName } : null;
 
-  const repositoryInstance = makeModelRepository(moduleName, Model);
-  if (repositoryInstance) {
-    ServerFactory.repositoryRegistry[moduleName].instance = repositoryInstance;
-  }
+    const router = Router();
+    const controllerAPI = ControllerAPI.getInstance();
 
-  ServerFactory.schemaRegistry[modelName] = schema;
-  ServerFactory.modelRegistry[modelName] = Model;
+    // Ping
+    router.get('/ping', controllerWrapper(controllerAPI.ping));
 
-  const router = Router();
-  const controllerAPI = ControllerAPI.getInstance();
+    if (ctx) {
+      // Get list
+      router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
+    }
 
-  // Ping
-  router.get('/ping', controllerWrapper(controllerAPI.ping));
-
-  // Get list
-  router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
-
-  return router;
-};
+    return router;
+  };

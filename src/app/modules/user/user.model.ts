@@ -1,10 +1,11 @@
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { IModel, ISchemaType, IVirtualType } from '@/core/interfaces/common.interface';
+import { Model } from '@/core/decorators/model.decorator';
+import { AbstractModel } from '@/core/helpers/module.helper';
 
-import { IUser } from './interfaces/user.model.interface';
-
-const model: IModel = {
-  schema: {
+@Model()
+export class UserModel extends AbstractModel {
+  public override name = 'User';
+  public override schema = {
     fullName: {
       type: DATA_TYPE_ENUM.STRING,
       constraints: [CONSTRAINT_ENUM.REQUIRED, CONSTRAINT_ENUM.UNIQUE],
@@ -40,18 +41,5 @@ const model: IModel = {
         },
       },
     },
-  },
-  virtuals: {
-    // Just for virtual field test
-    fullNameAndEmail: {
-      getter() {
-        // TODO: How to use generic to map thisSchema type to IUser type
-        const thisSchema = this as IUser;
-
-        return `${thisSchema.fullName} - ${thisSchema.email}`;
-      },
-    },
-  },
-};
-
-export default model;
+  };
+}

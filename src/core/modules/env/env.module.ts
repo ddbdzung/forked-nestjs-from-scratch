@@ -11,15 +11,15 @@ import { AbstractEnvModule } from '@/core/helpers/module.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-@Module()
+@Module({
+  isGlobal: true,
+})
 export class EnvModule extends AbstractEnvModule {
   public static register() {
     bootstrapBaseEnv();
     bootstrapExtendedEnv();
 
     return class extends AbstractEnvModule {
-      public override model = null;
-
       constructor() {
         super();
 
@@ -28,6 +28,7 @@ export class EnvModule extends AbstractEnvModule {
         sysLogInfo(`[${instance.name}]: Module initialized!`);
 
         ServerFactory.moduleRegistry[instance.name] = instance;
+        ServerFactory.globalModuleRegistry[instance.name] = instance;
         return instance;
       }
     };

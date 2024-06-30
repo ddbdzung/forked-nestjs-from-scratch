@@ -90,6 +90,7 @@ export class ControllerAPI {
     });
   }
 
+  // TODO: Add generic type for getList
   async getList(req: Request, res: Response, next: NextFunction) {
     const ctx = res.locals.ctx as IContextAPI | undefined;
     if (!ctx) {

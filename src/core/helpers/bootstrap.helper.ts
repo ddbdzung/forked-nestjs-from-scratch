@@ -90,7 +90,7 @@ export class ServerFactory {
    */
   static schemaRegistry: Record<RegistryName, Schema> = {};
   /**
-   * Key by model name
+   * Key by module name
    */
   static modelRegistry: Record<RegistryName, unknown> = {};
   /**

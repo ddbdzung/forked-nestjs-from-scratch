@@ -18,8 +18,6 @@ export class EnvModule extends AbstractEnvModule {
     bootstrapExtendedEnv();
 
     return class extends AbstractEnvModule {
-      public override model = null;
-
       constructor() {
         super();
 

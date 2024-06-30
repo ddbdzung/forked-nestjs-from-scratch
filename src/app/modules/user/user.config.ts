@@ -4,6 +4,5 @@ import { AbstractConfig } from '@/core/helpers/module.helper';
 
 @Config()
 export class UserConfig extends AbstractConfig {
-  override modelName = 'user';
   override prefixModule = 'users';
 }

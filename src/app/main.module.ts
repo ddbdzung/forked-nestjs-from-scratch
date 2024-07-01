@@ -6,6 +6,7 @@ import { EnvModule } from '@/core/modules/env/env.module';
 
 import { UserModule } from '@/app/modules/user/user.module';
 import { Env } from '@/app/modules/env/env.service';
+import { PostModule } from '@/app/modules/post/post.module';
 
 @Module({
   registry: [
@@ -30,9 +31,7 @@ import { Env } from '@/app/modules/env/env.service';
       },
     }),
     UserModule,
+    PostModule,
   ],
 })
-export class MainModule extends AbstractModule {
-  @Model()
-  model = null;
-}
+export class MainModule extends AbstractModule {}

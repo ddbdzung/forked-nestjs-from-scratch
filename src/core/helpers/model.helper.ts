@@ -1,7 +1,7 @@
-import type { Express } from 'express';
-import type { CallbackError, CallbackWithoutResultAndOptionalError, Schema } from 'mongoose';
+import type { Express, Router as RouterType } from 'express';
+import type { CallbackError, CallbackWithoutResultAndOptionalError, Model, Schema } from 'mongoose';
+import type { MongoServerError } from 'mongodb';
 
-import * as MongoDB from 'mongodb';
 import mongoose from 'mongoose';
 import { Router } from 'express';
 
@@ -9,7 +9,9 @@ import {
   IContextAPI,
   IModel,
   IModelHandler,
+  ImodelHandler,
   ISchemaType,
+  IVirtualType,
 } from '@/core/interfaces/common.interface';
 import {
   CONSTRAINT_DETAIL_ENUM,
@@ -23,6 +25,8 @@ import { BusinessException, ExceptionMetadataType, SystemException } from './exc
 import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.helper';
 import { ServerFactory } from './bootstrap.helper';
 import { HTTP_RESPONSE_CODE } from '../constants/http.constant';
+import { AbstractConfig } from './module.helper';
+import { BaseRepository } from '../repository/base.repository';
 
 type SchemaTyping = Record<DATA_TYPE_ENUM, unknown>;
 type ConstraintTyping = Record<
@@ -30,7 +34,7 @@ type ConstraintTyping = Record<
   { validConstraint: CONSTRAINT_ENUM[]; validConstraintDetail: CONSTRAINT_DETAIL_ENUM[] }
 >;
 
-const schemaTypeMap: SchemaTyping = {
+export const schemaTypeMap: SchemaTyping = {
   [DATA_TYPE_ENUM.STRING]: String,
   [DATA_TYPE_ENUM.NUMBER]: Number,
   [DATA_TYPE_ENUM.BOOLEAN]: Boolean,
@@ -119,7 +123,7 @@ interface ConstraintDefinition {
 export const makeConstraintDef = (
   field: string,
   fieldConfig: ISchemaType,
-  metadata: { modelName: string },
+  metadata: { modelName?: string; moduleName?: string },
 ) => {
   const { constraints, type, sharp, getter, ...constraintDetail } = fieldConfig;
   const { defaultValue, enums, max, maxLength, min, minLength, pattern } = constraintDetail;
@@ -366,7 +370,7 @@ export const makeSchema =
     return schemaResult;
   };
 
-export const makeModelPlugin = async (model: IModel, schema: Schema) => {
+export const makeModelPlugin = (model: IModel, schema: Schema) => {
   // TODO: Check type of plugin to avoid any type
   model.plugins?.forEach((plugin) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -374,7 +378,7 @@ export const makeModelPlugin = async (model: IModel, schema: Schema) => {
   });
 };
 
-export const makeModelMiddleware = async (model: IModel, schema: Schema) => {
+export const makeModelMiddleware = (model: IModel, schema: Schema) => {
   schema.post(
     'save',
     function (
@@ -383,7 +387,7 @@ export const makeModelMiddleware = async (model: IModel, schema: Schema) => {
       next: CallbackWithoutResultAndOptionalError,
     ) {
       if (error.name === MONGO_ERROR) {
-        const mongoServerError = error as MongoDB.MongoServerError;
+        const mongoServerError = error as MongoServerError;
 
         if (mongoServerError.code === MONGO_ERROR_CODE.DUPLICATE_KEY) {
           const keyValue = mongoServerError.errorResponse?.keyValue || {};
@@ -416,30 +420,57 @@ export const makeModelMiddleware = async (model: IModel, schema: Schema) => {
   // TODO: Implement later
 };
 
-// TODO: remove app parameter IF not needed
-export const modelHandler = (payload: IModelHandler) => (app: Express) => {
-  const { model } = payload;
-  const { name: modelName } = model;
-  const ctx: IContextAPI = { modelName };
+export const makeVirtual = (schema: Schema, virtuals?: Record<string, IVirtualType>) => {
+  for (const virtualField in virtuals) {
+    const { getter, setter } = virtuals[virtualField];
 
-  const schema = makeSchema({ modelName })(model.schema);
-  makeModelMiddleware(model, schema).then(async () => {
-    await makeModelPlugin(model, schema);
+    if (getter) {
+      schema.virtual(virtualField).get(getter);
+    }
 
-    const User = mongoose.model(modelName, schema);
+    if (setter) {
+      schema.virtual(virtualField).set(setter);
+    }
+  }
+};
+
+export const makeModelRepository = (
+  moduleName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  model: any,
+): BaseRepository | null => {
+  const repositoryRegisterInstance = ServerFactory.repositoryRegistry[moduleName];
+  if (!repositoryRegisterInstance) {
+    return null;
+  }
+  const { ctr } = repositoryRegisterInstance;
+
+  return new ctr(model);
+};
+
+export const modelHandler =
+  (payload: ImodelHandler) =>
+  (app: Express): RouterType => {
+    const { model, moduleName } = payload;
+    const modelName = model.name;
+
+    const { model: Model, repository: repositoryInstance, schema } = model.startModel();
+    if (repositoryInstance) {
+      ServerFactory.repositoryRegistry[moduleName].instance = repositoryInstance;
+    }
 
     ServerFactory.schemaRegistry[modelName] = schema;
-    ServerFactory.modelRegistry[modelName] = User;
-  });
+    ServerFactory.modelRegistry[moduleName] = Model;
 
-  const router = Router();
-  const controllerAPI = ControllerAPI.getInstance();
+    const ctx: IContextAPI = { modelName };
+    const router = Router();
+    const controllerAPI = ControllerAPI.getInstance();
 
-  // Ping
-  router.get('/ping', controllerWrapper(controllerAPI.ping));
+    // Ping
+    router.get('/ping', controllerWrapper(controllerAPI.ping));
 
-  // Get list
-  router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
+    // Get list
+    router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
 
-  return router;
-};
+    return router;
+  };

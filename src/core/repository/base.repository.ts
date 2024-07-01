@@ -17,7 +17,7 @@ type IfUpdateHasResult<T> = [null, IfAny<T, any, Document<unknown, {}, T> & Requ
 
 // Mongoose Base Repository
 // All should follow this pattern [error, result] to avoid confusion when handling the result of the function call in the service layer
-export abstract class BaseRepository<T extends Document> implements IBaseRepository<T> {
+export abstract class BaseRepository<T extends Document = Document> implements IBaseRepository<T> {
   constructor(protected model: Model<T>) {}
 
   /**

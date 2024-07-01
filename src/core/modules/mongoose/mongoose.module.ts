@@ -72,8 +72,6 @@ export class MongooseModule extends AbstractDatabaseModule {
       });
 
     return class extends AbstractDatabaseModule {
-      public override model = null;
-
       constructor() {
         super();
 

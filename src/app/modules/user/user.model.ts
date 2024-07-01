@@ -1,11 +1,11 @@
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { IModel } from '@/core/interfaces/common.interface';
+import { Model } from '@/core/decorators/model.decorator';
+import { AbstractModel } from '@/core/helpers/module.helper';
 
-import { USER_MODEL } from './user.constant';
-
-const model: IModel = {
-  name: USER_MODEL,
-  schema: {
+@Model()
+export class UserModel extends AbstractModel {
+  public override name = 'User';
+  public override schema = {
     fullName: {
       type: DATA_TYPE_ENUM.STRING,
       constraints: [CONSTRAINT_ENUM.REQUIRED, CONSTRAINT_ENUM.UNIQUE],
@@ -41,7 +41,5 @@ const model: IModel = {
         },
       },
     },
-  },
-};
-
-export default model;
+  };
+}

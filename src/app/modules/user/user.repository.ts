@@ -6,7 +6,7 @@ import { Repository } from '@/core/decorators/repository.decorator';
 import { IUser } from './interfaces/user.model.interface';
 import { IUserRepository } from './interfaces/user.repository.interface';
 
-@Repository({ name: 'UserRepository' })
+@Repository()
 export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
   constructor(protected override model: Model<IUser>) {
     super(model);

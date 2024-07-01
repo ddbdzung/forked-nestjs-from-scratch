@@ -34,12 +34,14 @@ export const webappRegister = ({
   app.use(mongoSanitize());
   app.use(compression());
 
+  // TODO: Implement general API (health check, etc.)
+
   for (const key in registryMap) {
     const instance = registryMap[key];
 
-    if (instance instanceof AbstractModule && instance.cb && instance.model) {
+    if (instance instanceof AbstractModule && instance.modelHandler) {
       const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
-      app.use(basePath, instance.cb(app));
+      app.use(basePath, instance.modelHandler(app));
     }
   }
 

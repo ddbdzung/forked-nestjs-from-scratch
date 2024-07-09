@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Express } from 'express';
-import type { IModel, IModuleOptions } from '@/core/interfaces/common.interface';
+import type { IModuleOptions } from '@/core/interfaces/common.interface';
 
-import express from 'express';
 import debug from 'debug';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
@@ -11,33 +9,22 @@ import { AbstractConfig, AbstractModel, AbstractModule } from '@/core/helpers/mo
 import { modelHandler } from '@/core/helpers/model.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
 import { BaseRepository } from '../repository/base.repository';
+import { AbstractController } from '../helpers/controller.helper';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
+import { omit } from '../utils/object.util';
+
+type ModuleName = string;
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
-const isMainModuleCreated = ServerFactory.isMainModuleCreated;
 
-const _verifyMainModule = (name: string) => {
-  if (name === MAIN_MODULE_NAME && isMainModuleCreated) {
-    throw new SystemException('Main module has been created!');
-  }
-
-  if (!(name === MAIN_MODULE_NAME && !isMainModuleCreated)) {
-    return;
-  }
-
-  ServerFactory.isMainModuleCreated = true;
-};
-
-const _verifyModule = <T extends new (...args: any[]) => any>(ctor: T) => {
-  _verifyMainModule(ctor.name);
-};
-
-function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
-  const { registry, provider, repository, model, imports, exports, isGlobal } = options;
+function ModuleDecoratorFactory(options: IModuleOptions = {}) {
+  const { registry, provider, repository, model, isGlobal, dynamicModule = false } = options;
 
   return <T extends new (...args: any[]) => AbstractModule>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
 
     const name = options.name ? options.name : ctor.name;
+    console.log('[DEBUG0][DzungDang] dynamicModule:', dynamicModule, name);
 
     if (ctor.name !== MAIN_MODULE_NAME && Object.hasOwn(options, 'registry')) {
       throw new SystemException(
@@ -46,32 +33,15 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
     }
 
     if (Array.isArray(registry) && registry.length > 0) {
-      if (registry.some((imp) => imp.name === MAIN_MODULE_NAME)) {
+      if (registry.some((constructorCaller) => constructorCaller.name === MAIN_MODULE_NAME)) {
         throw new SystemException('Main module cannot be in the registry!');
       }
 
-      registry.forEach(_verifyModule);
-      registry.forEach((imp) => new imp());
+      registry.forEach((constructorCaller) => new constructorCaller());
     }
 
     if (model && !repository) {
       throw new SystemException('Model must be declared with repository!');
-    }
-
-    if (imports && imports?.length > 0) {
-      imports.forEach((imp) => {
-        if (imp.name === MAIN_MODULE_NAME) {
-          throw new SystemException('Main module cannot be in the imports!');
-        }
-      });
-    }
-
-    if (exports && exports?.length > 0) {
-      exports.forEach((exp) => {
-        if (exp.name === MAIN_MODULE_NAME) {
-          throw new SystemException('Main module cannot be in the exports!');
-        }
-      });
     }
 
     if (repository) {
@@ -99,7 +69,7 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
           throw new SystemException('Provider must be derived class of AbstractConfig!');
         }
 
-        // TODO: More provider type can be added here
+        //* NOTE: More provider type can be added here
       });
     }
 
@@ -112,18 +82,29 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
 
       ServerFactory.modelRegistry[name] = modelInstance;
     }
+    console.log('[DEBUG][DzungDang] im going here:', name);
 
     return class extends ctor {
       constructor(...args: any[]) {
+        console.log('[DEBUG123][DzungDang] dynamicModule:', dynamicModule, name);
         if (instance) {
-          return instance;
+          return instance._instance as InstanceType<T>;
         }
 
         super(...args);
 
         instance = new ctor(...args) as InstanceType<T>;
+        instance._instance = instance;
         instance.name = options.name || ctor.name;
-        sysLogInfo(`[${ctor.name}]: Module initialized!`);
+        sysLogInfo(`[${instance.name}]: Module initialized!`);
+
+        if (instance.name === MAIN_MODULE_NAME) {
+          ServerFactory.isMainModuleCreated = true;
+        }
+
+        if (isGlobal) {
+          ServerFactory.globalModuleRegistry[name] = instance;
+        }
 
         const instanceConfig = ServerFactory.configRegistry[name] as AbstractConfig;
         if (instanceConfig) {
@@ -141,12 +122,7 @@ function ModuleDecoratorFactory<M>(options: IModuleOptions = {}) {
           }
         }
 
-        console.log('[DEBUG][DzungDang] isGlobal:', isGlobal);
-        if (isGlobal) {
-          ServerFactory.globalModuleRegistry[name] = instance;
-        }
-
-        ServerFactory.moduleRegistry[ctor.name] = instance;
+        ServerFactory.moduleRegistry[name] = instance;
         return instance;
       }
     };

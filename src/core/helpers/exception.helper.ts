@@ -1,4 +1,4 @@
-import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_CODE_LIST } from '@/core/constants/http.constant';
+import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 
 export enum ExceptionMetadataType {
   DEFAULT = 'other',

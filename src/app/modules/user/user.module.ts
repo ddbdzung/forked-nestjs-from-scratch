@@ -6,6 +6,7 @@ import { UserRepository } from './user.repository';
 import { UserConfig } from './user.config';
 
 @Module({
+  name: 'SysUserModule',
   provider: [UserConfig],
   model: UserModel,
   repository: UserRepository,

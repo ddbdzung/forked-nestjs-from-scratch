@@ -11,6 +11,7 @@ import type {
 import type { UpdateOptions, DeleteResult } from 'mongodb';
 
 import { IBaseRepository } from '@/core/interfaces/base.repository.interface';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 type IfUpdateHasResult<T> = [null, IfAny<T, any, Document<unknown, {}, T> & Require_id<T>>];
@@ -18,6 +19,8 @@ type IfUpdateHasResult<T> = [null, IfAny<T, any, Document<unknown, {}, T> & Requ
 // Mongoose Base Repository
 // All should follow this pattern [error, result] to avoid confusion when handling the result of the function call in the service layer
 export abstract class BaseRepository<T extends Document = Document> implements IBaseRepository<T> {
+  public readonly decoratorType = DECORATOR_TYPE.REPOSITORY;
+
   constructor(protected model: Model<T>) {}
 
   /**

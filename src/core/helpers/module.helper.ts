@@ -24,20 +24,42 @@ import {
   PROHIBITED_FIELD_LIST,
 } from '@/core/constants/model.constant';
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
-import { MONGO_ERROR, MONGO_ERROR_CODE } from '../modules/mongoose/mongoose.constant';
-import { HTTP_RESPONSE_CODE } from '../constants/http.constant';
+import { MONGO_ERROR, MONGO_ERROR_CODE } from '@/core/modules/mongoose/mongoose.constant';
+import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 import { ServerFactory } from './bootstrap.helper';
+import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
+import { omit } from '@/core/utils/object.util';
 
 export abstract class AbstractModule {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public _instance: InstanceType<new (...args: any) => any> | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public readonly decoratorType = DECORATOR_TYPE.MODULE;
+
   public modelHandler?: (app: Express) => Router;
   public modelName?: string;
 
-  public name?: string;
+  public name?: string; // Module name
   public version?: VERSION_API;
   public prefix?: string;
 
   public registry?: ConstructorType[];
   public isGlobal = false;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function _registerModule<T extends new (...args: any[]) => AbstractModule>(
+  ctor: T,
+  ...args: unknown[]
+) {
+  // Validate
+  if (ServerFactory.isMainModuleCreated) {
+    throw new SystemException('Can not register module after main module created');
+  }
+
+  // Register module
+  const instance = new ctor(...args) as InstanceType<T>;
+  console.log('[DEBUG][DzungDang] instance:', instance);
 }
 
 export abstract class AbstractDatabaseModule extends AbstractModule {
@@ -56,7 +78,16 @@ export abstract class AbstractEnvModule extends AbstractModule {
   }
 }
 
+export abstract class AbstractLoggerModule extends AbstractModule {
+  constructor() {
+    super();
+
+    this.isGlobal = true;
+  }
+}
+
 export abstract class AbstractConfig {
+  public readonly decoratorType = DECORATOR_TYPE.CONFIG;
   public name?: string; // Name of the class
   public abstract prefixModule: string;
   public version: VERSION_API = VERSION_API.V1;
@@ -143,20 +174,32 @@ const validConstraintMap: ConstraintTyping = {
 };
 
 export abstract class AbstractModel<T extends Document = Document> implements IModel {
-  public abstract schema: Record<string, ISchemaType>;
-  public abstract name: string;
   protected _schema: SchemaTyping | null = null;
   protected _model: Model<T> | null = null;
   protected _moduleName: string;
+
+  public abstract schema: Record<string, ISchemaType>;
+  public abstract name: string;
+
+  public readonly decoratorType = DECORATOR_TYPE.MODEL;
+
   public virtuals?: Record<string, IVirtualType>;
   public plugins?: unknown[];
-  public middlewares?: unknown[]; // TODO: Implement later
+  public middlewares?: unknown[];
 
   constructor(moduleName: string) {
     this._moduleName = moduleName;
   }
 
-  protected makeSchema(schema: Record<string, ISchemaType>) {
+  set moduleName(moduleName: string) {
+    if (ServerFactory.moduleRegistry[moduleName]) {
+      throw new SystemException(`Module name '${moduleName}' is already registered`);
+    }
+
+    this._moduleName = moduleName;
+  }
+
+  protected _makeSchema(schema: Record<string, ISchemaType>) {
     const schemaResult = new Schema();
 
     for (const field in schema) {
@@ -208,7 +251,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
         }
 
         schemaResult.add({
-          [field]: [this.makeSchema(sharp)],
+          [field]: [this._makeSchema(sharp)],
         } as unknown as SchemaTyping);
 
         continue;
@@ -231,7 +274,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     return schemaResult;
   }
 
-  protected makeVirtuals() {
+  protected _makeVirtuals() {
     if (!this.virtuals || !this._schema) {
       return;
     }
@@ -249,7 +292,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     }
   }
 
-  protected makeMiddleware() {
+  protected _makeMiddleware() {
     if (!this._schema) {
       return;
     }
@@ -290,11 +333,10 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
       return;
     }
 
-    // TODO: Check type of middleware to avoid any type
-    // TODO: Implement later
+    // TODO: Check type of middleware to avoid any type, Implement later
   }
 
-  protected makePlugins() {
+  protected _makePlugins() {
     if (!this.plugins) {
       return;
     }
@@ -308,13 +350,13 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     }
   }
 
-  protected makeModel() {
+  protected _makeModel() {
     if (!this._model && this._schema) {
       this._model = Modelize<T>(this.name, this._schema);
     }
   }
 
-  protected makeRepository() {
+  protected _makeRepository() {
     if (!this._model) {
       throw new SystemException(`Model ${this.name} have not been initialized yet`);
     }
@@ -348,7 +390,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     fieldConfig: ISchemaType,
     metadata: { modelName?: string; moduleName?: string },
   ) {
-    const { constraints, type, sharp, getter, ...constraintDetail } = fieldConfig;
+    const { constraints, type, sharp: _sharp, getter: _getter, ...constraintDetail } = fieldConfig;
     const { defaultValue, enums, max, maxLength, min, minLength, pattern } = constraintDetail;
     const validConstraints = validConstraintMap[type as DATA_TYPE_ENUM];
     const { validConstraint, validConstraintDetail } = validConstraints;
@@ -527,17 +569,16 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
   }
 
   public startModel() {
-    this._schema = this.makeSchema(this.schema);
-    this.makeVirtuals();
-    this.makeMiddleware();
-    this.makePlugins();
-    this.makeModel();
-    const repository = this.makeRepository();
+    this._schema = this._makeSchema(this.schema);
+    this._makeVirtuals();
+    this._makeMiddleware();
+    this._makePlugins();
+    this._makeModel();
 
     return {
-      repository,
       model: this._model,
       schema: this._schema,
+      repository: this._makeRepository(),
     };
   }
 }

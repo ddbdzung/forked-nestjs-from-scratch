@@ -2,7 +2,6 @@
 
 import debug from 'debug';
 
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 

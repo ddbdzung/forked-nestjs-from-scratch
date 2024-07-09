@@ -1,8 +1,8 @@
 import debug from 'debug';
 import { Server } from 'http';
-import { IRouterMatcher, ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler } from 'express';
 
-import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
+import { DEBUG_CODE } from '@/core/constants/common.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 
 import { BusinessException, SystemException } from './exception.helper';

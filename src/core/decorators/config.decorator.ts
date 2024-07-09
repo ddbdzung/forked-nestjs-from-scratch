@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import debug from 'debug';
 
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import { SystemException } from '@/core/helpers/exception.helper';
 import { AbstractConfig } from '@/core/helpers/module.helper';
 import { DEBUG_CODE } from '@/core/constants/common.constant';

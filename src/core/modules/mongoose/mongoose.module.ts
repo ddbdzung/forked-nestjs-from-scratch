@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Schema, model, connect } from 'mongoose';
+import mongoose, { connect } from 'mongoose';
 import debug from 'debug';
 
 import { Module } from '@/core/decorators/module.decorator';
@@ -15,7 +15,8 @@ const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 @Module()
 export class MongooseModule extends AbstractDatabaseModule {
   public static register(options: IRegisterOption) {
-    const { uriBuilder, isDebugMode = false } = options;
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const { uriBuilder, isDebugMode = false, onSuccess = () => {}, onFail = () => {} } = options;
 
     if (isDebugMode) {
       mongoose.set('debug', true);
@@ -26,10 +27,14 @@ export class MongooseModule extends AbstractDatabaseModule {
     connect(configuration.uri, configuration.options)
       .then(() => {
         sysLogInfo(`[MongooseModule]: Connected to ${configuration.uri}`);
+
+        onSuccess();
       })
       .catch((error) => {
         if (error instanceof Error) {
           sysLogInfo(`[MongooseModule]: ${error.message}`);
+
+          onFail(error);
         }
 
         throw error;
@@ -43,7 +48,6 @@ export class MongooseModule extends AbstractDatabaseModule {
         instance.name = 'MongooseModule';
         sysLogInfo(`[${instance.name}]: Module initialized!`);
 
-        ServerFactory.moduleRegistry[instance.name] = instance;
         ServerFactory.globalModuleRegistry[instance.name] = instance;
         return instance;
       }

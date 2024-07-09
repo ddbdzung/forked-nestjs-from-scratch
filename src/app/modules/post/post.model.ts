@@ -1,6 +1,6 @@
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
 import { Model } from '@/core/decorators/model.decorator';
-import { AbstractModel, AbstractModule } from '@/core/helpers/module.helper';
+import { AbstractModel } from '@/core/helpers/module.helper';
 
 @Model()
 export class PostModel extends AbstractModel {

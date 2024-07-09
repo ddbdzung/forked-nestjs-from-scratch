@@ -4,7 +4,7 @@ import { AbstractModel } from '@/core/helpers/module.helper';
 
 @Model()
 export class UserModel extends AbstractModel {
-  public override name = 'User';
+  public override name = 'SysUser';
   public override schema = {
     fullName: {
       type: DATA_TYPE_ENUM.STRING,

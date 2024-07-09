@@ -9,7 +9,6 @@ import debug from 'debug';
 import { DEBUG_CODE, PREFIX_API } from '@/core/constants/common.constant';
 import { ServerFactory } from '@/core/helpers/bootstrap.helper';
 import { systemErrorHandler } from '@/core/helpers/error.helper';
-import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 
 import { MainModule } from '@/app/main.module';
 import { Env } from '@/app/modules/env/env.service';
@@ -28,6 +27,7 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
+    console.log('[DEBUG][DzungDang] :', ServerFactory.moduleRegistry);
   });
 }
 

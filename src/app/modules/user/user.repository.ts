@@ -1,4 +1,4 @@
-import type { Document, Model } from 'mongoose';
+import type { Model } from 'mongoose';
 
 import { BaseRepository } from '@/core/repository/base.repository';
 import { Repository } from '@/core/decorators/repository.decorator';

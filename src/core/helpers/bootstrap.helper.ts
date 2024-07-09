@@ -11,6 +11,8 @@ import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
 import { Env } from '@/app/modules/env/env.service';
 import { AbstractModule } from './module.helper';
 import { SystemException } from './exception.helper';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
+import { AbstractModuleV2 } from '../decorators/module.decorator.v2';
 
 let isBootstrapBaseEnvRun = false;
 let isBootstrapExtendedEnvRun = false;
@@ -79,6 +81,7 @@ export const bootstrapExtendedEnv = () => {
 };
 
 type RegistryName = string;
+type ProviderName = string;
 export class ServerFactory {
   static isMainModuleCreated = false;
   static globalModuleRegistry: Record<RegistryName, unknown> = {};
@@ -104,36 +107,26 @@ export class ServerFactory {
    */
   static configRegistry: Record<RegistryName, unknown> = {};
 
-  /**
-   * Key by module name
-   */
-  static dependencyRegistry: Record<RegistryName, ConstructorType[]> = {};
-
-  /**
-   * Key by module name
-   */
-  static viableComponentRegistry: Record<RegistryName, ConstructorType[]> = {};
-
-  static prefixBaseRoute = '';
+  private static _prefixBaseRoute = '';
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
     const moduleInstance = new ctor();
-    if (!(moduleInstance instanceof AbstractModule)) {
-      throw new SystemException('Module must be an instance of AbstractModule!');
+
+    if (!(moduleInstance instanceof AbstractModuleV2)) {
+      throw new SystemException('Module must be an instance of AbstractModuleV2!');
     }
 
-    const moduleName = moduleInstance.constructor.name;
-    if (moduleName !== MAIN_MODULE_NAME) {
+    if (moduleInstance.moduleName !== MAIN_MODULE_NAME) {
       throw new SystemException('MainModule is required when using create method!');
     }
 
     return webappRegister({
       registryMap: ServerFactory.moduleRegistry,
-      prefixBaseRoute: ServerFactory.prefixBaseRoute,
+      prefixBaseRoute: ServerFactory._prefixBaseRoute,
     });
   }
 
   static setPrefixBaseRoute(prefix: string) {
-    ServerFactory.prefixBaseRoute = prefix;
+    ServerFactory._prefixBaseRoute = prefix;
   }
 }

@@ -7,30 +7,26 @@ import {
   bootstrapBaseEnv,
   bootstrapExtendedEnv,
 } from '@/core/helpers/bootstrap.helper';
-import { AbstractEnvModule } from '@/core/helpers/module.helper';
+import { _registerModule, AbstractEnvModule } from '@/core/helpers/module.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
 @Module({
-  isGlobal: true,
+  dynamicModule: true,
 })
 export class EnvModule extends AbstractEnvModule {
+  constructor() {
+    super();
+
+    console.log('[DEBUG][DzungDang] fuk:');
+  }
+
   public static register() {
     bootstrapBaseEnv();
     bootstrapExtendedEnv();
 
-    return class extends AbstractEnvModule {
-      constructor() {
-        super();
-
-        const instance = new EnvModule();
-        instance.name = 'EnvModule';
-        sysLogInfo(`[${instance.name}]: Module initialized!`);
-
-        ServerFactory.moduleRegistry[instance.name] = instance;
-        ServerFactory.globalModuleRegistry[instance.name] = instance;
-        return instance;
-      }
-    };
+    // _registerModule<EnvModule>(EnvModule);
+    // console.log('[DEBUG][DzungDang] after there:');
+    return EnvModule;
   }
 }

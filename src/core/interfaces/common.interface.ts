@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { VERSION_API } from '@/core/constants/common.constant';
-import { Document, Schema } from 'mongoose';
 import { AbstractModel } from '../helpers/module.helper';
 
 type ConstructorType = new (...args: any[]) => any;
@@ -45,9 +43,19 @@ export interface IModuleOptions {
   provider?: ConstructorType[];
   repository?: ConstructorType;
   model?: ConstructorType;
-  imports?: ConstructorType[];
-  exports?: ConstructorType[];
   isGlobal?: boolean;
+  dynamicModule?: boolean;
+}
+
+export interface IModuleOptionsV2 {
+  sysModule?: ConstructorType[]; // List of system modules (only for MainModule) (ex config, logger)
+  bizModule?: ConstructorType[]; // List of biz modules (only for MainModule)
+  moduleName?: string; // Name of the module
+  provider?: ConstructorType[]; // List of providers (config, controller, constant, service)
+  repository?: ConstructorType; // Repository of the module
+  model?: ConstructorType; // Model of the module
+  isGlobal?: boolean; // Set global module
+  dynamicModule?: boolean; // Set dynamic module
 }
 
 export interface IModelDecoratorOptions {

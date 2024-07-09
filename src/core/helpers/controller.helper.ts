@@ -8,6 +8,7 @@ import { IContextAPI } from '@/core/interfaces/common.interface';
 import { Env } from '@/app/modules/env/env.service';
 import { SystemException } from './exception.helper';
 import { APIResponse } from './api.helper';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
 
 export const controllerWrapper = (
   controller: (req: Request, res: Response, next: NextFunction) => unknown,
@@ -84,13 +85,13 @@ export class ControllerAPI {
     return ControllerAPI.instance;
   }
 
-  async ping(req: Request, res: Response, next: NextFunction) {
+  async ping(_req: Request, _res: Response, _next: NextFunction) {
     return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
       msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
     });
   }
 
-  // TODO: Add generic type for getList
+  // TODO: Add generic type for API
   async getList(req: Request, res: Response, next: NextFunction) {
     const ctx = res.locals.ctx as IContextAPI | undefined;
     if (!ctx) {
@@ -127,6 +128,7 @@ export class ControllerAPI {
 }
 
 export abstract class AbstractController {
+  public readonly decoratorType = DECORATOR_TYPE.CONTROLLER;
   abstract ping(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
   abstract getList(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
 }

@@ -12,6 +12,7 @@ interface IAPIResponse {
   meta?: Meta;
 }
 
+/** @public */
 export class APIResponseBuilder {
   private _statusCode?: HttpResponseCode;
   private _message = '';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { AbstractModel } from '../helpers/module.helper';
+import { AbstractModel } from '@/core/helpers/model.helper';
 
 type ConstructorType = new (...args: any[]) => any;
 
@@ -27,9 +27,6 @@ export interface IVirtualType {
 }
 
 export interface IModel {
-  /**
-   * Name of the model (define in *.config.ts file)
-   */
   name?: string;
   schema: Record<string, ISchemaType>;
   virtuals?: Record<string, IVirtualType>;

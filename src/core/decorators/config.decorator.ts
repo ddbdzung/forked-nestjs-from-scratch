@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import debug from 'debug';
 
-import { SystemException } from '@/core/helpers/exception.helper';
-import { AbstractConfig } from '@/core/helpers/module.helper';
+import { SystemException, AbstractConfig } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
+/** @public */
 function ConfigFactoryDecorator() {
   return <T extends new (...args: any[]) => AbstractConfig>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
 
     return class extends ctor {
-      public override prefixModule: string;
-
       constructor(...args: any[]) {
         if (instance) {
           return instance;

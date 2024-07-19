@@ -2,15 +2,22 @@
 import mongoose, { connect } from 'mongoose';
 import debug from 'debug';
 
-import { Module } from '@/core/decorators/module.decorator';
-import { AbstractDatabaseModule } from '@/core/helpers/module.helper';
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
+import { Module } from '@/core/decorators';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 import { IRegisterOption } from './mongoose.interface';
 import { MongodbConfigurationBuilder } from './mongoose.builder';
+import { AbstractModule } from '@/core/helpers/abstract.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+
+export abstract class AbstractDatabaseModule extends AbstractModule {
+  constructor() {
+    super();
+
+    this.isGlobal = true;
+  }
+}
 
 @Module()
 export class MongooseModule extends AbstractDatabaseModule {
@@ -40,17 +47,6 @@ export class MongooseModule extends AbstractDatabaseModule {
         throw error;
       });
 
-    return class extends AbstractDatabaseModule {
-      constructor() {
-        super();
-
-        const instance = new MongooseModule();
-        instance.name = 'MongooseModule';
-        sysLogInfo(`[${instance.name}]: Module initialized!`);
-
-        ServerFactory.globalModuleRegistry[instance.name] = instance;
-        return instance;
-      }
-    };
+    return MongooseModule;
   }
 }

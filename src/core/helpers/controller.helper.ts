@@ -3,13 +3,15 @@ import type { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_MESSAGE } from '@/core/constants/http.constant';
+import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
 import { IContextAPI } from '@/core/interfaces/common.interface';
 
 import { Env } from '@/app/modules/env/env.service';
-import { SystemException } from './exception.helper';
-import { APIResponse } from './api.helper';
-import { DECORATOR_TYPE } from '../constants/decorator.constant';
 
+import { SystemException } from './exception.helper';
+import { APIResponse, APIResponseBuilder } from './api.helper';
+
+/** @public */
 export const controllerWrapper = (
   controller: (req: Request, res: Response, next: NextFunction) => unknown,
 ) => {
@@ -38,6 +40,7 @@ export const controllerWrapper = (
   };
 };
 
+/** @public */
 export function bindContextApi(ctx: IContextAPI) {
   return (req: Request, res: Response, next: NextFunction) => {
     res.locals.ctx = ctx;
@@ -74,6 +77,7 @@ export function successHandler(
   return res.status(statusCode).json(responseObj);
 }
 
+/** @public */
 export class ControllerAPI {
   static instance: ControllerAPI | null = null;
 
@@ -86,9 +90,9 @@ export class ControllerAPI {
   }
 
   async ping(_req: Request, _res: Response, _next: NextFunction) {
-    return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
+    return new APIResponseBuilder(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
       msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
-    });
+    }).build();
   }
 
   // TODO: Add generic type for API
@@ -123,12 +127,15 @@ export class ControllerAPI {
     // const fullNameAndEmail = temp?.fullNameAndEmail;
     // console.log('[DEBUG][DzungDang] fullNameAndEmail:', fullNameAndEmail);
 
-    return new APIResponse(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], { data: dataList });
+    return new APIResponseBuilder(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
+      data: dataList,
+    });
   }
 }
 
+/** @public */
 export abstract class AbstractController {
   public readonly decoratorType = DECORATOR_TYPE.CONTROLLER;
-  abstract ping(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
-  abstract getList(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
+  // abstract ping(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
+  // abstract getList(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
 }

@@ -1,3 +1,5 @@
+import type { Express, Router } from 'express';
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -5,11 +7,26 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 
-import { errorHandler } from '@/core/helpers/error.helper';
-import { SystemException } from '@/core/helpers/exception.helper';
+import { errorHandler } from '@/core/helpers';
+import { SystemException } from '@/core/helpers';
 import { successHandler } from '@/core/helpers/controller.helper';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
-import { AbstractModule } from '@/core/helpers/module.helper';
+import { DECORATOR_TYPE } from '../constants/decorator.constant';
+import { VERSION_API } from '../constants/common.constant';
+
+abstract class AbstractModule {
+  public readonly decoratorType = DECORATOR_TYPE.MODULE;
+
+  public modelHandler?: (app: Express) => Router;
+  public modelName?: string;
+
+  public moduleName?: string;
+  public version?: VERSION_API; // Version of module route
+  public prefix?: string; // Prefix for module route
+
+  public registry?: ConstructorType[];
+  public isGlobal = false;
+}
 
 export const webappRegister = ({
   registryMap,

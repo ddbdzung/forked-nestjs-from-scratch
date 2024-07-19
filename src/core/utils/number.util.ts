@@ -1,4 +1,4 @@
-import { SystemException } from '@/core/helpers/exception.helper';
+import { SystemException } from '@/core/helpers';
 
 /**
  * @param value Parse value as safe integer from string

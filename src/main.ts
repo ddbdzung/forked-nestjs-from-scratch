@@ -7,11 +7,10 @@ import type { Server } from 'http';
 import debug from 'debug';
 
 import { DEBUG_CODE, PREFIX_API } from '@/core/constants/common.constant';
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
-import { systemErrorHandler } from '@/core/helpers/error.helper';
+import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
-import { MainModule } from '@/app/main.module';
 import { Env } from '@/app/modules/env/env.service';
+import { MainModule } from '@/app/main.module';
 
 let server: Server | null = null;
 systemErrorHandler(server);
@@ -27,7 +26,6 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
-    console.log('[DEBUG][DzungDang] :', ServerFactory.moduleRegistry);
   });
 }
 

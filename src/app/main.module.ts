@@ -1,41 +1,32 @@
-import { Module } from '@/core/decorators/module.decorator';
-import { AbstractModule } from '@/core/helpers/module.helper';
-import { MongooseModule } from '@/core/modules/mongoose/mongoose.module';
-import { EnvModule } from '@/core/modules/env/env.module';
+import { AbstractModule, EnvModule, Module, MongooseModule } from '../core';
 
-import { UserModule } from '@/app/modules/user/user.module';
-import { Env } from '@/app/modules/env/env.service';
-import { PostModule } from '@/app/modules/post/post.module';
-import { AbstractModuleV2, ModuleV2 } from '@/core/decorators/module.decorator.v2';
-import { FileModule } from './modules/file/file.module';
+import { Env } from '@/app/modules/env';
+import { PostModule } from '@/app/modules/post';
+import { UserModule } from '@/app/modules/user';
 
-// @Module({
-//   registry: [
-//     EnvModule.register(),
-//     // MongooseModule.register({
-//     //   isDebugMode: true,
-//     //   uriBuilder: (builder) => {
-//     //     const env = Env.getInstance();
-//     //     const host = env.get<string>('DATABASE_HOST');
-//     //     const port = env.get<number>('DATABASE_PORT');
-//     //     const dbName = env.get<string>('DATABASE_NAME');
+@Module({
+  sysModule: [
+    EnvModule.register(),
+    MongooseModule.register({
+      isDebugMode: true,
+      uriBuilder: (builder) => {
+        const env = Env.getInstance();
+        const host = env.get<string>('DATABASE_HOST');
+        const port = env.get<number>('DATABASE_PORT');
+        const dbName = env.get<string>('DATABASE_NAME');
 
-//     //     return builder
-//     //       .setHost(host)
-//     //       .setPort(port)
-//     //       .setDatabaseName(dbName)
-//     //       .withOptions({
-//     //         connectTimeoutMS: 3000,
-//     //         maxPoolSize: 10,
-//     //       })
-//     //       .build();
-//     //   },
-//     // }),
-//     // UserModule,
-//     // PostModule,
-//   ],
-// })
-@ModuleV2({
-  bizModule: [FileModule],
+        return builder
+          .setHost(host)
+          .setPort(port)
+          .setDatabaseName(dbName)
+          .withOptions({
+            connectTimeoutMS: 3000,
+            maxPoolSize: 10,
+          })
+          .build();
+      },
+    }),
+  ],
+  bizModule: [UserModule, PostModule],
 })
-export class MainModule extends AbstractModuleV2 {}
+export class MainModule extends AbstractModule {}

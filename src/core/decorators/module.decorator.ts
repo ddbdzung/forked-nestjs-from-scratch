@@ -15,7 +15,7 @@ import {
 } from '@/core/helpers';
 import { webappRegister } from '@/core/bootstraps';
 import { ISchemaType } from '@/core/interfaces/common.interface';
-import { IModuleOptionsV2 } from '@/core/interfaces/common.interface';
+import { IModuleOptions } from '@/core/interfaces/common.interface';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
 
@@ -33,7 +33,7 @@ export class ModuleHelper {
   // General properties
   protected _isMainModule = false;
   protected _computedModuleName: string;
-  protected _options: IModuleOptionsV2;
+  protected _options: IModuleOptions;
 
   // Main module properties
   private _bizModuleErrorList: IErrorList[] = [];
@@ -44,7 +44,7 @@ export class ModuleHelper {
   private _modelErrorList: IErrorList[] = [];
   private _repositoryErrorList: IErrorList[] = [];
 
-  constructor(computedModuleName: string, options: IModuleOptionsV2) {
+  constructor(computedModuleName: string, options: IModuleOptions) {
     this._isMainModule = computedModuleName === MAIN_MODULE_NAME;
     this._options = options;
     this._computedModuleName = computedModuleName;
@@ -225,7 +225,7 @@ export class ModuleValidator extends ModuleHelper {
   /**
    * @description Used to validate module properties
    */
-  constructor(computedModuleName: string, options: IModuleOptionsV2) {
+  constructor(computedModuleName: string, options: IModuleOptions) {
     super(computedModuleName, options);
   }
 
@@ -287,7 +287,7 @@ export class ModuleValidator extends ModuleHelper {
 }
 
 /** @public */
-export function ModuleDecoratorFactory(options: IModuleOptionsV2 = {}) {
+export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
   const { moduleName, isGlobal } = options;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

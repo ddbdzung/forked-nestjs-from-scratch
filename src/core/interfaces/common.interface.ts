@@ -35,16 +35,6 @@ export interface IModel {
 }
 
 export interface IModuleOptions {
-  registry?: ConstructorType[];
-  name?: string;
-  provider?: ConstructorType[];
-  repository?: ConstructorType;
-  model?: ConstructorType;
-  isGlobal?: boolean;
-  dynamicModule?: boolean;
-}
-
-export interface IModuleOptionsV2 {
   sysModule?: ConstructorType[]; // List of system modules (only for MainModule) (ex config, logger)
   bizModule?: ConstructorType[]; // List of biz modules (only for MainModule)
   moduleName?: string; // Name of the module
@@ -60,6 +50,11 @@ export interface IModelDecoratorOptions {
 }
 
 export interface IModelHandler {
+  model: AbstractModel;
+  moduleName: string;
+}
+
+export interface ImodelHandler {
   model: AbstractModel;
   moduleName: string;
 }

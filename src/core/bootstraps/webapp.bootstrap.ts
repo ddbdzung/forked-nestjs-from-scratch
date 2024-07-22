@@ -1,32 +1,18 @@
 import type { Express, Router } from 'express';
 
 import express from 'express';
+import debug from 'debug';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 
-import { errorHandler } from '@/core/helpers';
-import { SystemException } from '@/core/helpers';
-import { successHandler } from '@/core/helpers/controller.helper';
+import { AbstractModule, errorHandler } from '@/core/helpers';
+import { SystemException, successHandler } from '@/core/helpers';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
-import { DECORATOR_TYPE } from '../constants/decorator.constant';
-import { VERSION_API } from '../constants/common.constant';
-
-abstract class AbstractModule {
-  public readonly decoratorType = DECORATOR_TYPE.MODULE;
-
-  public modelHandler?: (app: Express) => Router;
-  public modelName?: string;
-
-  public moduleName?: string;
-  public version?: VERSION_API; // Version of module route
-  public prefix?: string; // Prefix for module route
-
-  public registry?: ConstructorType[];
-  public isGlobal = false;
-}
+import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
+import { DEBUG_CODE, VERSION_API } from '@/core/constants/common.constant';
 
 export const webappRegister = ({
   registryMap,
@@ -50,12 +36,10 @@ export const webappRegister = ({
 
   // TODO: Implement general API (health check, etc.)
 
-  for (const key in registryMap) {
-    const instance = registryMap[key];
-
+  for (const instance of Object.values(registryMap)) {
     if (instance instanceof AbstractModule && instance.modelHandler) {
       const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
-      app.use(basePath, instance.modelHandler(app));
+      app.use(basePath, instance.modelHandler(app, basePath));
     }
   }
 

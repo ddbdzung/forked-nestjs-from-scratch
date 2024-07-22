@@ -6,7 +6,7 @@ import { DECORATOR_TYPE } from '../constants/decorator.constant';
 export abstract class AbstractModule {
   public readonly decoratorType = DECORATOR_TYPE.MODULE;
 
-  public modelHandler?: (app: Express) => Router;
+  public modelHandler?: (app: Express, basePath: string) => Router;
   public modelName?: string;
 
   public moduleName?: string;

@@ -13,7 +13,6 @@ import {
   AbstractModel,
   modelHandler,
 } from '@/core/helpers';
-import { webappRegister } from '@/core/bootstraps';
 import { ISchemaType } from '@/core/interfaces/common.interface';
 import { IModuleOptions } from '@/core/interfaces/common.interface';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';

@@ -13,6 +13,10 @@ interface IConstraintDetail {
   pattern?: string; // Set pattern for string field
 }
 
+export interface IPingResponse {
+  msg: string;
+}
+
 export interface ISchemaType extends IConstraintDetail {
   type: DATA_TYPE_ENUM;
   constraints?: CONSTRAINT_ENUM[];

@@ -6,7 +6,7 @@ import { expand } from 'dotenv-expand';
 
 import { DEBUG_CODE, MAIN_MODULE_NAME } from '@/core/constants/common.constant';
 import { BaseEnv } from '@/core/modules/env/env.service';
-import { webappRegister } from '@/core/bootstraps/webapp.bootstrap';
+import { webappRegister } from '@/core/bootstraps';
 
 import { Env } from '@/app/modules/env/env.service';
 import { AbstractModule } from './module.helper';

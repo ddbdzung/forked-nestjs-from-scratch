@@ -13,13 +13,13 @@ interface IAPIResponse {
 }
 
 /** @public */
-export class APIResponseBuilder {
+export class APIResponseBuilder<T> {
   private _statusCode?: HttpResponseCode;
   private _message = '';
-  private _data?: Data;
+  private _data?: T;
   private _meta?: Meta;
 
-  constructor(statusCode?: HttpResponseCode, message?: string, data?: Data, meta?: Meta) {
+  constructor(statusCode?: HttpResponseCode, message?: string, data?: T, meta?: Meta) {
     this._statusCode = statusCode;
     if (message) {
       this._message = message;
@@ -37,7 +37,7 @@ export class APIResponseBuilder {
       throw new SystemException('Message is required');
     }
 
-    return new APIResponse(this._statusCode, this._message, this._data, this._meta);
+    return new APIResponse<T>(this._statusCode, this._message, this._data, this._meta);
   }
 
   isApiOK() {
@@ -123,7 +123,7 @@ export class APIResponseBuilder {
     return this;
   }
 
-  withData(data: Data) {
+  withData(data: T) {
     this._data = data;
     return this;
   }
@@ -134,12 +134,12 @@ export class APIResponseBuilder {
   }
 }
 
-export class APIResponse {
+export class APIResponse<T> {
   private _statusCode?: HttpResponseCode;
   private _message = '';
-  private _data?: Data;
+  private _data?: T;
   private _meta?: Meta;
-  constructor(statusCode?: HttpResponseCode, message?: string, data?: Data, meta?: Meta) {
+  constructor(statusCode?: HttpResponseCode, message?: string, data?: T, meta?: Meta) {
     this._statusCode = statusCode;
     if (message) {
       this._message = message;

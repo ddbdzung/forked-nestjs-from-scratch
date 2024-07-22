@@ -10,6 +10,7 @@ import type { MongoServerError } from 'mongodb';
 
 import mongoose, { Schema, model as Modelize } from 'mongoose';
 import { Router } from 'express';
+import debug from 'debug';
 
 import {
   IContextAPI,
@@ -19,7 +20,7 @@ import {
   ISchemaType,
   IVirtualType,
 } from '@/core/interfaces/common.interface';
-import { VERSION_API } from '@/core/constants/common.constant';
+import { DEBUG_CODE, VERSION_API } from '@/core/constants/common.constant';
 import {
   CONSTRAINT_DETAIL_ENUM,
   CONSTRAINT_ENUM,
@@ -35,10 +36,12 @@ import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.h
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
 import { ServerFactory } from './factory.helper';
 
+const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+
 /** @public */
 export const modelHandler =
   (payload: IModelHandler) =>
-  (app: Express): RouterType => {
+  (app: Express, basePath: string): RouterType => {
     const { model, moduleName } = payload;
     const modelName = model.name;
 
@@ -63,6 +66,7 @@ export const modelHandler =
       router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
     }
 
+    sysLogInfo(`[WebappBootstrap][${moduleName}]: Registering module at ${basePath}`);
     return router;
   };
 

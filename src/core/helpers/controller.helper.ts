@@ -1,10 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { Document } from 'mongoose';
 
 import mongoose from 'mongoose';
 
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_MESSAGE } from '@/core/constants/http.constant';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
-import { IContextAPI } from '@/core/interfaces/common.interface';
+import { IContextAPI, IPingResponse } from '@/core/interfaces/common.interface';
 
 import { Env } from '@/app/modules/env/env.service';
 
@@ -49,6 +50,7 @@ export function bindContextApi(ctx: IContextAPI) {
   };
 }
 
+/** @public */
 export function successHandler(
   req: Request,
   res: Response & { locals: Record<string, unknown> },
@@ -90,9 +92,13 @@ export class ControllerAPI {
   }
 
   async ping(_req: Request, _res: Response, _next: NextFunction) {
-    return new APIResponseBuilder(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
-      msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
-    }).build();
+    return new APIResponseBuilder<IPingResponse>(
+      HTTP_RESPONSE_CODE.OK,
+      HTTP_RESPONSE_MESSAGE[200],
+      {
+        msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
+      },
+    ).build();
   }
 
   // TODO: Add generic type for API
@@ -127,9 +133,11 @@ export class ControllerAPI {
     // const fullNameAndEmail = temp?.fullNameAndEmail;
     // console.log('[DEBUG][DzungDang] fullNameAndEmail:', fullNameAndEmail);
 
-    return new APIResponseBuilder(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
-      data: dataList,
-    });
+    return new APIResponseBuilder<Document[]>(
+      HTTP_RESPONSE_CODE.OK,
+      HTTP_RESPONSE_MESSAGE[200],
+      dataList,
+    ).build();
   }
 }
 

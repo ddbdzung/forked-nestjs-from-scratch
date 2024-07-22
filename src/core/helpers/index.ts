@@ -10,4 +10,5 @@ export {
   AbstractController,
   ControllerAPI,
   bindContextApi,
+  successHandler,
 } from './controller.helper';

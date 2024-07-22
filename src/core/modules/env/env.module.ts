@@ -1,33 +1,25 @@
-import debug from 'debug';
+import { Module } from '@/core/decorators';
 
-import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { Module } from '@/core/decorators/module.decorator';
-import {
-  ServerFactory,
-  bootstrapBaseEnv,
-  bootstrapExtendedEnv,
-} from '@/core/helpers/bootstrap.helper';
-import { AbstractEnvModule } from '@/core/helpers/module.helper';
+import { bootstrapBaseEnv, bootstrapExtendedEnv } from './env.service';
+import { AbstractModule } from '@/core/helpers/abstract.helper';
 
-const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+export abstract class AbstractEnvModule extends AbstractModule {
+  constructor() {
+    super();
 
+    this.isGlobal = true;
+  }
+}
 @Module()
 export class EnvModule extends AbstractEnvModule {
+  constructor() {
+    super();
+  }
+
   public static register() {
     bootstrapBaseEnv();
     bootstrapExtendedEnv();
 
-    return class extends AbstractEnvModule {
-      constructor() {
-        super();
-
-        const instance = new EnvModule();
-        instance.name = 'EnvModule';
-        sysLogInfo(`[${instance.name}]: Module initialized!`);
-
-        ServerFactory.moduleRegistry[instance.name] = instance;
-        return instance;
-      }
-    };
+    return EnvModule;
   }
 }

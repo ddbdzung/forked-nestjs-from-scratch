@@ -1,6 +1,6 @@
 import type { ConnectOptions } from 'mongoose';
 
-import { SystemException } from '@/core/helpers/exception.helper';
+import { SystemException } from '@/core/helpers';
 
 class ObjectiveClass {
   /**

@@ -3,7 +3,7 @@ import { validateSync } from 'class-validator';
 import { instanceToPlain, plainToClass } from 'class-transformer';
 
 import { BaseEnv } from '@/core/modules/env/env.service';
-import { SystemException } from '@/core/helpers/exception.helper';
+import { SystemException } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 import { ValidatorClass } from './env.validator';

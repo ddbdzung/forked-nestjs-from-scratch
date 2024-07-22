@@ -1,7 +1,7 @@
 import type { Model } from 'mongoose';
 
-import { BaseRepository } from '@/core/repository/base.repository';
-import { Repository } from '@/core/decorators/repository.decorator';
+import { Repository } from '@/core/decorators';
+import { BaseRepository } from '@/core/repository';
 
 import { IPost } from './interfaces/post.model.interface';
 import { IPostRepository } from './interfaces/post.repository.interface';

@@ -2,8 +2,7 @@
 
 import debug from 'debug';
 
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
-import { SystemException } from '@/core/helpers/exception.helper';
+import { SystemException } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);

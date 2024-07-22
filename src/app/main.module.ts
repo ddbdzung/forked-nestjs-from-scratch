@@ -1,15 +1,11 @@
-import { Module } from '@/core/decorators/module.decorator';
-import { AbstractModule } from '@/core/helpers/module.helper';
-import { Model } from '@/core/decorators/model.decorator';
-import { MongooseModule } from '@/core/modules/mongoose/mongoose.module';
-import { EnvModule } from '@/core/modules/env/env.module';
+import { AbstractModule, EnvModule, Module, MongooseModule } from '../core';
 
-import { UserModule } from '@/app/modules/user/user.module';
-import { Env } from '@/app/modules/env/env.service';
-import { PostModule } from '@/app/modules/post/post.module';
+import { Env } from '@/app/modules/env';
+import { PostModule } from '@/app/modules/post';
+import { UserModule } from '@/app/modules/user';
 
 @Module({
-  registry: [
+  sysModule: [
     EnvModule.register(),
     MongooseModule.register({
       isDebugMode: true,
@@ -30,8 +26,7 @@ import { PostModule } from '@/app/modules/post/post.module';
           .build();
       },
     }),
-    UserModule,
-    PostModule,
   ],
+  bizModule: [UserModule, PostModule],
 })
 export class MainModule extends AbstractModule {}

@@ -2,15 +2,13 @@
 
 import debug from 'debug';
 
-import { ServerFactory } from '@/core/helpers/bootstrap.helper';
-import { SystemException } from '@/core/helpers/exception.helper';
+import { SystemException, AbstractModel } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { AbstractModel } from '@/core/helpers/module.helper';
-import { ISchemaType } from '../interfaces/common.interface';
+import { ISchemaType } from '@/core/interfaces/common.interface';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-function ModelDecoratorFactory() {
+export function ModelDecoratorFactory() {
   return <T extends new (...args: any[]) => AbstractModel>(ctor: T) => {
     let instance: InstanceType<T> | null = null;
 
@@ -36,5 +34,3 @@ function ModelDecoratorFactory() {
     };
   };
 }
-
-export { ModelDecoratorFactory as Model };

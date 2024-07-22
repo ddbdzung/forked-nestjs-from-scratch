@@ -1,5 +1,6 @@
-import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_CODE_LIST } from '@/core/constants/http.constant';
+import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 
+/** @public */
 export enum ExceptionMetadataType {
   DEFAULT = 'other',
   TRANSLATE = 'translate',
@@ -60,6 +61,7 @@ class BaseException extends Error implements IException {
   }
 }
 
+/** @public */
 export class SystemException extends BaseException {
   public override name = 'SystemException';
   constructor(message: string, innerError?: unknown) {
@@ -74,6 +76,7 @@ export class SystemException extends BaseException {
   }
 }
 
+/** @public */
 export class BusinessException extends BaseException {
   public override name = 'BusinessException';
   public metadata: IExceptionMetadata[] = [{ type: ExceptionMetadataType.DEFAULT }];

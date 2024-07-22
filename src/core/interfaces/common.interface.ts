@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { VERSION_API } from '@/core/constants/common.constant';
-import { Document, Schema } from 'mongoose';
-import { AbstractModel } from '../helpers/module.helper';
+import { AbstractModel } from '@/core/helpers/model.helper';
 
 type ConstructorType = new (...args: any[]) => any;
 
@@ -29,9 +27,6 @@ export interface IVirtualType {
 }
 
 export interface IModel {
-  /**
-   * Name of the model (define in *.config.ts file)
-   */
   name?: string;
   schema: Record<string, ISchemaType>;
   virtuals?: Record<string, IVirtualType>;
@@ -40,11 +35,14 @@ export interface IModel {
 }
 
 export interface IModuleOptions {
-  registry?: ConstructorType[];
-  name?: string;
-  provider?: ConstructorType[];
-  repository?: ConstructorType;
-  model?: ConstructorType;
+  sysModule?: ConstructorType[]; // List of system modules (only for MainModule) (ex config, logger)
+  bizModule?: ConstructorType[]; // List of biz modules (only for MainModule)
+  moduleName?: string; // Name of the module
+  provider?: ConstructorType[]; // List of providers (config, controller, constant, service)
+  repository?: ConstructorType; // Repository of the module
+  model?: ConstructorType; // Model of the module
+  isGlobal?: boolean; // Set global module
+  dynamicModule?: boolean; // Set dynamic module
 }
 
 export interface IModelDecoratorOptions {
@@ -52,7 +50,7 @@ export interface IModelDecoratorOptions {
 }
 
 export interface IModelHandler {
-  model: IModel;
+  model: AbstractModel;
   moduleName: string;
 }
 

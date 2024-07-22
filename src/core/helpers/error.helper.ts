@@ -1,14 +1,15 @@
 import debug from 'debug';
 import { Server } from 'http';
-import { IRouterMatcher, ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler } from 'express';
 
-import { DEBUG_CODE, ENVIRONMENT_SYSTEM } from '@/core/constants/common.constant';
+import { DEBUG_CODE } from '@/core/constants/common.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 
 import { BusinessException, SystemException } from './exception.helper';
 
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
+/** @public */
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const isApiNotError: boolean = res.locals.isApiNotError;
   if (isApiNotError) {
@@ -43,6 +44,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 };
 
+/** @public */
 export const systemErrorHandler = (server: Server | null) => {
   const unexpectedErrorHandler = (error: Error) => {
     sysLogError(error);

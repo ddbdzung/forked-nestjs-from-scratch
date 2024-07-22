@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { IsIP, IsNumber, IsOptional, IsPort, IsString } from 'class-validator';
+import { IsIP, IsPort, IsString } from 'class-validator';
 
 import { parseSafeInteger } from '@/core/utils/number.util';
 

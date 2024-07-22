@@ -110,6 +110,7 @@ export class ModuleHelper {
 
       const moduleName = moduleCtor.name;
       instance.moduleName = moduleName;
+      instance.isGlobal = true;
 
       if (ServerFactory.moduleRegistry[moduleName]) {
         this._sysModuleErrorList.push({

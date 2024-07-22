@@ -1,4 +1,4 @@
-import { AbstractModule, EnvModule, Module, MongooseModule } from '../core';
+import { AbstractModule, EnvModule, LoggerModule, Module, MongooseModule } from '../core';
 
 import { Env } from '@/app/modules/env';
 import { PostModule } from '@/app/modules/post';
@@ -7,6 +7,7 @@ import { UserModule } from '@/app/modules/user';
 @Module({
   sysModule: [
     EnvModule.register(),
+    LoggerModule.register(),
     MongooseModule.register({
       isDebugMode: true,
       uriBuilder: (builder) => {

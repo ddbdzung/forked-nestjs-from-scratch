@@ -1,21 +1,10 @@
 import { Module } from '@/core/decorators';
 
 import { bootstrapBaseEnv, bootstrapExtendedEnv } from './env.service';
-import { AbstractModule } from '@/core/helpers/abstract.helper';
+import { AbstractModule } from '@/core/helpers';
 
-export abstract class AbstractEnvModule extends AbstractModule {
-  constructor() {
-    super();
-
-    this.isGlobal = true;
-  }
-}
 @Module()
-export class EnvModule extends AbstractEnvModule {
-  constructor() {
-    super();
-  }
-
+export class EnvModule extends AbstractModule {
   public static register() {
     bootstrapBaseEnv();
     bootstrapExtendedEnv();

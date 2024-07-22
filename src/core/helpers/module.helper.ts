@@ -28,35 +28,6 @@ import { MONGO_ERROR, MONGO_ERROR_CODE } from '../modules/mongoose/mongoose.cons
 import { HTTP_RESPONSE_CODE } from '../constants/http.constant';
 import { ServerFactory } from './bootstrap.helper';
 
-export abstract class AbstractModule {
-  public modelHandler?: (app: Express) => Router;
-  public modelName?: string;
-
-  public name?: string;
-  public version?: VERSION_API;
-  public prefix?: string;
-
-  public registry?: ConstructorType[];
-}
-
-export abstract class AbstractDatabaseModule extends AbstractModule {
-  constructor() {
-    super();
-  }
-}
-
-export abstract class AbstractEnvModule extends AbstractModule {
-  constructor() {
-    super();
-  }
-}
-
-export abstract class AbstractConfig {
-  public name?: string; // Name of the class
-  public abstract prefixModule: string;
-  public version: VERSION_API = VERSION_API.V1;
-}
-
 type SchemaDefTyping = Record<DATA_TYPE_ENUM, unknown>;
 type ConstraintTyping = Record<
   DATA_TYPE_ENUM,

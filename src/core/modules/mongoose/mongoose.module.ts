@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { connect } from 'mongoose';
 import debug from 'debug';
 
@@ -11,16 +10,8 @@ import { AbstractModule } from '@/core/helpers/abstract.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-export abstract class AbstractDatabaseModule extends AbstractModule {
-  constructor() {
-    super();
-
-    this.isGlobal = true;
-  }
-}
-
 @Module()
-export class MongooseModule extends AbstractDatabaseModule {
+export class MongooseModule extends AbstractModule {
   public static register(options: IRegisterOption) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const { uriBuilder, isDebugMode = false, onSuccess = () => {}, onFail = () => {} } = options;

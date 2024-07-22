@@ -9,7 +9,7 @@ import { BaseEnv } from '@/core/modules/env/env.service';
 import { webappRegister } from '@/core/bootstraps';
 
 import { Env } from '@/app/modules/env/env.service';
-import { AbstractModule } from './module.helper';
+import { AbstractModule } from './abstract.helper';
 import { SystemException } from './exception.helper';
 
 let isBootstrapBaseEnvRun = false;

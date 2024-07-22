@@ -17,7 +17,7 @@ export * from './constants/common.constant';
 export * from './constants/decorator.constant';
 export * from './constants/model.constant';
 export * from './constants/http.constant';
-export { EnvModule, MongooseModule } from './modules';
+export { EnvModule, MongooseModule, LoggerModule } from './modules';
 export { BaseRepository } from './repository';
 export * from './interfaces/base.repository.interface';
 export * from './interfaces/common.interface';

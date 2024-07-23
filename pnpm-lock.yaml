@@ -86,6 +86,9 @@ importers:
       winston-daily-rotate-file:
         specifier: ^5.0.0
         version: 5.0.0(winston@3.13.1)
+      winston-logstash:
+        specifier: ^1.2.1
+        version: 1.2.1(winston@3.13.1)
     devDependencies:
       '@types/compression':
         specifier: ^1.7.5
@@ -2014,6 +2017,16 @@ packages:
     engines: {node: '>=8'}
     peerDependencies:
       winston: ^3
+
+  winston-logstash@1.2.1:
+    resolution: {integrity: sha512-sa8AxlL0vb5OdGJpL7ZitSIKq9GtdqrTN6eKYe6CoMTDmOIOvJyVAMiZGIvwxkGRbCNGoGKCvx9vxwkdI6OWww==}
+    engines: {node: '>=6'}
+    peerDependencies:
+      winston: ^0.7.3 || ^1.0.0 || ^2.0.0 || ^3.0.0
+
+  winston-transport@4.5.0:
+    resolution: {integrity: sha512-YpZzcUzBedhlTAfJg6vJDlyEai/IFMIVcaEZZyl3UXIl4gmqRpU7AE89AHLkbzLUsv0NVmw7ts+iztqKxxPW1Q==}
+    engines: {node: '>= 6.4.0'}
 
   winston-transport@4.7.1:
     resolution: {integrity: sha512-wQCXXVgfv/wUPOfb2x0ruxzwkcZfxcktz6JIMUaPLmcNhO4bZTwA/WtDWK74xV3F2dKu8YadrFv0qhwYjVEwhA==}
@@ -4086,6 +4099,17 @@ snapshots:
       triple-beam: 1.4.1
       winston: 3.13.1
       winston-transport: 4.7.1
+
+  winston-logstash@1.2.1(winston@3.13.1):
+    dependencies:
+      winston: 3.13.1
+      winston-transport: 4.5.0
+
+  winston-transport@4.5.0:
+    dependencies:
+      logform: 2.6.1
+      readable-stream: 3.6.2
+      triple-beam: 1.4.1
 
   winston-transport@4.7.1:
     dependencies:

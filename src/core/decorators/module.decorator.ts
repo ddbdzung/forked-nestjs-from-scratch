@@ -311,10 +311,16 @@ export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
     moduleHelper.throwErrorList();
 
     return class extends ctor {
+      // Only work with biz module
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       constructor(...args: any[]) {
         if (instance) {
           return instance;
+        }
+
+        const instanceInRegistry = ServerFactory.moduleRegistry[computedModuleName];
+        if (instanceInRegistry) {
+          return instanceInRegistry as InstanceType<T>;
         }
 
         super(...args);

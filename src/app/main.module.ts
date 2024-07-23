@@ -1,4 +1,4 @@
-import { AbstractModule, EnvModule, LoggerModule, Module, MongooseModule } from '../core';
+import { AbstractModule, EnvModule, LoggerLogstashModule, Module, MongooseModule } from '../core';
 
 import { Env } from '@/app/modules/env';
 import { PostModule } from '@/app/modules/post';
@@ -7,7 +7,18 @@ import { UserModule } from '@/app/modules/user';
 @Module({
   sysModule: [
     EnvModule.register(),
-    LoggerModule.register(),
+    // LoggerLogstashModule.register({
+    //   useLogstash: {
+    //     host: 'localhost',
+    //     port: 28_777,
+    //     node_name: 'nodejs-app',
+    //     max_connect_retries: 1,
+    //     onError: () => {
+    //       console.log('[DEBUG][DzungDang] haiz:');
+    //       console.error('[LoggerModule]: Stop the press, logging not working');
+    //     },
+    //   },
+    // }),
     MongooseModule.register({
       isDebugMode: true,
       uriBuilder: (builder) => {

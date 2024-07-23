@@ -1,1 +1,1 @@
-export { LoggerModule } from './logger.module';
+export { LoggerLogstashModule } from './logger.module';

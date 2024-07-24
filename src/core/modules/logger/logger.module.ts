@@ -16,7 +16,7 @@ const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 export class LoggerLogstashModule extends AbstractModule implements ILogger {
   public logger: Logger | null = null;
   private static _transports: transport[] = [];
-  public static onError: (() => void) | null = null;
+  public static onError: ((error: Error) => void) | null = null;
 
   constructor() {
     const instance = ServerFactory.globalModuleRegistry[LoggerLogstashModule.name];
@@ -28,12 +28,12 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
 
     if (!this.logger) {
       // TODO: How to set event 'on' to logger (it does not work as expected)
+      // Solution 1: Create a callback function to run after creating MainModule
       setTimeout(() => {
+        winston.clear;
         const logger = winston.createLogger({
           transports: LoggerLogstashModule._transports,
         });
-
-        this.logger = logger;
         const onError = LoggerLogstashModule.onError;
         if (onError) {
           logger.on('error', onError);

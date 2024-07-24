@@ -9,7 +9,7 @@ declare module 'winston-logstash/lib/winston-logstash-latest' {
     max_connect_retries?: number;
     timeout_connect_retries?: number;
     rejectUnauthorized?: boolean;
-    onError?: () => void;
+    onError?: (error: Error) => void;
   }
   export default class LogstashTransport extends transport {
     constructor(options: ILogstashTransportOptions) {

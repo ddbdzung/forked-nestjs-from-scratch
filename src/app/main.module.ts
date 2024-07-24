@@ -13,7 +13,7 @@ import { UserModule } from '@/app/modules/user';
     //     port: 28_777,
     //     node_name: 'nodejs-app',
     //     max_connect_retries: 1,
-    //     onError: () => {
+    //     onError: (error: Error) => {
     //       console.log('[DEBUG][DzungDang] haiz:');
     //       console.error('[LoggerModule]: Stop the press, logging not working');
     //     },

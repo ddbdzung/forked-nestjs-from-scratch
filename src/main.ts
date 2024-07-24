@@ -39,12 +39,12 @@ async function bootstrap() {
         }) as transport,
       ],
     });
-    logger.on('error', () => {
-      console.error('[LoggerModule]: Stop the press, logging not working');
+    logger.on('error', (error) => {
+      console.error('[LoggerModule]: Stop the press, logging not working', error);
     });
     console.log('[DEBUG][DzungDang] logger:', logger);
-    // const logger = new LoggerLogstashModule();
-    // logger.info(`[Main]: Server started at port ${appPort}`);
+
+    logger.info(`[Main]: Server started at port ${appPort}`);
   });
 }
 

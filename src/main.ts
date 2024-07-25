@@ -30,7 +30,7 @@ async function bootstrap() {
   server = webapp.listen(appPort, () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
     const logger = new LoggerLogstashModule();
-    logger.info(`[Main123]: Server started at port ${appPort}`);
+    logger.info('Main', ServerFactory.moduleRegistry, 1, 'a', true);
   });
 }
 

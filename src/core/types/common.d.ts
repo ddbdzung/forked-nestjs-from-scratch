@@ -12,9 +12,7 @@ declare module 'winston-logstash/lib/winston-logstash-latest' {
     onError?: (error: Error) => void;
   }
   export default class LogstashTransport extends transport {
-    constructor(options: ILogstashTransportOptions) {
-      super(options);
-    }
+    constructor(options: ILogstashTransportOptions);
   }
 }
 

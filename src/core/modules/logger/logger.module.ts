@@ -12,7 +12,37 @@ import { DEBUG_CODE } from '@/core/constants/common.constant';
 
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
-@Module({})
+function censor(censor) {
+  let i = 0;
+
+  return function (key, value) {
+    if (
+      i !== 0 &&
+      typeof censor === 'object' &&
+      typeof value == 'object' &&
+      censor == value
+    )
+      return '[Circular]';
+
+    if (i >= 29)
+      // seems to be a harded maximum of 30 serialized objects?
+      return '[Unknown]';
+
+    ++i; // so we know we aren't using the original object anymore
+
+    return value;
+  };
+}
+
+function safeStringify(val: any) {
+  try {
+    return JSON.stringify(val, censor(val));
+  } catch (error) {
+    return '[Circular]';
+  }
+}
+import fs from 'fs';
+@Module()
 export class LoggerLogstashModule extends AbstractModule implements ILogger {
   public logger: Logger | null = null;
   private static _transports: transport[] = [];
@@ -77,7 +107,10 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
   }
 
   public info(message: string, ...args: any[]) {
-    this.logger?.info(message, ...args);
+    const stringifyArgs = safeStringify(args.map(arg => {
+      return safeStringify(arg);
+    }))
+    this.logger?.info(stringifyArgs);
   }
   public warn(message: string, ...args: any[]) {
     this.logger?.warn(message, ...args);

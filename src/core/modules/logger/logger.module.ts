@@ -27,19 +27,16 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
     super();
 
     if (!this.logger) {
-      // TODO: How to set event 'on' to logger (it does not work as expected)
-      // Solution 1: Create a callback function to run after creating MainModule
-      setTimeout(() => {
-        winston.clear;
-        const logger = winston.createLogger({
-          transports: LoggerLogstashModule._transports,
-        });
-        const onError = LoggerLogstashModule.onError;
-        if (onError) {
-          logger.on('error', onError);
-          console.log('[DEBUG][DzungDang] logger:', logger);
-        }
-      }, 0);
+      const logger = winston.createLogger({
+        transports: LoggerLogstashModule._transports,
+      });
+
+      const onError = LoggerLogstashModule.onError;
+      if (onError) {
+        logger.on('error', onError);
+      }
+
+      this.logger = logger;
     }
   }
 
@@ -73,6 +70,8 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
         }) as transport,
       );
     }
+
+    LoggerLogstashModule._transports = transports;
 
     return LoggerLogstashModule;
   }

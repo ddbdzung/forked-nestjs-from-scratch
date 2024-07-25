@@ -29,22 +29,8 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
-    const logger = winston.createLogger({
-      transports: [
-        new LogstashTransport({
-          host: 'localhost',
-          port: 28777,
-          node_name: 'nodejs-app',
-          max_connect_retries: 1,
-        }) as transport,
-      ],
-    });
-    logger.on('error', (error) => {
-      console.error('[LoggerModule]: Stop the press, logging not working', error);
-    });
-    console.log('[DEBUG][DzungDang] logger:', logger);
-
-    logger.info(`[Main]: Server started at port ${appPort}`);
+    const logger = new LoggerLogstashModule();
+    logger.info(`[Main123]: Server started at port ${appPort}`);
   });
 }
 

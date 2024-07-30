@@ -7,61 +7,34 @@ import debug from 'debug';
 
 import { Module } from '@/core/decorators';
 import { AbstractModule, ServerFactory } from '@/core/helpers';
-import { ILogger, ILoggerOptions } from './interfaces/logger.module.interface';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { safeStringify } from '@/core/utils/object.util';
 
+import { ILogger, ILoggerOptions } from './interfaces/logger.module.interface';
+
+const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
-function censor(censor) {
-  let i = 0;
-
-  return function (key, value) {
-    if (
-      i !== 0 &&
-      typeof censor === 'object' &&
-      typeof value == 'object' &&
-      censor == value
-    )
-      return '[Circular]';
-
-    if (i >= 29)
-      // seems to be a harded maximum of 30 serialized objects?
-      return '[Unknown]';
-
-    ++i; // so we know we aren't using the original object anymore
-
-    return value;
-  };
-}
-
-function safeStringify(val: any) {
-  try {
-    return JSON.stringify(val, censor(val));
-  } catch (error) {
-    return '[Circular]';
-  }
-}
-import fs from 'fs';
 @Module()
-export class LoggerLogstashModule extends AbstractModule implements ILogger {
+export class LoggerModule extends AbstractModule implements ILogger {
   public logger: Logger | null = null;
   private static _transports: transport[] = [];
   public static onError: ((error: Error) => void) | null = null;
 
   constructor() {
-    const instance = ServerFactory.globalModuleRegistry[LoggerLogstashModule.name];
+    const instance = ServerFactory.globalModuleRegistry[LoggerModule.name];
     if (instance) {
-      return instance as LoggerLogstashModule;
+      return instance as LoggerModule;
     }
 
     super();
 
-    if (!this.logger) {
+    if (!this.logger && LoggerModule._transports.length > 0) {
       const logger = winston.createLogger({
-        transports: LoggerLogstashModule._transports,
+        transports: LoggerModule._transports,
       });
 
-      const onError = LoggerLogstashModule.onError;
+      const onError = LoggerModule.onError;
       if (onError) {
         logger.on('error', onError);
       }
@@ -86,7 +59,7 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
       } = useLogstash;
 
       if (onError) {
-        LoggerLogstashModule.onError = onError;
+        LoggerModule.onError = onError;
       }
 
       transports.push(
@@ -101,24 +74,37 @@ export class LoggerLogstashModule extends AbstractModule implements ILogger {
       );
     }
 
-    LoggerLogstashModule._transports = transports;
+    LoggerModule._transports = transports;
 
-    return LoggerLogstashModule;
+    return LoggerModule;
   }
 
   public info(message: string, ...args: any[]) {
-    const stringifyArgs = safeStringify(args.map(arg => {
-      return safeStringify(arg);
-    }))
-    this.logger?.info(stringifyArgs);
+    this.logger?.info(message, ...args);
   }
   public warn(message: string, ...args: any[]) {
     this.logger?.warn(message, ...args);
   }
   public error(message: string, ...args: any[]) {
-    this.logger?.error(message, ...args);
+    sysLogError(message, ...args);
+    this.logger?.error(
+      message,
+      safeStringify(
+        args.map((arg) => {
+          return safeStringify(arg);
+        }),
+      ),
+    );
   }
   public debug(message: string, ...args: any[]) {
-    this.logger?.debug(message, ...args);
+    sysLogInfo(message, ...args);
+    this.logger?.debug(
+      message,
+      safeStringify(
+        args.map((arg) => {
+          return safeStringify(arg);
+        }),
+      ),
+    );
   }
 }

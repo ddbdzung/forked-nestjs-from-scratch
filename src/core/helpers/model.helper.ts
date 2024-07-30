@@ -30,7 +30,6 @@ import {
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 import { MONGO_ERROR, MONGO_ERROR_CODE } from '@/core/modules/mongoose/mongoose.constant';
-import { omit } from '@/core/utils/object.util';
 
 import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.helper';
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';

@@ -4,7 +4,7 @@ import {
   AbstractModule,
   DEBUG_CODE,
   EnvModule,
-  LoggerLogstashModule,
+  LoggerModule,
   Module,
   MongooseModule,
 } from '../core';
@@ -18,14 +18,14 @@ const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 @Module({
   sysModule: [
     EnvModule.register(),
-    LoggerLogstashModule.register({
+    LoggerModule.register({
       useLogstash: {
         host: 'localhost',
         port: 28_777,
         node_name: 'nodejs-app',
         max_connect_retries: 5,
         onError: (error: Error) => {
-          sysLogError(`[LoggerLogstashModule]: ${error.message}`);
+          sysLogError(`[LoggerModule]: ${error.message}`);
         },
       },
     }),

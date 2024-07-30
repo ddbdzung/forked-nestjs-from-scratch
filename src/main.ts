@@ -11,7 +11,7 @@ import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
 import { Env } from '@/app/modules/env/env.service';
 import { MainModule } from '@/app/main.module';
-import { LoggerLogstashModule } from './core';
+import { LoggerModule } from './core';
 import LogstashTransport from 'winston-logstash/lib/winston-logstash-latest';
 import winston, { transport } from 'winston';
 
@@ -29,8 +29,8 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
-    const logger = new LoggerLogstashModule();
-    logger.info('Main', ServerFactory.moduleRegistry, 1, 'a', true);
+    const logger = new LoggerModule();
+    logger.debug('Main', ServerFactory.moduleRegistry, 1, 'a', true);
   });
 }
 

@@ -1,11 +1,16 @@
-import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
-import { Model } from '@/core/decorators';
-import { AbstractModel } from '@/core/helpers';
+import {
+  AbstractModel,
+  Model,
+  CONSTRAINT_ENUM,
+  DATA_TYPE_ENUM,
+  IVirtualType,
+  ISchema,
+} from '@/core/index';
 
 @Model()
 export class UserModel extends AbstractModel {
   public override name = 'SysUser';
-  public override schema = {
+  public override schema: ISchema = {
     fullName: {
       type: DATA_TYPE_ENUM.STRING,
       constraints: [CONSTRAINT_ENUM.REQUIRED, CONSTRAINT_ENUM.UNIQUE],

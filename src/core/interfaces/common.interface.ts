@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
+import {
+  CONSTRAINT_ENUM,
+  DATA_TYPE_ENUM,
+  REF_DATA_TYPE_ENUM,
+} from '@/core/constants/model.constant';
 import { AbstractModel } from '@/core/helpers/model.helper';
 
 type ConstructorType = new (...args: any[]) => any;
@@ -17,13 +21,30 @@ export interface IPingResponse {
   msg: string;
 }
 
+/**
+ * Ref field will be indexed field, so only allow master data types
+ * Ref field will be reference to another model name with default projection
+ * Ref field will automatically ref to _id field of reference model
+ * If not, set toField in ref field
+ * TODO: Implement ref field
+ */
+export interface IRefType {
+  type: REF_DATA_TYPE_ENUM; // Only allow master data types (indexing field)
+  toModel: string; // Reference to model name
+  toField?: string; // Reference to field name (default is _id)
+  defaultProjection?: string; // Default projection for reference field (default is full document)
+}
+
 export interface ISchemaType extends IConstraintDetail {
   type: DATA_TYPE_ENUM;
   constraints?: CONSTRAINT_ENUM[];
   sharp?: DATA_TYPE_ENUM | Record<string, ISchemaType>; // Set sharp for array data type
   getter?: (v: unknown) => unknown; // Set getter for primitive data type
   defaultValue?: unknown; // Set default value for field
+  ref?: IRefType; // Set ref for reference field
 }
+
+export type ISchema = Record<string, ISchemaType>;
 
 export interface IVirtualType {
   getter?: () => unknown; // Set getter for virtual field
@@ -54,11 +75,6 @@ export interface IModelDecoratorOptions {
 }
 
 export interface IModelHandler {
-  model: AbstractModel;
-  moduleName: string;
-}
-
-export interface ImodelHandler {
   model: AbstractModel;
   moduleName: string;
 }

@@ -17,8 +17,9 @@ import {
   IModelHandler,
   ConstraintDefinition,
   IModel,
-  ISchemaType,
   IVirtualType,
+  ISchema,
+  ISchemaType,
 } from '@/core/interfaces/common.interface';
 import { DEBUG_CODE, VERSION_API } from '@/core/constants/common.constant';
 import {
@@ -92,6 +93,8 @@ export const schemaTypeMap: SchemaDefTyping = {
   [DATA_TYPE_ENUM.MAP]: Map,
 
   [DATA_TYPE_ENUM.BIG_INT]: BigInt,
+
+  [DATA_TYPE_ENUM.CODE]: String,
 };
 
 export const validConstraintMap: ConstraintTyping = {
@@ -146,6 +149,10 @@ export const validConstraintMap: ConstraintTyping = {
     validConstraint: [CONSTRAINT_ENUM.REQUIRED],
     validConstraintDetail: [],
   },
+  [DATA_TYPE_ENUM.CODE]: {
+    validConstraint: [CONSTRAINT_ENUM.REQUIRED],
+    validConstraintDetail: [],
+  },
 };
 
 /** @public */
@@ -154,7 +161,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
   protected _model: Model<T> | null = null;
   protected _moduleName: string;
 
-  public abstract schema: Record<string, ISchemaType>;
+  public abstract schema: ISchema;
   public abstract name: string;
 
   public readonly decoratorType = DECORATOR_TYPE.MODEL;
@@ -175,7 +182,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     this._moduleName = moduleName;
   }
 
-  protected _makeSchema(schema: Record<string, ISchemaType>) {
+  private _makeSchema(schema: Record<string, ISchemaType>) {
     const schemaResult = new Schema();
 
     for (const field in schema) {
@@ -250,7 +257,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     return schemaResult;
   }
 
-  protected _makeVirtuals() {
+  private _makeVirtuals() {
     if (!this.virtuals || !this._schema) {
       return;
     }
@@ -268,7 +275,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     }
   }
 
-  protected _makeMiddleware() {
+  private _makeMiddleware() {
     if (!this._schema) {
       return;
     }
@@ -312,7 +319,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     // TODO: Check type of middleware to avoid any type, Implement later
   }
 
-  protected _makePlugins() {
+  private _makePlugins() {
     if (!this.plugins) {
       return;
     }
@@ -326,13 +333,13 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     }
   }
 
-  protected _makeModel() {
+  private _makeModel() {
     if (!this._model && this._schema) {
       this._model = Modelize<T>(this.name, this._schema);
     }
   }
 
-  protected _makeRepository() {
+  private _makeRepository() {
     if (!this._model) {
       throw new SystemException(`Model ${this.name} have not been initialized yet`);
     }
@@ -361,7 +368,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     return new ctor(this._model);
   }
 
-  protected _makeConstraintDef(
+  private _makeConstraintDef(
     field: string,
     fieldConfig: ISchemaType,
     metadata: { modelName?: string; moduleName?: string },

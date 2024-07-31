@@ -18,17 +18,17 @@ const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 @Module({
   sysModule: [
     EnvModule.register(),
-    LoggerModule.register({
-      useLogstash: {
-        host: 'localhost',
-        port: 28_777,
-        node_name: 'nodejs-app',
-        max_connect_retries: 5,
-        onError: (error: Error) => {
-          sysLogError(`[LoggerModule]: ${error.message}`);
-        },
-      },
-    }),
+    // LoggerModule.register({
+    //   useLogstash: {
+    //     host: 'localhost',
+    //     port: 28_777,
+    //     node_name: 'nodejs-app',
+    //     max_connect_retries: 5,
+    //     onError: (error: Error) => {
+    //       sysLogError(`[LoggerModule]: ${error.message}`);
+    //     },
+    //   },
+    // }),
     MongooseModule.register({
       isDebugMode: true,
       uriBuilder: (builder) => {
@@ -49,6 +49,6 @@ const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
       },
     }),
   ],
-  bizModule: [UserModule, PostModule],
+  // bizModule: [UserModule, PostModule],
 })
 export class MainModule extends AbstractModule {}

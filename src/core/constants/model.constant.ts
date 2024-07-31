@@ -43,6 +43,14 @@ export enum DATA_TYPE_ENUM {
 
   // BigInt data types
   BIG_INT = 'bigInt', // BigInt ex 9007199254740991n
+
+  // Master data types
+  CODE = 'code', // Code data type for code field (EMP1, EMP2, ...)
+}
+
+export enum REF_DATA_TYPE_ENUM {
+  OBJECT_ID = DATA_TYPE_ENUM.OBJECT_ID,
+  CODE = DATA_TYPE_ENUM.CODE,
 }
 
 export const DATA_TYPE_ENUM_LIST = Object.values(DATA_TYPE_ENUM);

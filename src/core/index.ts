@@ -23,3 +23,4 @@ export * from './interfaces/base.repository.interface';
 export * from './interfaces/common.interface';
 export * from './utils/number.util';
 export * from './utils/object.util';
+export * from './utils/array.util';

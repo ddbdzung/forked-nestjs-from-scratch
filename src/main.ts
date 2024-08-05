@@ -11,7 +11,6 @@ import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
 import { Env } from '@/app/modules/env/env.service';
 import { MainModule } from '@/app/main.module';
-import { LoggerModule } from './core';
 import LogstashTransport from 'winston-logstash/lib/winston-logstash-latest';
 import winston, { transport } from 'winston';
 
@@ -22,6 +21,18 @@ const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
+type PersonSchema = {
+  _id: ObjectId;
+  name: string;
+  code: string;
+  age: number;
+  stories: Schema.Types.ObjectId[];
+};
+type StorySchema = {
+  authorCode: string;
+  title: string;
+  fans: Schema.Types.ObjectId[];
+};
 async function bootstrap() {
   ServerFactory.setPrefixBaseRoute(PREFIX_API);
 

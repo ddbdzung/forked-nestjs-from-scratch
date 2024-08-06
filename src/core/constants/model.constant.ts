@@ -48,9 +48,34 @@ export enum DATA_TYPE_ENUM {
   CODE = 'code', // Code data type for code field (EMP1, EMP2, ...)
 }
 
-export enum REF_DATA_TYPE_ENUM {
-  OBJECT_ID = DATA_TYPE_ENUM.OBJECT_ID,
-  CODE = DATA_TYPE_ENUM.CODE,
+export enum MODEL_MIDDLEWARE_TYPE_ENUM {
+  PRE = 'pre',
+  POST = 'post',
 }
 
-export const DATA_TYPE_ENUM_LIST = Object.values(DATA_TYPE_ENUM);
+export enum MODEL_MIDDLEWARE_HOOK_ENUM {
+  DISTINCT = 'distinct',
+  VALIDATE = 'validate',
+  AGGREGATE = 'aggregate',
+  BULK_WRITE = 'bulkWrite',
+  CREATE_COLLECTION = 'createCollection',
+
+  SAVE = 'save',
+  INSERT_MANY = 'insertMany',
+
+  FIND = 'find',
+  FIND_ONE = 'findOne',
+
+  COUNT_DOCUMENTS = 'countDocuments',
+  ESTIMATED_DOCUMENT_COUNT = 'estimatedDocumentCount',
+  REPLACE_ONE = 'replaceOne',
+  FIND_ONE_AND_REPLACE = 'findOneAndReplace',
+
+  UPDATE_ONE = 'updateOne',
+  UPDATE_MANY = 'updateMany',
+  FIND_ONE_AND_UPDATE = 'findOneAndUpdate',
+
+  DELETE_ONE = 'deleteOne',
+  DELETE_MANY = 'deleteMany',
+  FIND_ONE_AND_DELETE = 'findOneAndDelete',
+}

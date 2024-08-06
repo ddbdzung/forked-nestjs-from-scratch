@@ -259,14 +259,7 @@ export class ModuleValidator extends ModuleHelper {
       );
     }
 
-    const notAllowedProps = [
-      'isGlobal',
-      'dynamicModule',
-      'repository',
-      'model',
-      'provider',
-      'moduleName',
-    ];
+    const notAllowedProps = ['isGlobal', 'repository', 'model', 'provider', 'moduleName'];
     this._validatePropertyList(notAllowedProps);
 
     ServerFactory.isMainModuleCreated = true;

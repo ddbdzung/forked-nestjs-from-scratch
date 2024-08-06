@@ -11,28 +11,12 @@ import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
 import { Env } from '@/app/modules/env/env.service';
 import { MainModule } from '@/app/main.module';
-import LogstashTransport from 'winston-logstash/lib/winston-logstash-latest';
-import winston, { transport } from 'winston';
 
 let server: Server | null = null;
 systemErrorHandler(server);
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
 
-type PersonSchema = {
-  _id: ObjectId;
-  name: string;
-  code: string;
-  age: number;
-  stories: Schema.Types.ObjectId[];
-};
-type StorySchema = {
-  authorCode: string;
-  title: string;
-  fans: Schema.Types.ObjectId[];
-};
 async function bootstrap() {
   ServerFactory.setPrefixBaseRoute(PREFIX_API);
 
@@ -42,36 +26,6 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, async () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
-
-    const personSchema = Schema({
-      _id: Schema.Types.ObjectId,
-      name: String,
-      code: { type: String, index: true },
-      age: Number,
-      stories: [{ type: Schema.Types.ObjectId, ref: 'Story' }],
-    });
-
-    const storySchema = Schema({
-      authorCode: { type: Schema.Types.String, ref: 'Person' },
-      title: String,
-      fans: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
-    });
-
-    const Story = mongoose.model<storySchema>('Story', storySchema);
-    const Person = mongoose.model('Person', personSchema);
-
-    const story = await Story.findOne({ title: 'Casino Royale' })
-      .populate({
-        path: 'authorCode',
-        select: '',
-        localField: 'authorCode',
-        foreignField: 'code',
-      })
-      .exec();
-    console.log(story);
-
-    // const logger = new LoggerModule();
-    // logger.debug('Main', ServerFactory.moduleRegistry, 1, 'a', true);
   });
 }
 

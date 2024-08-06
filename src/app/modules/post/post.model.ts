@@ -1,4 +1,8 @@
-import { CONSTRAINT_ENUM, DATA_TYPE_ENUM } from '@/core/constants/model.constant';
+import {
+  CONSTRAINT_ENUM,
+  DATA_TYPE_ENUM,
+  MODEL_MIDDLEWARE_TYPE_ENUM,
+} from '@/core/constants/model.constant';
 import { Model } from '@/core/decorators';
 import { AbstractModel } from '@/core/helpers';
 

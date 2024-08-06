@@ -26,6 +26,8 @@ import {
   CONSTRAINT_DETAIL_ENUM,
   CONSTRAINT_ENUM,
   DATA_TYPE_ENUM,
+  MODEL_MIDDLEWARE_HOOK_ENUM,
+  MODEL_MIDDLEWARE_TYPE_ENUM,
   PROHIBITED_FIELD_LIST,
 } from '@/core/constants/model.constant';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
@@ -45,7 +47,7 @@ export const modelHandler =
     const { model, moduleName } = payload;
     const modelName = model.name;
 
-    const { model: Model, repository: repositoryInstance, schema } = model.startModel();
+    const { model: Model, repository: repositoryInstance, schema } = model.makeModel();
     if (repositoryInstance) {
       ServerFactory.repositoryRegistry[moduleName].instance = repositoryInstance;
     }
@@ -150,10 +152,109 @@ export const validConstraintMap: ConstraintTyping = {
     validConstraintDetail: [],
   },
   [DATA_TYPE_ENUM.CODE]: {
-    validConstraint: [CONSTRAINT_ENUM.REQUIRED],
+    validConstraint: [CONSTRAINT_ENUM.UNIQUE],
     validConstraintDetail: [],
   },
 };
+
+// export const modelMiddlewareTypeMap: IModelMiddlewareTypeMap = {
+//   queryMiddleware: {
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.DISTINCT]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DISTINCT,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.COUNT_DOCUMENTS]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.COUNT_DOCUMENTS,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.ESTIMATED_DOCUMENT_COUNT]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.ESTIMATED_DOCUMENT_COUNT,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_DELETE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_DELETE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_REPLACE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_REPLACE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_UPDATE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_UPDATE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.REPLACE_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.REPLACE_ONE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_MANY]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_MANY,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_MANY]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_MANY,
+//     },
+//   },
+//   documentMiddleware: {
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.SAVE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.SAVE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE,
+//     },
+//   },
+//   aggregateMiddleware: {
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.AGGREGATE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.AGGREGATE,
+//     },
+//   },
+//   modelMiddleware: {
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.BULK_WRITE]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.BULK_WRITE,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.INSERT_MANY]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.INSERT_MANY,
+//     },
+//     [MODEL_MIDDLEWARE_HOOK_ENUM.CREATE_COLLECTION]: {
+//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
+//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.CREATE_COLLECTION,
+//     },
+//   },
+// };
 
 /** @public */
 export abstract class AbstractModel<T extends Document = Document> implements IModel {
@@ -281,7 +382,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     }
 
     this._schema.post(
-      'save',
+      MODEL_MIDDLEWARE_HOOK_ENUM.SAVE,
       function (
         error: Error,
         doc: Record<string, unknown>,
@@ -538,7 +639,12 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
         break;
 
       case DATA_TYPE_ENUM.DATE:
-        // No constraint for default date field
+        if (hasDefaultValueField) {
+          constraintDefinition.default = defaultValue;
+        }
+        break;
+
+      case DATA_TYPE_ENUM.CODE:
         if (hasDefaultValueField) {
           constraintDefinition.default = defaultValue;
         }
@@ -551,7 +657,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     return constraintDefinition;
   }
 
-  public startModel() {
+  public makeModel() {
     this._schema = this._makeSchema(this.schema);
     this._makeVirtuals();
     this._makeMiddleware();

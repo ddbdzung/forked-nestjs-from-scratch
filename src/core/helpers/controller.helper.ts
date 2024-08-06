@@ -109,18 +109,25 @@ export class ControllerAPI {
     }
 
     const modelInstance = mongoose.model(ctx.modelName);
+    // const fakeData = [
+    //   {
+    //     fullName: 'John Doe',
+    //     email: 'd@email.com',
+    //     password: '123456',
+    //     nickName: ['John', 'Doe'],
+    //     updatedAtLogList: [
+    //       {
+    //         updatedAt: new Date(),
+    //         logList: ['log1', 'log2'],
+    //       },
+    //     ],
+    //   },
+    // ];
     const fakeData = [
       {
-        fullName: 'John Doe',
-        email: 'd@email.com',
-        password: '123456',
-        nickName: ['John', 'Doe'],
-        updatedAtLogList: [
-          {
-            updatedAt: new Date(),
-            logList: ['log1', 'log2'],
-          },
-        ],
+        postNumber: 'P001',
+        title: 'Post 1',
+        content: 'Content 1',
       },
     ];
     const dataList = await modelInstance.create(fakeData);

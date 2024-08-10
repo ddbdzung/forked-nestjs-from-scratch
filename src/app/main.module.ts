@@ -49,6 +49,6 @@ const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
       },
     }),
   ],
-  // bizModule: [UserModule, PostModule],
+  bizModule: [PostModule],
 })
 export class MainModule extends AbstractModule {}

@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Document, HydratedDocument, ObjectId } from 'mongoose';
+
 import {
   CONSTRAINT_ENUM,
   DATA_TYPE_ENUM,
   MODEL_MIDDLEWARE_HOOK_ENUM,
-  MODEL_MIDDLEWARE_TYPE_ENUM,
+  MODEL_MIDDLEWARE_PERIOD_ENUM,
 } from '@/core/constants/model.constant';
 import { AbstractModel } from '@/core/helpers/model.helper';
 
 type ConstructorType = new (...args: any[]) => any;
 
+/** @public */
 interface IConstraintDetail {
   enums?: string[] | number[]; // Set enum for string / number field
   min?: number; // Set min value for number field
@@ -18,11 +21,14 @@ interface IConstraintDetail {
   pattern?: string; // Set pattern for string field
 }
 
+/** @public */
 export interface IPingResponse {
   msg: string;
 }
 
+/** @public */
 export interface ISchemaType extends IConstraintDetail {
+  alternateName?: string; // Set alternate name for field
   type: DATA_TYPE_ENUM;
   constraints?: CONSTRAINT_ENUM[];
   sharp?: DATA_TYPE_ENUM | Record<string, ISchemaType>; // Set sharp for array data type
@@ -30,13 +36,24 @@ export interface ISchemaType extends IConstraintDetail {
   defaultValue?: unknown; // Set default value for field
 }
 
+/** @public */
 export type ISchema = Record<string, ISchemaType>;
 
+type InterfaceWithoutMongooseDocumentKey<T extends Document> = {
+  _id: T['_id'];
+  __v: T['__v'];
+} & Omit<T, keyof Document>;
+
+/** @public */
+export type ISchemaOfDocument<T extends Document> = InterfaceWithoutMongooseDocumentKey<T>;
+
+/** @public */
 export interface IVirtualType {
   getter?: () => unknown; // Set getter for virtual field
   setter?: (v: unknown) => void; // Set setter for virtual field
 }
 
+/** @public */
 export interface IModel {
   name?: string;
   schema: Record<string, ISchemaType>;
@@ -45,6 +62,7 @@ export interface IModel {
   plugins?: unknown[];
 }
 
+/** @public */
 export interface IModuleOptions {
   sysModule?: ConstructorType[]; // List of system modules (only for MainModule) (ex config, logger)
   bizModule?: ConstructorType[]; // List of biz modules (only for MainModule)
@@ -55,19 +73,23 @@ export interface IModuleOptions {
   isGlobal?: boolean; // Set global module
 }
 
+/** @public */
 export interface IModelDecoratorOptions {
   plugins?: unknown[];
 }
 
+/** @public */
 export interface IModelHandler {
   model: AbstractModel;
   moduleName: string;
 }
 
+/** @public */
 export interface IContextAPI {
   modelName: string;
 }
 
+/** @public */
 export interface ConstraintDefinition {
   required: boolean;
   unique: boolean;
@@ -78,4 +100,21 @@ export interface ConstraintDefinition {
   min?: number;
   max?: number;
   default?: unknown;
+}
+
+/** @public */
+export interface IModelMiddleware {
+  periods: MODEL_MIDDLEWARE_PERIOD_ENUM[];
+  hooks: MODEL_MIDDLEWARE_HOOK_ENUM[];
+  handler: () => Promise<void>;
+}
+
+interface ISchemaTimestampType {
+  isUsed: boolean; // Set to true to use timestamp field
+  alternateName?: string; // Set alternate name for timestamp field in Mongoose schema
+}
+
+export interface IModelTimestamp {
+  createdAt?: ISchemaTimestampType;
+  updatedAt?: ISchemaTimestampType;
 }

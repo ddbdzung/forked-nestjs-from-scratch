@@ -13,6 +13,7 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type IfUpdateHasResult<T> = [null, IfAny<T, any, Document<unknown, {}, T> & Require_id<T>>];
 
+/** @public */
 // Mongoose Base Repository Interface
 export interface IBaseRepository<T> {
   create(data: T | T[]): Promise<IfHasResult<T> | IfHasNoResult>;

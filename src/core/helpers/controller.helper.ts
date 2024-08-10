@@ -101,6 +101,29 @@ export class ControllerAPI {
     ).build();
   }
 
+  async create(req: Request, res: Response, next: NextFunction) {
+    const ctx = res.locals.ctx as IContextAPI | undefined;
+    if (!ctx) {
+      return next(new SystemException('[API_ERROR]: ContextAPI is required'));
+    }
+
+    const modelInstance = mongoose.model(ctx.modelName);
+
+    const fakeData = [
+      {
+        title: 'Post 1',
+        content: 'Content 1',
+      },
+    ];
+    const dataList = await modelInstance.create(fakeData);
+
+    return new APIResponseBuilder<Document[]>(
+      HTTP_RESPONSE_CODE.CREATED,
+      HTTP_RESPONSE_MESSAGE[201],
+      dataList,
+    ).build();
+  }
+
   // TODO: Add generic type for API
   async getList(req: Request, res: Response, next: NextFunction) {
     const ctx = res.locals.ctx as IContextAPI | undefined;
@@ -109,23 +132,8 @@ export class ControllerAPI {
     }
 
     const modelInstance = mongoose.model(ctx.modelName);
-    const fakeData = [
-      {
-        fullName: 'John Doe',
-        email: 'd@email.com',
-        password: '123456',
-        nickName: ['John', 'Doe'],
-        updatedAtLogList: [
-          {
-            updatedAt: new Date(),
-            logList: ['log1', 'log2'],
-          },
-        ],
-      },
-    ];
-    const dataList = await modelInstance.create(fakeData);
 
-    // const dataList = await modelInstance.find({});
+    const dataList = await modelInstance.find({});
 
     // To test virtual field
     // const dataList = await modelInstance.find({});

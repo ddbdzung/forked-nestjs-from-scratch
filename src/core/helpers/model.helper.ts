@@ -5,6 +5,9 @@ import type {
   Schema as SchemaTyping,
   Model,
   Document,
+  HydratedDocument,
+  ObjectId,
+  QueryWithHelpers,
 } from 'mongoose';
 import type { MongoServerError } from 'mongodb';
 
@@ -20,6 +23,8 @@ import {
   IVirtualType,
   ISchema,
   ISchemaType,
+  IModelMiddleware,
+  IModelTimestamp,
 } from '@/core/interfaces/common.interface';
 import { DEBUG_CODE, VERSION_API } from '@/core/constants/common.constant';
 import {
@@ -27,7 +32,9 @@ import {
   CONSTRAINT_ENUM,
   DATA_TYPE_ENUM,
   MODEL_MIDDLEWARE_HOOK_ENUM,
-  MODEL_MIDDLEWARE_TYPE_ENUM,
+  MODEL_MIDDLEWARE_PERIOD_ENUM,
+  MODEL_MIDDLEWARE_QUERY_HOOK_ENUM,
+  MODEL_MIDDLEWARE_QUERY_HOOK_ENUM_LIST,
   PROHIBITED_FIELD_LIST,
 } from '@/core/constants/model.constant';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
@@ -37,6 +44,7 @@ import { MONGO_ERROR, MONGO_ERROR_CODE } from '@/core/modules/mongoose/mongoose.
 import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.helper';
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
 import { ServerFactory } from './factory.helper';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
@@ -52,8 +60,12 @@ export const modelHandler =
       ServerFactory.repositoryRegistry[moduleName].instance = repositoryInstance;
     }
 
-    ServerFactory.schemaRegistry[modelName] = schema;
-    ServerFactory.modelRegistry[moduleName] = Model;
+    ServerFactory.mongooseSchemaRegistry[moduleName] = schema;
+    if (!Model) {
+      throw new SystemException(`Model ${modelName} have not been initialized yet`);
+    }
+
+    ServerFactory.mongooseModelRegistry[moduleName] = Model;
 
     const ctx: IContextAPI | null = modelName ? { modelName } : null;
 
@@ -66,6 +78,7 @@ export const modelHandler =
     if (ctx) {
       // Get list
       router.get('/', bindContextApi(ctx), controllerWrapper(controllerAPI.getList));
+      router.post('/', bindContextApi(ctx), controllerWrapper(controllerAPI.create));
     }
 
     sysLogInfo(`[WebappBootstrap][${moduleName}]: Registering module at ${basePath}`);
@@ -152,118 +165,25 @@ export const validConstraintMap: ConstraintTyping = {
     validConstraintDetail: [],
   },
   [DATA_TYPE_ENUM.CODE]: {
-    validConstraint: [CONSTRAINT_ENUM.REQUIRED],
+    validConstraint: [CONSTRAINT_ENUM.UNIQUE],
     validConstraintDetail: [],
   },
 };
 
-// export const modelMiddlewareTypeMap: IModelMiddlewareTypeMap = {
-//   queryMiddleware: {
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.DISTINCT]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DISTINCT,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.COUNT_DOCUMENTS]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.COUNT_DOCUMENTS,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.ESTIMATED_DOCUMENT_COUNT]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.ESTIMATED_DOCUMENT_COUNT,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_DELETE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_DELETE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_REPLACE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_REPLACE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_UPDATE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.FIND_ONE_AND_UPDATE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.REPLACE_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.REPLACE_ONE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_MANY]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_MANY,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_MANY]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_MANY,
-//     },
-//   },
-//   documentMiddleware: {
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.VALIDATE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.SAVE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.SAVE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.UPDATE_ONE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.DELETE_ONE,
-//     },
-//   },
-//   aggregateMiddleware: {
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.AGGREGATE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.AGGREGATE,
-//     },
-//   },
-//   modelMiddleware: {
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.BULK_WRITE]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.BULK_WRITE,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.INSERT_MANY]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.INSERT_MANY,
-//     },
-//     [MODEL_MIDDLEWARE_HOOK_ENUM.CREATE_COLLECTION]: {
-//       type: [MODEL_MIDDLEWARE_TYPE_ENUM.PRE, MODEL_MIDDLEWARE_TYPE_ENUM.POST],
-//       hook: MODEL_MIDDLEWARE_HOOK_ENUM.CREATE_COLLECTION,
-//     },
-//   },
-// };
-
 /** @public */
 export abstract class AbstractModel<T extends Document = Document> implements IModel {
+  /**
+   * Schema of mongoose lib
+   */
   protected _schema: SchemaTyping | null = null;
   protected _model: Model<T> | null = null;
   protected _moduleName: string;
 
   public abstract schema: ISchema;
   public abstract name: string;
+
+  // TODO: Implement now
+  public timestamp: IModelTimestamp = {};
 
   public readonly decoratorType = DECORATOR_TYPE.MODEL;
 
@@ -283,7 +203,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     this._moduleName = moduleName;
   }
 
-  private _makeSchema(schema: Record<string, ISchemaType>) {
+  private _makeSchema(schema: ISchema) {
     const schemaResult = new Schema();
 
     for (const field in schema) {
@@ -416,6 +336,41 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     if (!this.middlewares) {
       return;
     }
+
+    this.middlewares.forEach((middleware) => {
+      if (!(middleware instanceof ModelMiddleware)) {
+        throw new SystemException(`[ModelMiddleware]: Invalid type of middleware: ${middleware}`);
+      }
+
+      const { handler, hooks, periods } = middleware.toObject();
+
+      if (
+        hooks.includes(MODEL_MIDDLEWARE_HOOK_ENUM.SAVE) &&
+        hooks.some((hook) => (MODEL_MIDDLEWARE_QUERY_HOOK_ENUM_LIST as string[]).includes(hook))
+      ) {
+        throw new SystemException(
+          'Save hook cannot be used with query hooks in the same middleware',
+        );
+      }
+
+      periods.forEach((period) => {
+        hooks.forEach((hook) => {
+          if (!this._schema) {
+            throw new SystemException('[ModelMiddleware]: Mongoose Schema is not initialized');
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._schema as any)[period](hook, handler);
+          // this._schema.pre('find', async function (this) {
+          //   // this.getQuery(),
+          // })
+          // this._schema.pre('save', async function (this) {
+          //   // this.
+
+          // });
+        });
+      });
+    });
 
     // TODO: Check type of middleware to avoid any type, Implement later
   }
@@ -639,7 +594,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
         break;
 
       case DATA_TYPE_ENUM.DATE:
-        // No constraint for default date field
+      case DATA_TYPE_ENUM.CODE:
         if (hasDefaultValueField) {
           constraintDefinition.default = defaultValue;
         }
@@ -664,5 +619,107 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
       schema: this._schema,
       repository: this._makeRepository(),
     };
+  }
+}
+
+class ModelMiddleware implements IModelMiddleware {
+  periods: MODEL_MIDDLEWARE_PERIOD_ENUM[];
+  hooks: MODEL_MIDDLEWARE_HOOK_ENUM[];
+  handler: () => Promise<void>;
+
+  constructor(
+    periods: MODEL_MIDDLEWARE_PERIOD_ENUM[],
+    hooks: MODEL_MIDDLEWARE_HOOK_ENUM[],
+    handler: () => Promise<void>,
+  ) {
+    this.periods = periods;
+    this.hooks = hooks;
+    this.handler = handler;
+  }
+
+  toObject(): IModelMiddleware {
+    return {
+      periods: this.periods,
+      hooks: this.hooks,
+      handler: this.handler,
+    };
+  }
+}
+
+type HandlerFor<T> = (this: HydratedDocument<T> | QueryWithHelpers<T, T>) => Promise<void>;
+
+/** @public */
+export class ModelMiddlewareBuilder<T> {
+  private handler?: HandlerFor<T>;
+  private periods: MODEL_MIDDLEWARE_PERIOD_ENUM[] = [];
+  private hooks: MODEL_MIDDLEWARE_HOOK_ENUM[] = [];
+
+  addPeriod(period: MODEL_MIDDLEWARE_PERIOD_ENUM) {
+    if (this.periods.includes(period)) {
+      return this;
+    }
+
+    this.periods.push(period);
+    return this;
+  }
+
+  setPeriods(periods: MODEL_MIDDLEWARE_PERIOD_ENUM[]) {
+    this.periods = periods;
+    return this;
+  }
+
+  addHook(hook: MODEL_MIDDLEWARE_HOOK_ENUM) {
+    if (this.hooks.includes(hook)) {
+      return this;
+    }
+
+    this.hooks.push(hook);
+    return this;
+  }
+
+  setHooks(hooks: MODEL_MIDDLEWARE_HOOK_ENUM[]) {
+    this.hooks = hooks;
+    return this;
+  }
+
+  setHandler<K extends 'document' | 'query'>(
+    type: K,
+    handler: (
+      this: K extends 'document' ? HydratedDocument<T> : QueryWithHelpers<T, T>,
+    ) => Promise<void>,
+  ): this {
+    if (type === 'document') {
+      (this.handler as (this: HydratedDocument<T>) => Promise<void>) = handler as (
+        this: HydratedDocument<T>,
+      ) => Promise<void>;
+    } else {
+      (this.handler as (this: QueryWithHelpers<T, T>) => Promise<void>) = handler as (
+        this: QueryWithHelpers<T, T>,
+      ) => Promise<void>;
+    }
+
+    return this;
+  }
+
+  build() {
+    if (!this.handler) {
+      throw new Error('[ModelMiddlewareBuilder]: Handler is required');
+    }
+
+    if (!this.periods.length) {
+      throw new Error('[ModelMiddlewareBuilder]: Period is required');
+    }
+
+    if (!this.hooks.length) {
+      throw new Error('[ModelMiddlewareBuilder]: Hook is required');
+    }
+
+    return new ModelMiddleware(this.periods, this.hooks, this.handler);
+  }
+
+  reset() {
+    this.periods = [];
+    this.hooks = [];
+    this.handler = undefined;
   }
 }

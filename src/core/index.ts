@@ -11,6 +11,7 @@ export {
   SystemException,
   bindContextApi,
   controllerWrapper,
+  ModelMiddlewareBuilder,
 } from './helpers';
 export { Config, Model, Module, Repository } from './decorators';
 export * from './constants/common.constant';

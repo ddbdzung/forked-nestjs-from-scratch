@@ -1,4 +1,4 @@
-import type { Schema } from 'mongoose';
+import type { Model, Schema } from 'mongoose';
 import type { Express, Router } from 'express';
 
 import debug from 'debug';
@@ -9,7 +9,7 @@ type ProviderName = string;
 import { MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
 import { webappRegister } from '@/core/bootstraps';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { ISchemaType } from '@/core/interfaces/common.interface';
+import { ISchema } from '@/core/interfaces/common.interface';
 
 import { SystemException } from './exception.helper';
 import { AbstractModule } from './abstract.helper';
@@ -17,7 +17,19 @@ import { AbstractModule } from './abstract.helper';
 /** @public */
 export class ServerFactory {
   static isMainModuleCreated = false;
+  /**
+   * Key by module name
+   */
   static globalModuleRegistry: Record<RegistryName, unknown> = {};
+  /**
+   * Key by module name
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static mongooseModelRegistry: Record<RegistryName, Model<any>> = {};
+  /**
+   * Key by module name
+   */
+  static mongooseSchemaRegistry: Record<RegistryName, Schema> = {};
   /**
    * Key by module name
    */
@@ -25,7 +37,7 @@ export class ServerFactory {
   /**
    * Key by model name
    */
-  static schemaRegistry: Record<RegistryName, Schema> = {};
+  static schemaRegistry: Record<RegistryName, ISchema> = {};
   /**
    * Key by module name
    */
@@ -40,6 +52,9 @@ export class ServerFactory {
    */
   static configRegistry: Record<RegistryName, unknown> = {};
 
+  /**
+   * Prefix base route for all modules
+   */
   private static _prefixBaseRoute = '';
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {

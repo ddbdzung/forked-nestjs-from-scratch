@@ -23,7 +23,7 @@ interface IException {
   message: string;
   innerError?: unknown;
   toString(): string;
-  toJSON(): IExceptionData;
+  toObject(): IExceptionData;
 }
 
 class BaseException extends Error implements IException {
@@ -53,7 +53,7 @@ class BaseException extends Error implements IException {
     return `${this.name}: ${this.message}`;
   }
 
-  public toJSON(): IExceptionData {
+  public toObject(): IExceptionData {
     return {
       statusCode: HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR,
       message: this.message,
@@ -68,7 +68,7 @@ export class SystemException extends BaseException {
     super(message, innerError);
   }
 
-  public override toJSON(): IExceptionData {
+  public override toObject(): IExceptionData {
     return {
       statusCode: this.statusCode,
       message: this.message,
@@ -89,7 +89,7 @@ export class BusinessException extends BaseException {
     return this;
   }
 
-  public override toJSON() {
+  public override toObject() {
     const json: IExceptionData = {
       statusCode: this.statusCode,
       message: this.message,

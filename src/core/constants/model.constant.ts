@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 export const PROHIBITED_FIELD_LIST = ['_id', '__v', 'id'];
 
 export enum CONSTRAINT_ENUM {
@@ -48,17 +50,15 @@ export enum DATA_TYPE_ENUM {
   CODE = 'code', // Code data type for code field (EMP1, EMP2, ...)
 }
 
-export enum MODEL_MIDDLEWARE_TYPE_ENUM {
+export enum MODEL_MIDDLEWARE_PERIOD_ENUM {
   PRE = 'pre',
   POST = 'post',
 }
 
 export enum MODEL_MIDDLEWARE_HOOK_ENUM {
-  DISTINCT = 'distinct',
   VALIDATE = 'validate',
   AGGREGATE = 'aggregate',
   BULK_WRITE = 'bulkWrite',
-  CREATE_COLLECTION = 'createCollection',
 
   SAVE = 'save',
   INSERT_MANY = 'insertMany',
@@ -79,3 +79,9 @@ export enum MODEL_MIDDLEWARE_HOOK_ENUM {
   DELETE_MANY = 'deleteMany',
   FIND_ONE_AND_DELETE = 'findOneAndDelete',
 }
+
+export const MODEL_MIDDLEWARE_QUERY_HOOK_ENUM = omit(MODEL_MIDDLEWARE_HOOK_ENUM, ['SAVE']);
+
+export const MODEL_MIDDLEWARE_QUERY_HOOK_ENUM_LIST = Object.values(
+  MODEL_MIDDLEWARE_QUERY_HOOK_ENUM,
+);

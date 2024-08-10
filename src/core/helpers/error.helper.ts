@@ -25,22 +25,25 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     if (err instanceof SystemException || err instanceof BusinessException) {
-      const error = err.toJSON();
+      const error = err.toObject();
+
       return res.status(error.statusCode).json(error);
     }
 
     if (err instanceof Error) {
-      const error = new SystemException(err.message, err).toJSON();
+      sysLogError('[errorHandler]: Unexpected System Error:', err);
+      const error = new SystemException(err.message, err).toObject();
+
       return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json({ error });
     }
 
-    sysLogError('[errorHandler]: Unknown error', `'${err?.toString()}'`);
+    sysLogError('[errorHandler]: Unknown error:', `'${err?.toString()}'`);
 
-    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
+    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toObject());
   } catch (error) {
-    sysLogError('[errorHandler]: Error when handling error', error);
+    sysLogError('[errorHandler]: Error when handling error:', error);
 
-    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toJSON());
+    return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(unknownError.toObject());
   }
 };
 

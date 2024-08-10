@@ -178,6 +178,7 @@ export class ModuleHelper {
     }
 
     ServerFactory.modelRegistry[this._computedModuleName] = instance;
+    ServerFactory.schemaRegistry[this._computedModuleName] = instance.schema;
   }
 
   public registerRepositoryCtor() {

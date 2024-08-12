@@ -19,6 +19,8 @@ const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
 async function bootstrap() {
   ServerFactory.setPrefixBaseRoute(PREFIX_API);
+  // TODO: Make sysSequence module
+  ServerFactory.useSequenceModel();
 
   const webapp = ServerFactory.create(MainModule);
   const envInstance = Env.getInstance();

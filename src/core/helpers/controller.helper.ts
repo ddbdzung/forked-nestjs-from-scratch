@@ -124,7 +124,6 @@ export class ControllerAPI {
     ).build();
   }
 
-  // TODO: Add generic type for API
   async getList(req: Request, res: Response, next: NextFunction) {
     const ctx = res.locals.ctx as IContextAPI | undefined;
     if (!ctx) {

@@ -45,6 +45,7 @@ import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.h
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
 import { ServerFactory } from './factory.helper';
 import { CLIENT_RENEG_LIMIT } from 'tls';
+import { ISysSequenceRepository } from '../interfaces/base.repository.interface';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
@@ -183,7 +184,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
   public abstract name: string;
 
   // TODO: Implement now
-  public timestamp: IModelTimestamp = {};
+  public timestamp: IModelTimestamp | boolean = false;
 
   public readonly decoratorType = DECORATOR_TYPE.MODEL;
 
@@ -361,18 +362,9 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this._schema as any)[period](hook, handler);
-          // this._schema.pre('find', async function (this) {
-          //   // this.getQuery(),
-          // })
-          // this._schema.pre('save', async function (this) {
-          //   // this.
-
-          // });
         });
       });
     });
-
-    // TODO: Check type of middleware to avoid any type, Implement later
   }
 
   private _makePlugins() {
@@ -721,5 +713,53 @@ export class ModelMiddlewareBuilder<T> {
     this.periods = [];
     this.hooks = [];
     this.handler = undefined;
+  }
+}
+
+/** @public */
+export class ModelHelper {
+  /**
+   * @requires SysSequenceModel to be initialized first
+   * @param schemaRegistryName Name of schema registry (key by module name)
+   */
+  static async generateSequenceCode(schemaRegistryName: string) {
+    if (!ServerFactory.isMainModuleCreated) {
+      throw new SystemException('MainModule is required when using generateSequenceCode method!');
+    }
+
+    if (!ServerFactory.sequenceModelName) {
+      throw new SystemException('Sequence model option is not set!');
+    }
+
+    const schema = ServerFactory.schemaRegistry[schemaRegistryName];
+    if (!schema) {
+      throw new SystemException(`Schema of ${schemaRegistryName} not found`);
+    }
+
+    const codeFieldList = Object.keys(schema).filter(
+      (key) => schema[key].type === DATA_TYPE_ENUM.CODE,
+    );
+
+    if (codeFieldList.length > 1) {
+      throw new SystemException('Multiple code fields found in schema. Please specify codeField');
+    }
+
+    if (codeFieldList.length === 0) {
+      throw new SystemException('Code field not found in schema');
+    }
+
+    const codeField = codeFieldList[0];
+    const sequenceRepositoryRegister =
+      ServerFactory.repositoryRegistry[ServerFactory.sequenceModelName];
+    if (!sequenceRepositoryRegister) {
+      throw new SystemException('Sequence repository not found');
+    }
+
+    const sequenceRepository = sequenceRepositoryRegister.instance as ISysSequenceRepository | null;
+    if (!sequenceRepository) {
+      throw new SystemException('Sequence repository not found');
+    }
+
+    return sequenceRepository.getNextSequenceValue(codeField);
   }
 }

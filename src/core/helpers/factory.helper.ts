@@ -14,6 +14,8 @@ import { ISchema } from '@/core/interfaces/common.interface';
 import { SystemException } from './exception.helper';
 import { AbstractModule } from './abstract.helper';
 
+const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+
 /** @public */
 export class ServerFactory {
   static isMainModuleCreated = false;
@@ -52,10 +54,20 @@ export class ServerFactory {
    */
   static configRegistry: Record<RegistryName, unknown> = {};
 
+  private static _sequenceModelName: string;
+
   /**
    * Prefix base route for all modules
    */
   private static _prefixBaseRoute = '';
+
+  static get sequenceModelName() {
+    if (!ServerFactory._sequenceModelName) {
+      throw new SystemException('Sequence model option is not set!');
+    }
+
+    return ServerFactory._sequenceModelName;
+  }
 
   static create<T extends new (...args: unknown[]) => unknown>(ctor: T) {
     const moduleInstance = new ctor();
@@ -76,5 +88,11 @@ export class ServerFactory {
 
   static setPrefixBaseRoute(prefix: string) {
     ServerFactory._prefixBaseRoute = prefix;
+  }
+
+  static useSequenceModel(modelName?: string) {
+    const sysSequenceModelName = modelName || 'SysSequence';
+    ServerFactory._sequenceModelName = sysSequenceModelName;
+    sysLogInfo(`[ServerFactory]: Sequence model ${sysSequenceModelName} initialized!`);
   }
 }

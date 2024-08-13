@@ -15,6 +15,7 @@ import { SystemException } from './exception.helper';
 import { AbstractModule } from './abstract.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
+const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
 /** @public */
 export class ServerFactory {
@@ -49,6 +50,23 @@ export class ServerFactory {
    */
   static repositoryRegistry: Record<RegistryName, { ctr: ConstructorType; instance?: unknown }> =
     {};
+
+  static getRepositoryByModelName(modelName: string) {
+    const repoRegistry = ServerFactory.repositoryRegistry[modelName];
+
+    if (!repoRegistry) {
+      sysLogError(`[ServerFactory]: Repository registry not found for model ${modelName}`);
+      return null;
+    }
+
+    const repository = repoRegistry.instance;
+    if (!repository) {
+      sysLogError(`[ServerFactory]: Repository instance not found for model ${modelName}`);
+      return null;
+    }
+
+    return repository;
+  }
   /**
    * Key by module name
    */

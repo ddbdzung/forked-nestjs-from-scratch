@@ -12,7 +12,6 @@ export {
   bindContextApi,
   controllerWrapper,
   ModelMiddlewareBuilder,
-  ModelHelper,
 } from './helpers';
 export { Config, Model, Module, Repository } from './decorators';
 export * from './constants/common.constant';

@@ -11,7 +11,7 @@ import type {
 } from 'mongoose';
 import type { MongoServerError } from 'mongodb';
 
-import mongoose, { Schema, model as Modelize } from 'mongoose';
+import mongoose, { Schema, model as Modelize, SchemaTypeOptions } from 'mongoose';
 import { Router } from 'express';
 import debug from 'debug';
 
@@ -204,14 +204,23 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     this._moduleName = moduleName;
   }
 
-  private _makeSchema(schema: ISchema) {
-    const schemaResult = new Schema();
+  private _makeSchemaOptions() {
+    return {
+      typeKey: 'type',
+      id: true,
+      _id: true,
+      timestamps: this._makeTimestamp(),
+      versionKey: '__v',
+    };
+  }
+
+  private _makeSchema(schema: ISchema, _isTopStack = false) {
+    const schemaResult = _isTopStack ? new Schema({}, this._makeSchemaOptions()) : new Schema({});
 
     for (const field in schema) {
       if (PROHIBITED_FIELD_LIST.includes(field)) {
         throw new SystemException(`Field name '${field}' is prohibited`);
       }
-
       const fieldConfig = schema[field];
       const { type, sharp } = fieldConfig;
 
@@ -599,8 +608,31 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
     return constraintDefinition;
   }
 
+  private _makeTimestamp() {
+    if (!this.timestamp) {
+      return false;
+    }
+
+    if (typeof this.timestamp === 'object') {
+      const { createdAt, updatedAt } = this.timestamp;
+      const isCreatedAtUsed = createdAt?.isUsed;
+      const isUpdatedAtUsed = updatedAt?.isUsed;
+
+      if (!isCreatedAtUsed && !isUpdatedAtUsed) {
+        return false;
+      }
+
+      return {
+        createdAt: isCreatedAtUsed ? createdAt?.alternateName || 'createdAt' : false,
+        updatedAt: isUpdatedAtUsed ? updatedAt?.alternateName || 'updatedAt' : false,
+      };
+    }
+
+    return false;
+  }
+
   public makeModel() {
-    this._schema = this._makeSchema(this.schema);
+    this._schema = this._makeSchema(this.schema, true);
     this._makeVirtuals();
     this._makeMiddleware();
     this._makePlugins();
@@ -713,53 +745,5 @@ export class ModelMiddlewareBuilder<T> {
     this.periods = [];
     this.hooks = [];
     this.handler = undefined;
-  }
-}
-
-/** @public */
-export class ModelHelper {
-  /**
-   * @requires SysSequenceModel to be initialized first
-   * @param schemaRegistryName Name of schema registry (key by module name)
-   */
-  static async generateSequenceCode(schemaRegistryName: string) {
-    if (!ServerFactory.isMainModuleCreated) {
-      throw new SystemException('MainModule is required when using generateSequenceCode method!');
-    }
-
-    if (!ServerFactory.sequenceModelName) {
-      throw new SystemException('Sequence model option is not set!');
-    }
-
-    const schema = ServerFactory.schemaRegistry[schemaRegistryName];
-    if (!schema) {
-      throw new SystemException(`Schema of ${schemaRegistryName} not found`);
-    }
-
-    const codeFieldList = Object.keys(schema).filter(
-      (key) => schema[key].type === DATA_TYPE_ENUM.CODE,
-    );
-
-    if (codeFieldList.length > 1) {
-      throw new SystemException('Multiple code fields found in schema. Please specify codeField');
-    }
-
-    if (codeFieldList.length === 0) {
-      throw new SystemException('Code field not found in schema');
-    }
-
-    const codeField = codeFieldList[0];
-    const sequenceRepositoryRegister =
-      ServerFactory.repositoryRegistry[ServerFactory.sequenceModelName];
-    if (!sequenceRepositoryRegister) {
-      throw new SystemException('Sequence repository not found');
-    }
-
-    const sequenceRepository = sequenceRepositoryRegister.instance as ISysSequenceRepository | null;
-    if (!sequenceRepository) {
-      throw new SystemException('Sequence repository not found');
-    }
-
-    return sequenceRepository.getNextSequenceValue(codeField);
   }
 }

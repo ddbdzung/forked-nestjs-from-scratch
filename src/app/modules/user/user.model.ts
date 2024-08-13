@@ -7,9 +7,11 @@ import {
   ISchema,
 } from '@/core/index';
 
+import { USER_MODEL_NAME } from './user.constant';
+
 @Model()
 export class UserModel extends AbstractModel {
-  public override name = 'SysUser';
+  public override name = USER_MODEL_NAME;
   public override schema: ISchema = {
     fullName: {
       type: DATA_TYPE_ENUM.STRING,

@@ -17,7 +17,9 @@ export function ModelDecoratorFactory() {
       public override schema: Record<string, ISchemaType>;
 
       constructor(...args: any[]) {
+        console.log('[DEBUG][DzungDang] me here:', ctor.name);
         if (instance) {
+          console.log('[DEBUG][DzungDang] me here 1:', ctor.name);
           return instance;
         }
 

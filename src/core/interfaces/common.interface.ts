@@ -114,6 +114,7 @@ interface ISchemaTimestampType {
   alternateName?: string; // Set alternate name for timestamp field in Mongoose schema
 }
 
+/** @public */
 export interface IModelTimestamp {
   createdAt?: ISchemaTimestampType;
   updatedAt?: ISchemaTimestampType;

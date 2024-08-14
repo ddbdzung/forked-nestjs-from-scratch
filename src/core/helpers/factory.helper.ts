@@ -51,6 +51,11 @@ export class ServerFactory {
   static repositoryRegistry: Record<RegistryName, { ctr: ConstructorType; instance?: unknown }> =
     {};
 
+  /**
+   * Key by module name
+   */
+  static controllerRegistry: Record<RegistryName, unknown> = {};
+
   static getRepositoryByModelName(modelName: string) {
     const repoRegistry = ServerFactory.repositoryRegistry[modelName];
 

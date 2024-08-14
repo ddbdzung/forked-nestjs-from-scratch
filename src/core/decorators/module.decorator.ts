@@ -12,6 +12,7 @@ import {
   AbstractModule,
   AbstractModel,
   modelHandler,
+  AbstractController,
 } from '@/core/helpers';
 import { ISchemaType } from '@/core/interfaces/common.interface';
 import { IModuleOptions } from '@/core/interfaces/common.interface';
@@ -204,6 +205,28 @@ export class ModuleHelper {
     };
   }
 
+  public registerController() {
+    const { controller } = this._options;
+    if (!controller) {
+      return;
+    }
+
+    if (this._isMainModule) {
+      throw new SystemException(
+        `In ${this._computedModuleName}, repository must be declared in non ${MAIN_MODULE_NAME}!`,
+      );
+    }
+
+    const instance = new controller();
+    if (!(instance instanceof AbstractController)) {
+      throw new SystemException(
+        `In ${this._computedModuleName}, controller must be an instance of AbstractController!`,
+      );
+    }
+
+    ServerFactory.controllerRegistry[this._computedModuleName] = instance;
+  }
+
   public throwErrorList() {
     const errorList = this._isMainModule
       ? [...this._bizModuleErrorList, ...this._sysModuleErrorList]
@@ -301,6 +324,7 @@ export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
     moduleHelper.registerProvider();
     moduleHelper.registerModel();
     moduleHelper.registerRepositoryCtor();
+    moduleHelper.registerController();
 
     moduleHelper.throwErrorList();
 

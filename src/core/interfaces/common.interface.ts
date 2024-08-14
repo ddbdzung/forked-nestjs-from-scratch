@@ -71,6 +71,7 @@ export interface IModuleOptions {
   repository?: ConstructorType; // Repository of the module
   model?: ConstructorType; // Model of the module
   isGlobal?: boolean; // Set global module
+  controller?: ConstructorType; // Controller of the module
 }
 
 /** @public */

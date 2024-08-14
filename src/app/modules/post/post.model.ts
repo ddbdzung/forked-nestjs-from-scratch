@@ -43,22 +43,4 @@ export class PostModel extends AbstractModel {
       isUsed: true,
     },
   };
-
-  public override middlewares?: unknown[] | undefined = [
-    new ModelMiddlewareBuilder<IPost>()
-      .addPeriod(MODEL_MIDDLEWARE_PERIOD_ENUM.PRE)
-      .setHooks([MODEL_MIDDLEWARE_HOOK_ENUM.SAVE])
-      .setHandler('document', async function (this) {
-        console.log(
-          '[DEBUG][DzungDang]  ServerFactory.mongooseModelRegistry:',
-          ServerFactory.mongooseModelRegistry,
-        );
-        const userModel = ServerFactory.mongooseModelRegistry[USER_MODULE_NAME];
-        console.log('[DEBUG][DzungDang] userModel:', userModel);
-
-        const userRepository = new UserRepository(userModel);
-        console.log('[DEBUG][DzungDang] userRepository:', userRepository);
-      })
-      .build(),
-  ];
 }

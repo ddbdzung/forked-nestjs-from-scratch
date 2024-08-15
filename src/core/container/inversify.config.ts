@@ -6,6 +6,6 @@ import { USER_DI } from '@/app/modules/user/user.constant';
 const container = new Container();
 
 // Bind your services
-container.bind<UserRepository>(USER_DI.USER_REPOSITORY).to(new UserRepository());
+// container.bind<UserRepository>(USER_DI.USER_REPOSITORY).to(new UserRepository());
 
 export { container };

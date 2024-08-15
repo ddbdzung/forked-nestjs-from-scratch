@@ -1,10 +1,10 @@
-import 'reflect-metadata';
-import { Container } from 'inversify';
-import { UserService } from './services/user.service'; // Adjust the path
+// import 'reflect-metadata';
+// import { Container } from 'inversify';
+// import { UserService } from './services/user.service'; // Adjust the path
 
-const container = new Container();
+// const container = new Container();
 
-// Register UserService as a singleton
-container.bind<UserService>(UserService).toSelf().inSingletonScope();
+// // Register UserService as a singleton
+// container.bind<UserService>(UserService).toSelf().inSingletonScope();
 
-export { container };
+// export { container };

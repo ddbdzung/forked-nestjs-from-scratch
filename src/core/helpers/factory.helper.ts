@@ -1,4 +1,4 @@
-import type { Model, Schema } from 'mongoose';
+import type { Document, Model, Schema } from 'mongoose';
 import type { Express, Router } from 'express';
 
 import debug from 'debug';
@@ -13,6 +13,7 @@ import { ISchema } from '@/core/interfaces/common.interface';
 
 import { SystemException } from './exception.helper';
 import { AbstractModule } from './abstract.helper';
+import { BaseRepository } from '../repository';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
@@ -48,8 +49,10 @@ export class ServerFactory {
   /**
    * Key by module name
    */
-  static repositoryRegistry: Record<RegistryName, { ctr: ConstructorType; instance?: unknown }> =
-    {};
+  static repositoryRegistry: Record<
+    RegistryName,
+    { ctr: ConstructorType; instance?: BaseRepository<Document> }
+  > = {};
 
   /**
    * Key by module name

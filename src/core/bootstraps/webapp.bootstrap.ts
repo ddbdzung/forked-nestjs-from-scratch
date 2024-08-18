@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 
-import { AbstractModule, errorHandler } from '@/core/helpers';
+import { AbstractModule, errorHandler, ServerFactory } from '@/core/helpers';
 import { SystemException, successHandler } from '@/core/helpers';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
@@ -37,9 +37,13 @@ export const webappRegister = ({
   // TODO: Implement general API (health check, etc.)
 
   for (const instance of Object.values(registryMap)) {
+    const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
     if (instance instanceof AbstractModule && instance.modelHandler) {
-      const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
       app.use(basePath, instance.modelHandler(app, basePath));
+    }
+
+    if (instance instanceof AbstractModule && instance.customControllerHandler) {
+      app.use(basePath, instance.customControllerHandler(app, basePath));
     }
   }
 

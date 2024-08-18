@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
-import { container } from '../container/inversify.config'; // Adjust the import path as necessary
+import { Container } from '../container/inversify.config'; // Adjust the import path as necessary
+import { USER_DI } from '@/app/modules/user/user.constant';
 
 export function Inject(token: symbol) {
-  return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
-    const existingInjectedParameters = Reflect.getOwnMetadata('design:paramtypes', target) || [];
-    existingInjectedParameters[parameterIndex] = token;
-    Reflect.defineMetadata('design:paramtypes', existingInjectedParameters, target);
-
-    // Modify constructor to inject dependencies
-    const originalConstructor = target;
-    const newConstructor = function (...args: any[]) {
-      const injectedArgs = existingInjectedParameters.map((dep: symbol) => container.get(dep));
-      return new originalConstructor(...injectedArgs, ...args);
-    };
-    newConstructor.prototype = originalConstructor.prototype;
-    return newConstructor;
+  return function (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) {
+    const xx = Container.getInstance().get(token);
+    console.log('[DEBUG][DzungDang] xx:', xx);
   };
 }

@@ -9,6 +9,8 @@ export abstract class AbstractModule {
   public modelHandler?: (app: Express, basePath: string) => Router;
   public modelName?: string;
 
+  public customControllerHandler?: (app: Express, basePath: string) => Router;
+
   public moduleName?: string;
   public version?: VERSION_API; // Version of module route
   public prefix?: string; // Prefix for module route

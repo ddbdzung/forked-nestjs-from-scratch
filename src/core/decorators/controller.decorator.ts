@@ -2,31 +2,22 @@ import debug from 'debug';
 
 import { AbstractController, AbstractModel, SystemException } from '../helpers';
 import { DEBUG_CODE } from '../constants/common.constant';
+import { container } from '../container/inversify.config';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// const METHOD_METADATA_KEY = Symbol('method_metadata_key');
+
 function ControllerDecoratorFactory() {
-  return <T extends new (...args: any[]) => AbstractController>(ctor: T) => {
-    let instance: InstanceType<T> | null = null;
+  return <T extends new (...args: any[]) => T>(ctor: T) => {
+    const methods = Object.getOwnPropertyNames(ctor.prototype).filter(
+      (name) => name !== 'constructor' && typeof ctor.prototype[name] === 'function',
+    );
 
-    return class extends ctor {
-      constructor(...args: any[]) {
-        if (instance) {
-          return instance;
-        }
+    // Re-define metadata for constructor
+    Reflect.defineMetadata('METHOD_METADATA_KEY', methods, ctor);
 
-        super(...args);
-
-        instance = new ctor(...args) as InstanceType<T>;
-        if (!instance) {
-          throw new SystemException('Controller instance cannot be created!');
-        }
-
-        sysLogInfo(`[${ctor.name}]: Controller initialized!`);
-        return instance;
-      }
-    };
+    return ctor;
   };
 }
 

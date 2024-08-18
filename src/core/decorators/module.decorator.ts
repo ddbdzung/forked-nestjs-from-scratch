@@ -1,7 +1,7 @@
 import groupBy from 'lodash/groupBy';
 
 import type { Schema } from 'mongoose';
-import type { Express, Router } from 'express';
+import { Express, Router } from 'express';
 
 import debug from 'debug';
 
@@ -13,8 +13,9 @@ import {
   AbstractModel,
   modelHandler,
   AbstractController,
+  controllerWrapper,
 } from '@/core/helpers';
-import { ISchemaType } from '@/core/interfaces/common.interface';
+import { IControllerHandlerPayload, ISchemaType } from '@/core/interfaces/common.interface';
 import { IModuleOptions } from '@/core/interfaces/common.interface';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
@@ -206,8 +207,8 @@ export class ModuleHelper {
   }
 
   public registerController() {
-    const { controller } = this._options;
-    if (!controller) {
+    const { controller: Controller } = this._options;
+    if (!Controller) {
       return;
     }
 
@@ -217,12 +218,12 @@ export class ModuleHelper {
       );
     }
 
-    const instance = new controller();
-    if (!(instance instanceof AbstractController)) {
-      throw new SystemException(
-        `In ${this._computedModuleName}, controller must be an instance of AbstractController!`,
-      );
-    }
+    const instance = new Controller();
+    // if (!(instance instanceof AbstractController)) {
+    //   throw new SystemException(
+    //     `In ${this._computedModuleName}, controller must be an instance of AbstractController!`,
+    //   );
+    // }
 
     ServerFactory.controllerRegistry[this._computedModuleName] = instance;
   }
@@ -353,6 +354,10 @@ export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
 
         const configInstance = ServerFactory.configRegistry[computedModuleName] as AbstractConfig;
         if (configInstance) {
+          instance.customControllerHandler = customControllerHandler({
+            controllerInstance: ServerFactory.controllerRegistry[computedModuleName],
+          });
+
           const modelInstance = ServerFactory.modelRegistry[computedModuleName] as AbstractModel;
           let modelName = '';
 
@@ -379,5 +384,41 @@ export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
         return instance;
       }
     };
+  };
+}
+// const METHOD_METADATA_KEY = Symbol('method_metadata_key');
+
+export function customControllerHandler(payload: IControllerHandlerPayload) {
+  return (app: Express, basePath: string) => {
+    console.log('[DEBUG][DzungDang] in customControllerHandler:');
+    const { controllerInstance } = payload;
+    if (!controllerInstance) {
+      return;
+    }
+
+    const methodNameList = Reflect.getOwnMetadata(
+      'METHOD_METADATA_KEY',
+      controllerInstance.constructor,
+    );
+
+    const router = Router();
+
+    methodNameList.forEach((methodName) => {
+      const method = controllerInstance[methodName];
+      console.log(
+        '[DEBUG][DzungDang] raw methodMeta:',
+        Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method),
+      );
+      const methodMeta = Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method) || {
+        path: '/12',
+        method: 'get',
+      };
+      console.log('[DEBUG][DzungDang] methodMeta:', methodMeta);
+      const { path, method: httpMethod } = methodMeta;
+
+      router[httpMethod](path, controllerWrapper(method.bind(controllerInstance)));
+    });
+
+    return router;
   };
 }

@@ -4,6 +4,7 @@ import debug from 'debug';
 
 import { SystemException } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { Container } from '../container/inversify.config';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
@@ -23,6 +24,9 @@ function RepositoryDecoratorFactory() {
         if (!instance) {
           throw new SystemException('Repository instance cannot be created!');
         }
+
+        Container.getInstance().bind(Symbol(ctor.name)).toInstance(instance);
+        console.log('[DEBUG][DzungDang] instance set  :', Symbol(ctor.name));
 
         sysLogInfo(`[${ctor.name}]: Repository initialized!`);
         return instance;

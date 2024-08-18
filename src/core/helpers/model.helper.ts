@@ -44,8 +44,8 @@ import { MONGO_ERROR, MONGO_ERROR_CODE } from '@/core/modules/mongoose/mongoose.
 import { ControllerAPI, bindContextApi, controllerWrapper } from './controller.helper';
 import { BusinessException, ExceptionMetadataType, SystemException } from './exception.helper';
 import { ServerFactory } from './factory.helper';
-import { CLIENT_RENEG_LIMIT } from 'tls';
 import { ISysSequenceRepository } from '../interfaces/base.repository.interface';
+import { BaseRepository } from '../repository';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
@@ -183,7 +183,6 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
   public abstract schema: ISchema;
   public abstract name: string;
 
-  // TODO: Implement now
   public timestamp: IModelTimestamp | boolean = false;
 
   public readonly decoratorType = DECORATOR_TYPE.MODEL;
@@ -422,7 +421,7 @@ export abstract class AbstractModel<T extends Document = Document> implements IM
       throw new SystemException(`Model ${moduleName} have not been initialized yet`);
     }
 
-    return new ctor(this._model);
+    return new ctor(this._model) as BaseRepository<T>;
   }
 
   private _makeConstraintDef(

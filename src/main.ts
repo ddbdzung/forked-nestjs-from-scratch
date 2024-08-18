@@ -11,7 +11,8 @@ import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
 import { Env } from '@/app/modules/env/env.service';
 import { MainModule } from '@/app/main.module';
-import { MyClass } from './test';
+import './test';
+import { PostRepository } from './app/modules/post/post.repository';
 
 let server: Server | null = null;
 systemErrorHandler(server);
@@ -29,7 +30,6 @@ async function bootstrap() {
 
   server = webapp.listen(appPort, async () => {
     sysLogInfo(`[Main]: Server started at port ${appPort}`);
-    const example = new MyClass('david', 18);
   });
 }
 

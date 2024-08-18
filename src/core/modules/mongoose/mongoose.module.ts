@@ -3,10 +3,10 @@ import debug from 'debug';
 
 import { Module } from '@/core/decorators';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { AbstractModule } from '@/core/helpers/abstract.helper';
 
 import { IRegisterOption } from './mongoose.interface';
 import { MongodbConfigurationBuilder } from './mongoose.builder';
-import { AbstractModule } from '@/core/helpers/abstract.helper';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 

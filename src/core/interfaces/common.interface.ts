@@ -120,3 +120,10 @@ export interface IModelTimestamp {
   createdAt?: ISchemaTimestampType;
   updatedAt?: ISchemaTimestampType;
 }
+
+export interface IControllerHandlerPayload {
+  data?: unknown;
+  query?: unknown;
+  params?: unknown;
+  controllerInstance: unknown;
+}

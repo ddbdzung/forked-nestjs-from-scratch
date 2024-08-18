@@ -34,7 +34,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       sysLogError('[errorHandler]: Unexpected System Error:', err);
       const error = new SystemException(err.message, err).toObject();
 
-      return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json({ error });
+      return res.status(HTTP_RESPONSE_CODE.INTERNAL_SERVER_ERROR).json(error);
     }
 
     sysLogError('[errorHandler]: Unknown error:', `'${err?.toString()}'`);

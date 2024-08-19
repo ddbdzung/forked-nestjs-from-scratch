@@ -25,9 +25,6 @@ function RepositoryDecoratorFactory() {
           throw new SystemException('Repository instance cannot be created!');
         }
 
-        Container.getInstance().bind(Symbol(ctor.name)).toInstance(instance);
-        console.log('[DEBUG][DzungDang] instance set  :', Symbol(ctor.name));
-
         sysLogInfo(`[${ctor.name}]: Repository initialized!`);
         return instance;
       }

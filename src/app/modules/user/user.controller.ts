@@ -10,15 +10,18 @@ import { container } from '../../../test';
 @Controller()
 @injectable()
 export class UserController {
-  constructor(
-    @inject(USER_DI.USER_REPOSITORY)
-    private readonly userRepository: IUserRepository,
-  ) {}
-  // @inject(USER_DI.USER_REPOSITORY) private userRepository: IUserRepository;
+  // constructor(
+  //   @inject(USER_DI.USER_REPOSITORY)
+  //   private readonly userRepository: IUserRepository,
+  // ) {
+  //   this._userRepository = userRepository;
+  // }
+
+  // private _userRepository: IUserRepository;
 
   async getAllUsers(req, res, next) {
-    // const repository = container.get<IUserRepository>(USER_DI.USER_REPOSITORY);
-    console.log('[DEBUG][DzungDang] userRepository:', this.userRepository);
+    const repository = container.get<IUserRepository>(USER_DI.USER_REPOSITORY);
+    console.log('[DEBUG][DzungDang] repository:', repository);
 
     // const data = await this.userRepository.findAll();
     // console.log('[DEBUG][DzungDang] data:', data);

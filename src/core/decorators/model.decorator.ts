@@ -5,6 +5,7 @@ import debug from 'debug';
 import { SystemException, AbstractModel } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 import { ISchemaType } from '@/core/interfaces/common.interface';
+import { container } from '../../test';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 

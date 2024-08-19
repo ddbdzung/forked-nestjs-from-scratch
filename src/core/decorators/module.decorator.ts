@@ -19,6 +19,7 @@ import { IControllerHandlerPayload, ISchemaType } from '@/core/interfaces/common
 import { IModuleOptions } from '@/core/interfaces/common.interface';
 import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
 import { DEBUG_CODE, MAIN_MODULE_NAME, VERSION_API } from '@/core/constants/common.constant';
+import { container } from '../../test';
 
 type RegistryName = string;
 type ProviderName = string;
@@ -179,6 +180,7 @@ export class ModuleHelper {
       throw new SystemException(`Model ${instance.name} must be declared with repository!`);
     }
 
+    container.bind(Symbol.for(instance.name)).toConstantValue(instance);
     ServerFactory.modelRegistry[this._computedModuleName] = instance;
     ServerFactory.schemaRegistry[this._computedModuleName] = instance.schema;
   }

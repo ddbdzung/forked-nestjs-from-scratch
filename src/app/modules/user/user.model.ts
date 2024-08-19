@@ -8,8 +8,10 @@ import {
 } from '@/core/index';
 
 import { USER_MODEL_NAME } from './user.constant';
+import { injectable } from 'inversify';
 
 @Model()
+@injectable()
 export class UserModel extends AbstractModel {
   public override name = USER_MODEL_NAME;
   public override schema: ISchema = {

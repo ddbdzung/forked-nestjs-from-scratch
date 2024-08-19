@@ -53,7 +53,6 @@ const myContainer = new Container();
 myContainer.bind<Warrior>(TYPES.Warrior).to(Ninja);
 myContainer.bind<Weapon>(TYPES.Weapon).to(Katana);
 myContainer.bind<ThrowableWeapon>(TYPES.ThrowableWeapon).to(Shuriken);
-myContainer.bind<IUserRepository>(USER_DI.USER_REPOSITORY).to(UserRepository);
 // const ninja1 = myContainer.get<Warrior>(TYPES.Warrior);
 // console.log('[DEBUG][DzungDang] ninja1:', ninja1.fight());
 // console.log('[DEBUG][DzungDang] ninja1:', ninja1.sneak());

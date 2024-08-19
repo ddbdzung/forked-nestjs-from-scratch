@@ -5,12 +5,11 @@ import { Repository } from '@/core/decorators';
 
 import { IUser } from './interfaces/user.model.interface';
 import { IUserRepository } from './interfaces/user.repository.interface';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
-// @Repository()
 @injectable()
 export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
-  constructor(protected override model: Model<IUser>) {
+  constructor(@inject(Symbol.for('SysUser')) protected override model: Model<IUser>) {
     super(model);
   }
 

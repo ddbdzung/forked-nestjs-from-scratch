@@ -91,7 +91,7 @@ export class MongodbConfigurationBuilder {
     return this._options;
   }
 
-  public setHost(host: string): MongodbConfigurationBuilder {
+  public setHost(host: string): this {
     if (!validIpAddressRegex.test(host) && !validHostnameRegex.test(host)) {
       throw new SystemException('Host must be a valid ip address or hostname');
     }
@@ -100,7 +100,7 @@ export class MongodbConfigurationBuilder {
     return this;
   }
 
-  public setPort(port: number): MongodbConfigurationBuilder {
+  public setPort(port: number): this {
     if (port < 0 || port > 65_535) {
       throw new SystemException('Port must be between 0 and 65535');
     }
@@ -109,12 +109,12 @@ export class MongodbConfigurationBuilder {
     return this;
   }
 
-  public setDatabaseName(databaseName: string): MongodbConfigurationBuilder {
+  public setDatabaseName(databaseName: string): this {
     this._uriConfig.databaseName = databaseName;
     return this;
   }
 
-  public withAccessCredentials(username: string, password: string): MongodbConfigurationBuilder {
+  public withAccessCredentials(username: string, password: string): this {
     const specialCharacters = ['$', ':', '/', '?', '#', '[', ']', '@'];
     const formattedPassword = specialCharacters.some((char) => password.includes(char))
       ? encodeURIComponent(password)
@@ -126,7 +126,7 @@ export class MongodbConfigurationBuilder {
     return this;
   }
 
-  public withOptions(options: ConnectOptions): MongodbConfigurationBuilder {
+  public withOptions(options: ConnectOptions): this {
     this._options = options;
     return this;
   }

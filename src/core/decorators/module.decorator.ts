@@ -392,34 +392,34 @@ export function ModuleDecoratorFactory(options: IModuleOptions = {}) {
 
 export function customControllerHandler(payload: IControllerHandlerPayload) {
   return (app: Express, basePath: string) => {
-    console.log('[DEBUG][DzungDang] in customControllerHandler:');
-    const { controllerInstance } = payload;
-    if (!controllerInstance) {
-      return;
-    }
+    // console.log('[DEBUG][DzungDang] in customControllerHandler:');
+    // const { controllerInstance } = payload;
+    // if (!controllerInstance) {
+    //   return;
+    // }
 
-    const methodNameList = Reflect.getOwnMetadata(
-      'METHOD_METADATA_KEY',
-      controllerInstance.constructor,
-    );
+    // const methodNameList = Reflect.getOwnMetadata(
+    //   'METHOD_METADATA_KEY',
+    //   controllerInstance.constructor,
+    // );
 
     const router = Router();
 
-    methodNameList.forEach((methodName) => {
-      const method = controllerInstance[methodName];
-      console.log(
-        '[DEBUG][DzungDang] raw methodMeta:',
-        Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method),
-      );
-      const methodMeta = Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method) || {
-        path: '/12',
-        method: 'get',
-      };
-      console.log('[DEBUG][DzungDang] methodMeta:', methodMeta);
-      const { path, method: httpMethod } = methodMeta;
+    // methodNameList.forEach((methodName) => {
+    //   const method = controllerInstance[methodName];
+    //   console.log(
+    //     '[DEBUG][DzungDang] raw methodMeta:',
+    //     Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method),
+    //   );
+    //   const methodMeta = Reflect.getMetadata(DECORATOR_TYPE.CONTROLLER, method) || {
+    //     path: '/12',
+    //     method: 'get',
+    //   };
+    //   console.log('[DEBUG][DzungDang] methodMeta:', methodMeta);
+    //   const { path, method: httpMethod } = methodMeta;
 
-      router[httpMethod](path, controllerWrapper(method.bind(controllerInstance)));
-    });
+    //   router[httpMethod](path, controllerWrapper(method.bind(controllerInstance)));
+    // });
 
     return router;
   };

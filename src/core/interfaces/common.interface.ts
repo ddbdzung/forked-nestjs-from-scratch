@@ -127,3 +127,5 @@ export interface IControllerHandlerPayload {
   params?: unknown;
   controllerInstance: unknown;
 }
+
+export type Type<T = any> = new (...args: any[]) => T;

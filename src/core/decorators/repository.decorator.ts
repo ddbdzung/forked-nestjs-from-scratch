@@ -4,7 +4,6 @@ import debug from 'debug';
 
 import { SystemException } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { Container } from '../container/inversify.config';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 

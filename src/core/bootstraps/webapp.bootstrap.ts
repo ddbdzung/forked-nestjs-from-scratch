@@ -36,7 +36,7 @@ export const webappRegister = ({
 
   // TODO: Implement general API (health check, etc.)
 
-  for (const instance of Object.values(registryMap)) {
+  for (const instance of Object.values(registryMap as Record<string, AbstractModule>)) {
     const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
     if (instance instanceof AbstractModule && instance.modelHandler) {
       app.use(basePath, instance.modelHandler(app, basePath));

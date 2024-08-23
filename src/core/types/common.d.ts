@@ -48,3 +48,5 @@ type ConstructorType = new (...args: any[]) => any;
 type Readonly<T> = {
   readonly [P in keyof T]: T[P];
 };
+
+type Controller = object;

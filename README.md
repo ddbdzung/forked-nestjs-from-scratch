@@ -2,6 +2,10 @@
 
 ## Author: [David Dang](https://github.com/ddbdzung)
 
-## Project Convention:
+## Disclaimer
+<p>
+This is likely a customized version of Nestjs project. It is not intended to be a generic project and will not be used for make money. It is only for learning purpose.
+</p>
 
-1. Each modules in /app should contains all the necessary files to run the module. Every imported files from other modules should be declared in .module.ts file to make it easier to track the dependencies.
+## Reference
+[Nestjs](https://nestjs.com/)

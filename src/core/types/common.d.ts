@@ -50,3 +50,5 @@ type Readonly<T> = {
 };
 
 type Controller = object;
+
+type Ctr<T = any> = new (...args: any[]) => T;

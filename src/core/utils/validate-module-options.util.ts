@@ -4,6 +4,7 @@ const moduleOptionKeys = [
   moduleOptionConstants.IMPORTS,
   moduleOptionConstants.EXPORTS,
   moduleOptionConstants.PROVIDERS,
+  moduleOptionConstants.CONTROLLERS,
 ];
 
 export function validateModuleKeys(keys: string[]) {

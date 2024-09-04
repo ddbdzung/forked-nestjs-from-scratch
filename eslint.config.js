@@ -3,6 +3,7 @@
 
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
+// const eslintJest = require('eslint-plugin-jest');
 
 module.exports = tseslint.config({
   files: ['**/*.ts', '**/*.tsx'],
@@ -10,6 +11,7 @@ module.exports = tseslint.config({
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     ...tseslint.configs.stylistic,
+    // ...eslintJest.configs.recommended,
   ],
   ignores: ['node_modules', 'dist', 'coverage', 'public', 'static', 'vendor'],
   languageOptions: {

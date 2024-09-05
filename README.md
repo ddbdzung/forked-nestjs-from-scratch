@@ -4,7 +4,7 @@
 
 ## Disclaimer
 <p>
-This is likely a customized version of Nestjs project. It is not intended to be a generic project and will not be used for make money. It is only for learning purpose.
+This is likely a customized version of a NestJS project. It is not intended for commercial use or profit; it is solely for learning purposes.
 </p>
 
 ## Reference

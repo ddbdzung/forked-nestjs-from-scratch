@@ -16,7 +16,7 @@ module.exports = tseslint.config({
   ignores: ['node_modules', 'dist', 'coverage', 'public', 'static', 'vendor'],
   languageOptions: {
     parserOptions: {
-      project: './tsconfig.json',
+      project: ['./tsconfig.json', './tsconfig.test.json'],
     },
   },
   rules: {

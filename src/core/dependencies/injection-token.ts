@@ -1,7 +1,6 @@
 import { uid } from 'uid/secure';
 import { createHash } from 'crypto';
-
-export const METADATA_TOKEN_KEY = '__METADATA_TOKEN_KEY__';
+import { UncaughtDependencyException } from './exception';
 
 export type ForwardRefFn = () => InjectionToken;
 
@@ -28,10 +27,13 @@ export class InjectionToken {
     this._id = this._generateId();
 
     if (typeof identifier === 'string') {
+      this._identifier = identifier;
       this._token = this._generateToken(this._id, identifier);
     } else if (typeof identifier === 'function') {
-      this.bindTo(identifier);
+      this._identifier = identifier.name;
       this._token = this._generateToken(this._id, identifier.name);
+
+      this.bindTo(identifier);
     }
 
     return this;

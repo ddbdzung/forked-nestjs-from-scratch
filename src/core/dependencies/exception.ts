@@ -1,4 +1,13 @@
-import { RuntimeException } from '@/core/utils/exception.util';
+/** @see https://github.com/nestjs/nest/blob/master/packages/core/errors/exceptions/runtime.exception.ts */
+export class RuntimeException extends Error {
+  constructor(message = '') {
+    super(message);
+  }
+
+  public what() {
+    return this.message;
+  }
+}
 
 export class UninjectedTokenException extends RuntimeException {
   constructor(targetName: string, index: number) {

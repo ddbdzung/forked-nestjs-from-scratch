@@ -10,7 +10,7 @@ import { UncaughtDependencyException, UninjectedTokenException } from './excepti
 export const INJECT_CLASS_METADATA_KEY = '__INJECT_CLASS_METADATA_KEY__';
 export const CONSTRUCTOR_PARAM_METADATA_KEY = 'design:paramtypes';
 
-class DIContainer implements IDIContainer {
+export class DIContainer implements IDIContainer {
   private static _instance: DIContainer;
 
   private _instanceDict: Map<InjectionToken['token'], unknown>;

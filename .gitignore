@@ -28,3 +28,4 @@ yarn.lock
 .DS_Store
 # Windows thumbnail cache files
 Thumbs.db
+coverage/

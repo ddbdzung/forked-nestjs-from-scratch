@@ -1,14 +1,30 @@
 import 'reflect-metadata';
 
+import { DeliverModule } from '../../common/dependency.mocks';
+import { IPayloadInjector } from '../../../src/core/interfaces/dependencies/injection-token.interface';
+import { InjectionToken } from '../../../src/core/dependencies';
+
 describe('InjectDecorator', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let targetClass: any;
+  test('@Inject class should have metadata in target class', () => {
+    const metadataKey = '__INJECT_CLASS_METADATA_KEY__';
+    const metadataValue = Reflect.getMetadata(metadataKey, DeliverModule) as IPayloadInjector[];
 
-  beforeAll(async () => {
-    targetClass = new Map();
-  });
+    expect(metadataValue).toBeDefined();
+    expect(metadataValue).toBeInstanceOf(Array);
+    expect(metadataValue.length).toBe(2);
 
-  test('First test', () => {
-    expect(1 + 1).toEqual(2);
+    const [officeInjectorPayload, userInjectorPayload] = metadataValue;
+
+    expect(officeInjectorPayload.index).toBe(1);
+    expect(officeInjectorPayload.token).toBeInstanceOf(InjectionToken);
+    expect(officeInjectorPayload.sourceConstructor).toBe(DeliverModule);
+    expect(officeInjectorPayload.injected).toBeFalsy();
+
+    expect(userInjectorPayload.index).toBe(0);
+    expect(userInjectorPayload.token).toBeInstanceOf(Function);
+    expect(userInjectorPayload.sourceConstructor).toBe(DeliverModule);
+    expect(userInjectorPayload.injected).toBeFalsy();
+
+    expect(officeInjectorPayload.token).not.toBe(userInjectorPayload.token);
   });
 });

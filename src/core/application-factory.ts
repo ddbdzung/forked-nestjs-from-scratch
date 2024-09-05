@@ -1,7 +1,7 @@
 import type { CorsOptions } from 'cors';
 
 import { ApplicationConfig } from './application';
-import { DependencyContainer } from './dependency-injection/container';
+// import { DependencyContainer } from './dependency-injection/container';
 import { IApplication } from './interfaces/application.interface';
 import { VERSION_API } from './constants/common.constant';
 
@@ -17,9 +17,9 @@ export class ApplicationFactory implements IApplication {
   }
 }
 
-export class ApplicationFactoryStatic {
-  static create<T extends IApplication = IApplication>(module: unknown) {
-    const appConfig = new ApplicationConfig();
-    const container = new DependencyContainer(appConfig);
-  }
-}
+// export class ApplicationFactoryStatic {
+//   static create<T extends IApplication = IApplication>(module: unknown) {
+//     const appConfig = new ApplicationConfig();
+//     const container = new DependencyContainer(appConfig);
+//   }
+// }

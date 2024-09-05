@@ -1,4 +1,7 @@
-import { forwardRef, Inject, Injectable, InjectionToken } from '../../src/core/dependencies';
+import { forwardRef } from '../../forward-ref';
+import { InjectionToken } from '../../injection-token';
+import { Inject } from '../../inject.decorator';
+import { Injectable } from '../../injectable.decorator';
 
 import { IDeliverModule, IOfficeModule, IUserModule } from './common.interface';
 

@@ -1,5 +1,8 @@
-import { forwardRef, InjectionToken } from '../../../src/core/dependencies';
-import { DeliverModule } from '../../common/dependency.mocks';
+import 'reflect-metadata';
+
+import { forwardRef } from '../forward-ref';
+import { InjectionToken } from '../injection-token';
+import { DeliverModule } from './common/dependency.mocks';
 
 describe('forwardRef', () => {
   let defaultInjectionToken: InjectionToken;

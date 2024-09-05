@@ -11,7 +11,6 @@ import { ServerFactory, systemErrorHandler } from '@/core/helpers';
 
 import { Env } from '@/app/modules/env/env.service';
 import { MainModule } from '@/app/main.module';
-import './test';
 import { PostRepository } from './app/modules/post/post.repository';
 
 let server: Server | null = null;

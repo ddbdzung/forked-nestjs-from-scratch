@@ -1,5 +1,7 @@
 import 'reflect-metadata';
-import { DIContainer, InjectionToken } from '../../../src/core/dependencies';
+
+import { DIContainer } from '../dependency-container';
+import { InjectionToken } from '../injection-token';
 import {
   DeliverModule,
   deliverModuleToken,
@@ -7,8 +9,8 @@ import {
   officeModuleToken,
   UserModule,
   userModuleToken,
-} from '../../common/dependency.mocks';
-import { IDeliverModule, IOfficeModule, IUserModule } from '../../common/common.interface';
+} from './common/dependency.mocks';
+import { IDeliverModule, IOfficeModule, IUserModule } from './common/common.interface';
 
 class MockDependency {}
 

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
-import { DeliverModule } from '../../common/dependency.mocks';
-import { IPayloadInjector } from '../../../src/core/interfaces/dependencies/injection-token.interface';
-import { InjectionToken } from '../../../src/core/dependencies';
+import { DeliverModule } from './common/dependency.mocks';
+import { InjectionToken } from '../injection-token';
+import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
 
 describe('InjectDecorator', () => {
   test('@Inject class should have metadata in target class', () => {

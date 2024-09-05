@@ -6,8 +6,8 @@ import {
   officeModuleToken,
   DeliverModule,
   OfficeModule,
-} from '../../common/dependency.mocks';
-import { InjectionToken } from '../../../src/core/dependencies';
+} from './common/dependency.mocks';
+import { InjectionToken } from '../injection-token';
 
 describe('InjectionToken', () => {
   test('constructor with string should generate token', () => {

@@ -8,6 +8,7 @@ import {
   MODEL_MIDDLEWARE_PERIOD_ENUM,
 } from '@/core/constants/model.constant';
 import { AbstractModel } from '@/core/helpers/model.helper';
+import { SCOPE } from '../dependencies';
 
 type ConstructorType = new (...args: any[]) => any;
 
@@ -129,3 +130,16 @@ export interface IControllerHandlerPayload {
 }
 
 export type Type<T = any> = new (...args: any[]) => T;
+
+export interface UseClassProvider {
+  provide: string;
+  useClass: Type;
+  /**
+   * Default is 'DEFAULT' (singleton)
+   */
+  scope?: SCOPE;
+}
+
+export type Provider = Type<any> | UseClassProvider;
+
+export type CustomProvider = Exclude<Provider, Type<any>>;

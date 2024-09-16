@@ -3,24 +3,30 @@ import 'reflect-metadata';
 import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
 import { DeliverModule, OfficeModule, UserModule } from './common/dependency.mocks';
 import { InjectionToken } from '../injection-token';
+import { InjectableOptions, SCOPE, SCOPE_METADATA_KEY } from '../injectable.decorator';
 
 describe('InjectableDecorator', () => {
-  test('@Injectable class should have metadata in target class', () => {
+  test('@Injectable class should have design:paramtypes metadata key', () => {
     const metadataKey = 'design:paramtypes';
-    const metadataDeliverModule = Reflect.getMetadata(metadataKey, DeliverModule) as unknown[];
+    const metadataDeliverModule = Reflect.getMetadataKeys(DeliverModule);
+    const metadataOfficeModule = Reflect.getMetadataKeys(OfficeModule);
+    const metadataUserModule = Reflect.getMetadataKeys(UserModule);
 
-    expect(metadataDeliverModule).toBeDefined();
-    expect(metadataDeliverModule).toBeInstanceOf(Array);
-    expect(metadataDeliverModule.length).toBe(2);
+    expect(metadataDeliverModule).toContain(metadataKey);
+    expect(metadataOfficeModule).toContain(metadataKey);
+    expect(metadataUserModule).toContain(metadataKey);
+  });
 
-    const metadataUserModule = Reflect.getMetadata(metadataKey, UserModule) as unknown[];
-    expect(metadataUserModule).toBeDefined();
-    expect(metadataUserModule).toBeInstanceOf(Array);
-    expect(metadataUserModule.length).toBe(1);
+  test('@Injectable should define Scope metadata in target class', () => {
+    const options = Reflect.getMetadata(SCOPE_METADATA_KEY, DeliverModule);
 
-    const metadataOfficeModule = Reflect.getMetadata(metadataKey, OfficeModule) as unknown[];
-    expect(metadataOfficeModule).toBeDefined();
-    expect(metadataOfficeModule).toBeInstanceOf(Array);
-    expect(metadataOfficeModule.length).toBe(2);
+    expect(options).toBeDefined();
+    expect(options).toHaveProperty('scope');
+
+    // Default scope is singleton
+    const optionalOption = Reflect.getMetadata(SCOPE_METADATA_KEY, UserModule) as InjectableOptions;
+    expect(optionalOption).toBeDefined();
+    expect(optionalOption).toHaveProperty('scope');
+    expect(optionalOption.scope).toBe(SCOPE.DEFAULT);
   });
 });

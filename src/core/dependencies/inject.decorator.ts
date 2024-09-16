@@ -1,15 +1,16 @@
 import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
-import { ForwardRefFn, InjectionToken } from './injection-token';
+import { ForwardRefFn } from './forward-ref';
+import { InjectionToken } from './injection-token';
 
 export class PayloadInjector implements IPayloadInjector {
   private _index: number;
-  private _token: InjectionToken | ForwardRefFn;
+  private _token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>;
   private _sourceConstructor: Ctr;
   private _injected: boolean;
 
   constructor(
     index: number,
-    token: InjectionToken | ForwardRefFn,
+    token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>,
     sourceConstructor: Ctr,
     injected: boolean,
   ) {
@@ -33,7 +34,9 @@ export class PayloadInjector implements IPayloadInjector {
     return this._token;
   }
 
-  public set token(value: InjectionToken | ForwardRefFn) {
+  public set token(
+    value: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>,
+  ) {
     this._token = value;
   }
 
@@ -54,10 +57,16 @@ export class PayloadInjector implements IPayloadInjector {
  * @description Inject decorator to module to class constructor
  * @implements
  */
-export function Inject(token: InjectionToken | ForwardRefFn) {
+export function Inject(
+  token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>,
+) {
   return (target: Ctr, key: string | undefined, index: number) => {
     const metadataKey = PayloadInjector.getMetadataKey();
-    const metadataValue = Reflect.getMetadata(metadataKey, target) || [];
+
+    const metadataValue = Array.isArray(Reflect.getMetadata(metadataKey, target))
+      ? (Reflect.getMetadata(metadataKey, target) as PayloadInjector[])
+      : [];
+
     metadataValue.push(new PayloadInjector(index, token, target, false));
 
     Reflect.defineMetadata(metadataKey, metadataValue, target);

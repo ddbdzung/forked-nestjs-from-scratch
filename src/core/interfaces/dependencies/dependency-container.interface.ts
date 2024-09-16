@@ -1,4 +1,5 @@
 import { InjectionToken } from '@/core/dependencies/injection-token';
+import { Module } from '@/core/module';
 
 export interface IDIContainer {
   /**
@@ -17,5 +18,5 @@ export interface IDIContainer {
    * @param ctr Class constructor to be instantiated
    * @param injectionToken Injection token related to the dependency
    */
-  construct<T>(ctr: Ctr, injectionToken: InjectionToken): T;
+  construct<T>(ctr: Ctr, injectionToken: InjectionToken, originModule?: Module): T;
 }

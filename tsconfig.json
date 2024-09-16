@@ -2,7 +2,7 @@
   "compilerOptions": {
     "paths": {
       "@/core/*": ["core/*"],
-      "@/app/*": ["app/*"]
+      "@/app/*": ["app/*"],
     },
     "target": "ESNext",
     "module": "CommonJS",

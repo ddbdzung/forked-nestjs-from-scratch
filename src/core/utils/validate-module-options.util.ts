@@ -1,10 +1,11 @@
 import { MODULE_OPTION_KEYS as moduleOptionConstants } from '../constants';
 
-const moduleOptionKeys = [
+export const moduleOptionKeys = [
   moduleOptionConstants.IMPORTS,
   moduleOptionConstants.EXPORTS,
   moduleOptionConstants.PROVIDERS,
   moduleOptionConstants.CONTROLLERS,
+  moduleOptionConstants.MODEL,
 ];
 
 export function validateModuleKeys(keys: string[]) {

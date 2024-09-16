@@ -11,6 +11,7 @@ import {
   userModuleToken,
 } from './common/dependency.mocks';
 import { IDeliverModule, IOfficeModule, IUserModule } from './common/common.interface';
+import { uid } from 'uid/secure';
 
 class MockDependency {}
 
@@ -33,7 +34,7 @@ describe('DIContainer', () => {
 
   test('should store and retrieve instances by token', () => {
     const mockInstance = new MockDependency();
-    const token = new InjectionToken('MockDependency');
+    const token = new InjectionToken(uid(21), 'MockDependency');
     container.instanceDict.set(token.token, mockInstance);
 
     const retrievedInstance = container.getDependencyByToken<MockDependency>(token);

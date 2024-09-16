@@ -4,8 +4,9 @@ import { Inject } from '../../inject.decorator';
 import { Injectable } from '../../injectable.decorator';
 
 import { IDeliverModule, IOfficeModule, IUserModule } from './common.interface';
+import { uid } from 'uid/secure';
 
-@Injectable
+@Injectable()
 export class OfficeModule implements IOfficeModule {
   constructor(location?: string, employeeQty?: null | undefined) {
     // eslint-disable-next-line no-console
@@ -18,9 +19,9 @@ export class OfficeModule implements IOfficeModule {
   }
 }
 
-export const officeModuleToken = new InjectionToken(OfficeModule);
+export const officeModuleToken = new InjectionToken(uid(21), OfficeModule);
 
-@Injectable
+@Injectable()
 export class UserModule implements IUserModule {
   private _fullName: string;
 
@@ -42,9 +43,9 @@ export class UserModule implements IUserModule {
   }
 }
 
-export const userModuleToken = new InjectionToken(UserModule);
+export const userModuleToken = new InjectionToken(uid(21), UserModule);
 
-@Injectable
+@Injectable()
 export class DeliverModule implements IDeliverModule {
   constructor(
     @Inject(forwardRef(() => userModuleToken))
@@ -61,4 +62,4 @@ export class DeliverModule implements IDeliverModule {
   }
 }
 
-export const deliverModuleToken = new InjectionToken(DeliverModule);
+export const deliverModuleToken = new InjectionToken(uid(21), DeliverModule);

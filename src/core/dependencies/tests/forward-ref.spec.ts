@@ -3,11 +3,12 @@ import 'reflect-metadata';
 import { forwardRef } from '../forward-ref';
 import { InjectionToken } from '../injection-token';
 import { DeliverModule } from './common/dependency.mocks';
+import { uid } from 'uid/secure';
 
 describe('forwardRef', () => {
   let defaultInjectionToken: InjectionToken;
   beforeEach(() => {
-    defaultInjectionToken = new InjectionToken('defaultToken').bindTo(DeliverModule);
+    defaultInjectionToken = new InjectionToken(uid(21), 'defaultToken').bindTo(DeliverModule);
   });
 
   it('should return a Function', () => {

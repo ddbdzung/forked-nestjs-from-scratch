@@ -1,5 +1,6 @@
-import { ForwardRefFn } from './injection-token';
+export type ForwardRefFn<T> = () => T;
 
-export function forwardRef(cb: ForwardRefFn) {
-  return () => cb();
+export function forwardRef<T>(cb: ForwardRefFn<T>) {
+  const forwardRefFn = () => cb();
+  return forwardRefFn;
 }

@@ -92,6 +92,10 @@
       "json",
       "ts"
     ],
+    "moduleNameMapper": {
+      "^@/core/(.*)$": "<rootDir>/core/$1",
+      "^@/app/(.*)$": "<rootDir>/app/$1"
+    },
     "rootDir": "./src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {

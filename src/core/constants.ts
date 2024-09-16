@@ -3,6 +3,5 @@ export const MODULE_OPTION_KEYS = {
   EXPORTS: 'exports',
   PROVIDERS: 'providers',
   CONTROLLERS: 'controllers',
+  MODEL: 'model',
 };
-
-export const GLOBAL_MODULE_METADATA = '__module:global__';

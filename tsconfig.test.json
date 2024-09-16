@@ -2,7 +2,7 @@
     "compilerOptions": {
       "paths": {
         "@/core/*": ["core/*"],
-        "@/app/*": ["app/*"]
+        "@/app/*": ["app/*"],
       },
       "target": "ESNext",
       "module": "CommonJS",
@@ -32,7 +32,7 @@
       // Ensure that Transpiler can safely transpile files in the TypeScript project
       "isolatedModules": true
     },
-    "include": ["tests/**/*.ts", "babel.config.js", "eslint.config.js"],
+    "include": ["**/*.ts", "babel.config.js", "eslint.config.js"],
     "exclude": ["node_modules", "dist", "coverage"]
 }
   

@@ -1,10 +1,8 @@
 import { uid } from 'uid/secure';
 import { createHash } from 'crypto';
 import { UncaughtDependencyException } from './exception';
+import { isFunction, isString } from '../utils/validator.util';
 
-export type ForwardRefFn = () => InjectionToken;
-
-// TODO: Save InjectionToken to central container
 /**
  * @description InjectionToken related to itself class constructor
  * @implements
@@ -15,23 +13,19 @@ export class InjectionToken {
   private _token: string;
   private _boundTarget: Ctr;
 
-  private _generateId(): string {
-    return uid(21);
-  }
-
   private _generateToken(id: string, name: string): string {
     return createHash('sha256').update(`${id}_${name}`).digest('hex');
   }
 
-  constructor(identifier: string | Ctr) {
-    this._id = this._generateId();
+  constructor(id: string, identifier: string | Ctr) {
+    this._id = id;
 
-    if (typeof identifier === 'string') {
+    if (isString(identifier)) {
       this._identifier = identifier;
-      this._token = this._generateToken(this._id, identifier);
-    } else if (typeof identifier === 'function') {
+      this._token = this._generateToken(id, identifier);
+    } else if (isFunction(identifier)) {
       this._identifier = identifier.name;
-      this._token = this._generateToken(this._id, identifier.name);
+      this._token = this._generateToken(id, identifier.name);
 
       this.bindTo(identifier);
     }
@@ -41,6 +35,14 @@ export class InjectionToken {
 
   public get token() {
     return this._token;
+  }
+
+  public get identifier() {
+    return this._identifier;
+  }
+
+  public get id() {
+    return this._id;
   }
 
   public get boundTarget() {

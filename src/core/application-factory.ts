@@ -1,14 +1,14 @@
 import type { CorsOptions } from 'cors';
 
 import { ApplicationConfig } from './application';
-import { IApplication } from './interfaces/application.interface';
+import { ApplicationInterface } from './interfaces/application.interface';
 import { VERSION_API } from './constants/common.constant';
 import { InjectionToken } from './dependencies';
 import { Type } from './interfaces/common.interface';
 import { ModuleFactory } from './module-factory';
 import { CompanyService } from '@/app/modules/company/company.service';
 
-export class Application implements IApplication {
+export class Application implements ApplicationInterface {
   enableCors(options?: CorsOptions): void {
     throw new Error('Method not implemented.');
   }
@@ -21,7 +21,7 @@ export class Application implements IApplication {
 }
 
 class ApplicationFactoryStatic {
-  static create<T extends IApplication = IApplication>(module: Type) {
+  static create<T extends ApplicationInterface = ApplicationInterface>(module: Type) {
     const appConfig = new ApplicationConfig();
 
     const moduleFactory = new ModuleFactory(module);

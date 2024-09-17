@@ -1,7 +1,7 @@
 import { ForwardRefFn } from '@/core/dependencies/forward-ref';
 import { InjectionToken } from '@/core/dependencies/injection-token';
 
-export interface IPayloadInjector {
+export interface PayloadInjectorInterface {
   index: number;
   token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>;
   sourceConstructor: Ctr;

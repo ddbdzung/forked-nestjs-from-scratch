@@ -1,8 +1,8 @@
-import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
+import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
 import { ForwardRefFn } from './forward-ref';
 import { InjectionToken } from './injection-token';
 
-export class PayloadInjector implements IPayloadInjector {
+export class PayloadInjector implements PayloadInjectorInterface {
   private _index: number;
   private _token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>;
   private _sourceConstructor: Ctr;

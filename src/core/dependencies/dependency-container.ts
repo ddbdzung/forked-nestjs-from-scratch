@@ -3,8 +3,8 @@ import 'reflect-metadata';
 import { uid } from 'uid/secure';
 
 import { InjectionToken } from './injection-token';
-import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
-import { IDIContainer } from '@/core/interfaces/dependencies/dependency-container.interface';
+import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
+import { DIContainerInterface } from '@/core/interfaces/dependencies/dependency-container.interface';
 import { UncaughtDependencyException, UninjectedTokenException } from './exception';
 import { ModuleTokenFactory } from '../module-token-factory';
 import { ModulesContainer } from '../module-container';
@@ -15,7 +15,7 @@ import { isFunction, isString } from '../utils/validator.util';
 export const INJECT_CLASS_METADATA_KEY = '__INJECT_CLASS_METADATA_KEY__';
 export const CONSTRUCTOR_PARAM_METADATA_KEY = 'design:paramtypes';
 
-export class DIContainer implements IDIContainer {
+export class DIContainer implements DIContainerInterface {
   private static _instance: DIContainer;
 
   private _instanceDict: Map<InjectionToken['token'], unknown>;
@@ -62,13 +62,13 @@ export class DIContainer implements IDIContainer {
       (Reflect.getMetadata(CONSTRUCTOR_PARAM_METADATA_KEY, ctr) as unknown[]) || [];
 
     const injectedMetadataList = (Reflect.getMetadata(INJECT_CLASS_METADATA_KEY, ctr) ||
-      []) as IPayloadInjector[];
+      []) as PayloadInjectorInterface[];
 
     const injectedMetadataDict = injectedMetadataList.reduce((acc, curr) => {
       acc.set(curr.index, curr);
 
       return acc;
-    }, new Map<number, IPayloadInjector>());
+    }, new Map<number, PayloadInjectorInterface>());
 
     // Loop through constructor parameters, and construct dependencies recursively
     const args = constructorParamList.map((param, paramIndex) => {
@@ -77,7 +77,7 @@ export class DIContainer implements IDIContainer {
         return param;
       }
 
-      const injector = injectedMetadataDict.get(paramIndex) as IPayloadInjector;
+      const injector = injectedMetadataDict.get(paramIndex) as PayloadInjectorInterface;
       const { token, injected } = injector;
       if (!token) {
         throw new UninjectedTokenException(ctr.name, paramIndex);

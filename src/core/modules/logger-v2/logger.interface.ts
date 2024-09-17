@@ -1,4 +1,4 @@
-export interface ILogger {
+export interface LoggerInterface {
   log: (...args: unknown[]) => void;
   info: (...args: unknown[]) => void;
   warn: (...args: unknown[]) => void;

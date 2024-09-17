@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { DEFAULT_LOG_LEVEL } from './logger.constant';
-import { ConsoleLoggerOptions, ILogger } from './logger.interface';
+import { ConsoleLoggerOptions, LoggerInterface } from './logger.interface';
 
-export class ConsoleLogger implements ILogger {
+export class ConsoleLogger implements LoggerInterface {
   private _originalContext: string;
 
   constructor(context: string);
@@ -74,8 +74,8 @@ export class ConsoleLogger implements ILogger {
   }
 }
 
-export class Logger implements ILogger {
-  protected _localInstance: ILogger;
+export class Logger implements LoggerInterface {
+  protected _localInstance: LoggerInterface;
 
   constructor(context: string);
   constructor(context: string, _options?: { timestamp?: boolean; logLevel?: LogLevel[] });
@@ -84,7 +84,7 @@ export class Logger implements ILogger {
     protected _options: { timestamp?: boolean; logLevel?: LogLevel[] } = {},
   ) {}
 
-  get localInstance(): ILogger {
+  get localInstance(): LoggerInterface {
     return this._registerLocalInstance();
   }
 

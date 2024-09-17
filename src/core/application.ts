@@ -1,6 +1,6 @@
-import { IApplicationConfig } from './interfaces/application.interface';
+import { ApplicationConfigInterface } from './interfaces/application.interface';
 
-export class ApplicationConfig implements IApplicationConfig {
+export class ApplicationConfig implements ApplicationConfigInterface {
   private _globalPrefix: string;
 
   public get globalPrefix(): string {

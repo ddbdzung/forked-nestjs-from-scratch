@@ -1,7 +1,7 @@
 import { InjectionToken } from '@/core/dependencies/injection-token';
 import { Module } from '@/core/module';
 
-export interface IDIContainer {
+export interface DIContainerInterface {
   /**
    * Instance dictionary to store the dependencies by related injection token
    */

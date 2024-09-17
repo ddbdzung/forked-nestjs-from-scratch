@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { IPayloadInjector } from '@/core/interfaces/dependencies/injection-token.interface';
+import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
 import { DeliverModule, OfficeModule, UserModule } from './common/dependency.mocks';
 import { InjectionToken } from '../injection-token';
 import { InjectableOptions, SCOPE, SCOPE_METADATA_KEY } from '../injectable.decorator';

@@ -2,7 +2,7 @@ import { CorsOptions } from 'cors';
 
 import { VERSION_API } from '../constants/common.constant';
 
-export interface IApplication<TServer = unknown> {
+export interface ApplicationInterface<TServer = unknown> {
   /**
    * Enable versioning API in the application scope
    * @param options Version API options
@@ -16,6 +16,6 @@ export interface IApplication<TServer = unknown> {
   enableCors(options: CorsOptions): void;
 }
 
-export interface IApplicationConfig {
+export interface ApplicationConfigInterface {
   globalPrefix: string;
 }

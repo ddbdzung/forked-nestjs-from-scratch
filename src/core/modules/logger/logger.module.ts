@@ -10,13 +10,13 @@ import { AbstractModule, ServerFactory } from '@/core/helpers';
 import { DEBUG_CODE } from '@/core/constants/common.constant';
 import { safeStringify } from '@/core/utils/object.util';
 
-import { ILogger, ILoggerOptions } from './interfaces/logger.module.interface';
+import { LoggerInterface, LoggerOptions } from './interfaces/logger.module.interface';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
 @Module()
-export class LoggerModule extends AbstractModule implements ILogger {
+export class LoggerModule extends AbstractModule implements LoggerInterface {
   public logger: Logger | null = null;
   private static _transports: transport[] = [];
   public static onError: ((error: Error) => void) | null = null;
@@ -43,7 +43,7 @@ export class LoggerModule extends AbstractModule implements ILogger {
     }
   }
 
-  public static register(options: ILoggerOptions) {
+  public static register(options: LoggerOptions) {
     const transports: transport[] = [];
     const { useLogstash } = options;
 

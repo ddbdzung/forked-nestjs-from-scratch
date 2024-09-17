@@ -1,7 +1,6 @@
 import type { Model } from 'mongoose';
 
 import { BaseRepository } from '@/core/repository';
-import { Repository } from '@/core/decorators';
 
 import { IUser } from './interfaces/user.model.interface';
 import { IUserRepository } from './interfaces/user.repository.interface';

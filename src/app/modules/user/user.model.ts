@@ -1,11 +1,4 @@
-import {
-  AbstractModel,
-  Model,
-  CONSTRAINT_ENUM,
-  DATA_TYPE_ENUM,
-  IVirtualType,
-  ISchema,
-} from '@/core/index';
+import { AbstractModel, Model, CONSTRAINT_ENUM, DATA_TYPE_ENUM, ISchema } from '@/core/index';
 
 import { USER_MODEL_NAME } from './user.constant';
 

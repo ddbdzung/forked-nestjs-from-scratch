@@ -4,16 +4,16 @@ import {
   AbstractModule,
   DEBUG_CODE,
   EnvModule,
-  LoggerModule,
+  // LoggerModule,
   Module,
   MongooseModule,
 } from '../core';
 
 import { Env } from '@/app/modules/env';
-import { PostModule } from '@/app/modules/post';
+// import { PostModule } from '@/app/modules/post';
 import { UserModule } from '@/app/modules/user';
 
-const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
+// const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
 @Module({
   sysModule: [

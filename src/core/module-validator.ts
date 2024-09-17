@@ -108,7 +108,11 @@ export class ModuleValidator {
     return targetModule.providers.has(token.token);
   }
 
-  public static validateControllers(controllers: Type[]): void {}
+  public static validateControllers(controllers: Type[]): void {
+    // Not implement
+  }
 
-  public static validateModel(model: Type): void {}
+  public static validateModel(model: Type): void {
+    // Not implement
+  }
 }

@@ -1,19 +1,12 @@
 import {
   Model,
   AbstractModel,
-  ModelMiddlewareBuilder,
-  ServerFactory,
   IModelTimestamp,
   CONSTRAINT_ENUM,
   DATA_TYPE_ENUM,
-  MODEL_MIDDLEWARE_HOOK_ENUM,
-  MODEL_MIDDLEWARE_PERIOD_ENUM,
 } from '@/core/index';
 
-import { IPost } from './interfaces/post.model.interface';
-import { POST_MODEL_NAME, POST_MODULE_NAME } from './post.constant';
-import { UserRepository } from '../user/user.repository';
-import { USER_MODEL_NAME, USER_MODULE_NAME } from '../user/user.constant';
+import { POST_MODEL_NAME } from './post.constant';
 
 @Model()
 export class PostModel extends AbstractModel {

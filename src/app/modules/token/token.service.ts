@@ -1,8 +1,12 @@
+import debug from 'debug';
+
 import { Inject, Injectable } from '@/core/dependencies';
 import { IUserService } from '../user/interfaces/user.service.interface';
 import { TokenServiceInterface } from './interfaces/token.service.interface';
-import { UserService } from '../user/user.service';
 import { TimelapseServiceInterface } from '../timelapse/interfaces/timelapse.service.interface';
+import { DEBUG_CODE } from '@/core/index';
+
+const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
 @Injectable()
 export class TokenService implements TokenServiceInterface {
@@ -13,8 +17,8 @@ export class TokenService implements TokenServiceInterface {
   ) {}
 
   getToken(): void {
-    console.log('Token service: Get token!');
-    console.log('[DEBUG][DzungDang] xxx:', this.userService);
+    sysLogInfo('Token service: Get token!');
+    sysLogInfo('[DEBUG][DzungDang] xxx:', this.userService);
     this.userService.getUser();
     this.timelapseService.getTimelapse();
   }

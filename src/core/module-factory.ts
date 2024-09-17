@@ -156,12 +156,12 @@ export class ModuleFactory {
       const importedModules = Array.from(module.imports);
 
       importedModules.forEach((importedModule) => {
-        this.addExportedProviderFromModule(module, importedModule, new Set<Module>());
+        this._addExportedProviderFromModule(module, importedModule, new Set<Module>());
       });
     });
   }
 
-  public addExportedProviderFromModule(
+  private _addExportedProviderFromModule(
     originModule: Module,
     currentModule: Module,
     resolvedModuleSet: Set<Module>,
@@ -182,7 +182,7 @@ export class ModuleFactory {
           throw new Error(msg);
         }
 
-        this.addExportedProviderFromModule(originModule, targetModule, resolvedModuleSet);
+        this._addExportedProviderFromModule(originModule, targetModule, resolvedModuleSet);
         return;
       }
 

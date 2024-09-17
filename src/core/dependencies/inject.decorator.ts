@@ -2,6 +2,10 @@ import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injecti
 import { ForwardRefFn } from './forward-ref';
 import { InjectionToken } from './injection-token';
 
+/**
+ * @description Payload injector class to store the injection metadata
+ * @implements PayloadInjectorInterface
+ */
 export class PayloadInjector implements PayloadInjectorInterface {
   private _index: number;
   private _token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>;
@@ -55,7 +59,7 @@ export class PayloadInjector implements PayloadInjectorInterface {
 
 /**
  * @description Inject decorator to module to class constructor
- * @implements
+ * @public
  */
 export function Inject(
   token: InjectionToken | ForwardRefFn<InjectionToken> | string | ForwardRefFn<string>,

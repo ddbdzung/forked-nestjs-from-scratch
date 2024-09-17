@@ -5,7 +5,7 @@ import { isFunction, isString } from '../utils/validator.util';
 
 /**
  * @description InjectionToken related to itself class constructor
- * @implements
+ * @public
  */
 export class InjectionToken {
   private _id: string;

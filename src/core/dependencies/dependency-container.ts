@@ -2,19 +2,28 @@ import 'reflect-metadata';
 
 import { uid } from 'uid/secure';
 
-import { InjectionToken } from './injection-token';
 import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
 import { DIContainerInterface } from '@/core/interfaces/dependencies/dependency-container.interface';
-import { UncaughtDependencyException, UninjectedTokenException } from './exception';
+import { isFunction, isString } from '@/core/utils/validator.util';
 import { ModuleTokenFactory } from '../module-token-factory';
 import { ModulesContainer } from '../module-container';
 import { ModuleValidator } from '../module-validator';
 import { Module } from '../module';
-import { isFunction, isString } from '../utils/validator.util';
+import { DependencyInjectionError } from '../exceptions';
+import { UncaughtDependencyException, UninjectedTokenException } from './exception';
+import { InjectionToken } from './injection-token';
+import { PayloadInjector } from './inject.decorator';
 
-export const INJECT_CLASS_METADATA_KEY = '__INJECT_CLASS_METADATA_KEY__';
+/**
+ * @public
+ */
 export const CONSTRUCTOR_PARAM_METADATA_KEY = 'design:paramtypes';
 
+/**
+ * @description Dependency Injection Container
+ * @implements DIContainerInterface
+ * @public
+ */
 export class DIContainer implements DIContainerInterface {
   private static _instance: DIContainer;
 
@@ -61,7 +70,7 @@ export class DIContainer implements DIContainerInterface {
     const constructorParamList =
       (Reflect.getMetadata(CONSTRUCTOR_PARAM_METADATA_KEY, ctr) as unknown[]) || [];
 
-    const injectedMetadataList = (Reflect.getMetadata(INJECT_CLASS_METADATA_KEY, ctr) ||
+    const injectedMetadataList = (Reflect.getMetadata(PayloadInjector.getMetadataKey(), ctr) ||
       []) as PayloadInjectorInterface[];
 
     const injectedMetadataDict = injectedMetadataList.reduce((acc, curr) => {
@@ -105,7 +114,7 @@ export class DIContainer implements DIContainerInterface {
 
           if (!ModuleValidator.isInjectingValidProvider(originModule, tokenByIdentifer)) {
             const msg = `Provide identifier '${identifier}' for constructor '${ctr.name}' at index ${paramIndex} in '${originModule.ctor.name}' is not registered.\nMaybe you forgot to export the provider from the imported modules`;
-            throw new Error(msg);
+            throw new DependencyInjectionError(msg);
           }
         }
       }
@@ -119,7 +128,7 @@ export class DIContainer implements DIContainerInterface {
       injector.token = tokenOfInjector;
 
       Reflect.defineMetadata(
-        INJECT_CLASS_METADATA_KEY,
+        PayloadInjector.getMetadataKey(),
         Array.from(injectedMetadataDict.values()),
         ctr,
       );
@@ -133,5 +142,3 @@ export class DIContainer implements DIContainerInterface {
     return instance;
   }
 }
-
-// export const container = DIContainer.getInstance();

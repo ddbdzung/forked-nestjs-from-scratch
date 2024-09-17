@@ -1,9 +1,9 @@
 import { CONSTRUCTOR_PARAM_METADATA_KEY } from './dependency-container';
 
-/** @implements */
-// export function Injectable(target: Ctr) {
-//   return targetr
-// }
+/**
+ * @description Injectable decorator to module to class constructor
+ * @public
+ */
 export function Injectable(options: InjectableOptions = { scope: SCOPE.DEFAULT }) {
   return (target: Ctr) => {
     Reflect.defineMetadata(SCOPE_METADATA_KEY, options, target);
@@ -21,6 +21,9 @@ export interface InjectableOptions {
   scope: SCOPE;
 }
 
+/**
+ * @public
+ */
 export enum SCOPE {
   // Singleton
   DEFAULT = 'DEFAULT',

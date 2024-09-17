@@ -17,6 +17,7 @@ export interface DIContainerInterface {
    * Construct dependency by class constructor, mapping the dependencies by token
    * @param ctr Class constructor to be instantiated
    * @param injectionToken Injection token related to the dependency
+   * @param originModule Origin module to be used for dependency resolution
    */
   construct<T>(ctr: Ctr, injectionToken: InjectionToken, originModule?: Module): T;
 }

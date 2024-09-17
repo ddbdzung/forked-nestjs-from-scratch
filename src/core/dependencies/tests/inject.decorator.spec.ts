@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 
+import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
 import { DeliverModule } from './common/dependency.mocks';
 import { InjectionToken } from '../injection-token';
-import { PayloadInjectorInterface } from '@/core/interfaces/dependencies/injection-token.interface';
+import { PayloadInjector } from '../inject.decorator';
 
 describe('InjectDecorator', () => {
   test('@Inject class should have metadata in target class', () => {
-    const metadataKey = '__INJECT_CLASS_METADATA_KEY__';
+    const metadataKey = PayloadInjector.getMetadataKey();
     const metadataValue = Reflect.getMetadata(
       metadataKey,
       DeliverModule,

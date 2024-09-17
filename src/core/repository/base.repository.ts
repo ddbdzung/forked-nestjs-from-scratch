@@ -12,14 +12,12 @@ import type { UpdateOptions, DeleteResult } from 'mongodb';
 
 import { IBaseRepository } from '@/core/interfaces/base.repository.interface';
 import { DECORATOR_TYPE } from '../constants/decorator.constant';
-import { injectable } from 'inversify';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 type IfUpdateHasResult<T> = [null, IfAny<T, any, Document<unknown, {}, T> & Require_id<T>>];
 
 // Mongoose Base Repository
 // All should follow this pattern [error, result] to avoid confusion when handling the result of the function call in the service layer
-@injectable()
 export abstract class BaseRepository<T extends Document = Document> implements IBaseRepository<T> {
   public readonly decoratorType = DECORATOR_TYPE.REPOSITORY;
 

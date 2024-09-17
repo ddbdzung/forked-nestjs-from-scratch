@@ -114,7 +114,6 @@ export class Module {
         instance: null,
         scope: provider.scope ? provider.scope : getClassScope(provider.useClass), // Default scope is singleton if scope not defined in provider
         identifier: provider.provide,
-        isResolved: false,
       }),
     );
   }
@@ -144,7 +143,6 @@ export class Module {
         instance: null,
         scope: getClassScope(ctor),
         identifier: ctor.name || identifierName,
-        isResolved: false,
       }),
     );
   }

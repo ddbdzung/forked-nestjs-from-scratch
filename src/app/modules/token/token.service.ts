@@ -1,9 +1,4 @@
-import {
-  CONSTRUCTOR_PARAM_METADATA_KEY,
-  Inject,
-  Injectable,
-  InjectionToken,
-} from '@/core/dependencies';
+import { Inject, Injectable } from '@/core/dependencies';
 import { IUserService } from '../user/interfaces/user.service.interface';
 import { TokenServiceInterface } from './interfaces/token.service.interface';
 import { UserService } from '../user/user.service';

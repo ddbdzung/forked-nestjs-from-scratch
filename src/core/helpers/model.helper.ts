@@ -46,7 +46,6 @@ import { BusinessException, ExceptionMetadataType, SystemException } from './exc
 import { ServerFactory } from './factory.helper';
 import { ISysSequenceRepository } from '../interfaces/base.repository.interface';
 import { BaseRepository } from '../repository';
-import { injectable } from 'inversify';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
@@ -173,7 +172,6 @@ export const validConstraintMap: ConstraintTyping = {
 };
 
 /** @public */
-@injectable()
 export abstract class AbstractModel<T extends Document = Document> implements IModel {
   /**
    * Schema of mongoose lib

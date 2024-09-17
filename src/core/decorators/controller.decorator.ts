@@ -2,7 +2,6 @@
 
 // import { AbstractController, AbstractModel, SystemException } from '../helpers';
 // import { DEBUG_CODE } from '../constants/common.constant';
-// import { container } from '../container/inversify.config';
 
 // const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 

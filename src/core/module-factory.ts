@@ -31,11 +31,6 @@ export class ModuleFactory {
         this._diContainer.construct(token.boundTarget, token, module);
       });
     });
-
-    this._modules.forEach((module) => {
-      console.log('--------------------------------------------------------', module.ctor.name);
-      console.log('module', module);
-    });
   }
 
   private _addModule(ctor: Type, level?: number): Module {

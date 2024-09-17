@@ -5,7 +5,6 @@ export class InstanceWrapper<T> {
   private _instance: T;
   private _token: InjectionToken;
   private _identifier: string;
-  private _isResolved = false; // Is resolved by DI Container
   private _ctor: Ctr;
 
   private _initialize(metadata: Partial<InstanceWrapper<T>>) {
@@ -46,14 +45,6 @@ export class InstanceWrapper<T> {
 
   set identifier(value: string) {
     this._identifier = value;
-  }
-
-  get isResolved() {
-    return this._isResolved;
-  }
-
-  set isResolved(value: boolean) {
-    this._isResolved = value;
   }
 
   get ctor() {

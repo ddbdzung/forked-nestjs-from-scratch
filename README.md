@@ -1,5 +1,3 @@
-# Core
-
 ## Author: [David Dang](https://github.com/ddbdzung)
 
 ## Disclaimer

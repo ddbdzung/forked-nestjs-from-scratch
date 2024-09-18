@@ -61,7 +61,6 @@ export class DIContainer implements DIContainerInterface {
     return this._instanceDict.get(injectionToken.token) as T;
   }
 
-  // TODO: Implement scope, transient, singleton instance
   public construct<T>(ctr: Ctr, injectionToken: InjectionToken, originModule?: Module): T {
     if (this._instanceDict.has(injectionToken.token)) {
       return this.getDependencyByToken(injectionToken);
@@ -137,7 +136,31 @@ export class DIContainer implements DIContainerInterface {
     });
 
     const instance = new ctr(...args) as T;
+
     this._setInstance(injectionToken, instance);
+
+    if (!originModule) {
+      return instance;
+    }
+
+    // TODO: Add test
+    if (originModule.ctor === ctr) {
+      originModule.instance = instance;
+
+      return instance;
+    }
+
+    const originProvider = originModule.getProviderByToken(injectionToken);
+
+    if (!originProvider) {
+      throw new DependencyInjectionError(
+        'Wrong implement DI. Must init module factory before constructing instance',
+      );
+    }
+
+    if (!originProvider.instance) {
+      originProvider.instance = instance;
+    }
 
     return instance;
   }

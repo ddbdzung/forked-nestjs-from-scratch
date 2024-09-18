@@ -30,10 +30,10 @@ class ApplicationFactoryStatic {
     // TODO: Change interface to <Name>Interface
     // TODO: Add @Controller() decorator
     // TODO: Add @Model() decorator
-    const companyService = moduleFactory.diContainer.getDependencyByToken<CompanyService>(
-      moduleFactory.moduleTokenFactory.getTokenByCtor(CompanyService) as InjectionToken,
-    );
-    companyService.getCompany();
+    // const companyService = moduleFactory.diContainer.getDependencyByToken<CompanyService>(
+    //   moduleFactory.moduleTokenFactory.getTokenByCtor(CompanyService) as InjectionToken,
+    // );
+    // companyService.getCompany();
   }
 }
 

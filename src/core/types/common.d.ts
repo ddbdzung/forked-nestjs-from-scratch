@@ -28,7 +28,7 @@ type IfHasResult<T> = [null, T | T[]];
 
 type IfHasNoResult = [Error, null];
 
-type ConstructorType = new (...args: any[]) => any;
+type Type<T = any> = new (...args: any[]) => T;
 
 /**
  * @description This type is used to make all properties of an object readonly.

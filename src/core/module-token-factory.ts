@@ -1,7 +1,7 @@
 import { uid } from 'uid/secure';
 
 import { InjectionToken } from './dependencies';
-import { Type, UseClassProvider } from './interfaces/common.interface';
+import { UseClassProvider } from './interfaces/common.interface';
 import { ModuleUtil } from './module-util';
 import { createHash } from 'crypto';
 import { isString } from './utils/validator.util';

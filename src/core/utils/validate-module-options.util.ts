@@ -1,4 +1,4 @@
-import { MODULE_OPTION_KEYS as moduleOptionConstants } from '../constants';
+import { MODULE_OPTION_KEYS as moduleOptionConstants } from '../constants/common.constant';
 
 export const moduleOptionKeys = [
   moduleOptionConstants.IMPORTS,

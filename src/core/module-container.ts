@@ -2,7 +2,6 @@ import { uid } from 'uid/secure';
 
 import { Module } from './module';
 import { InjectionToken } from './dependencies';
-import { Type } from './interfaces/common.interface';
 
 export class ModulesContainer {
   private readonly _modulesByCtor = new WeakMap<Type, Module>();

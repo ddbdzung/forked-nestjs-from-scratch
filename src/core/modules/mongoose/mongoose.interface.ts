@@ -1,6 +1,6 @@
 import { MongodbConfiguration, MongodbConfigurationBuilder } from './mongoose.builder';
 
-export interface IRegisterOption {
+export interface RegisterOption {
   uriBuilder: (b: MongodbConfigurationBuilder) => MongodbConfiguration;
   isDebugMode: boolean;
   onSuccess?: () => void;

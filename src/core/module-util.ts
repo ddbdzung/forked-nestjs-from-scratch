@@ -1,6 +1,6 @@
 import { ForwardRefFn } from './dependencies/forward-ref';
-import { Type, UseClassProvider } from './interfaces/common.interface';
-import { MODULE_OPTION_KEYS as moduleOptionKeys } from './constants';
+import { UseClassProvider } from './interfaces/common.interface';
+import { MODULE_OPTION_KEYS as moduleOptionKeys } from './constants/common.constant';
 
 /**
  * @description Static class - External API - Utility class to decorate module class

@@ -1,18 +1,16 @@
-import { Module } from '@/core/decorators/module.decorator.v2';
-import { UserModule } from '../user/user.module.v2';
-import { TokenService } from './token.service';
-import { TimelapseModule } from '../timelapse/timelapse.module';
+import { Module } from '@/core/common';
 import { forwardRef } from '@/core/dependencies';
-import { Type } from '@/core/index';
+
+import { TokenService } from './token.service';
 
 @Module({
-  imports: [forwardRef<Type>(() => UserModule), TimelapseModule],
+  imports: [],
   providers: [
     {
       provide: 'TokenServiceInterface',
       useClass: TokenService,
     },
   ],
-  exports: [TimelapseModule, TokenService],
+  exports: [TokenService],
 })
 export class TokenModule {}

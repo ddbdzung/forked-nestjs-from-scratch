@@ -1,10 +1,11 @@
-import { CompanyModule } from './../company/company.module';
-import { Module } from '@/core/decorators/module.decorator.v2';
+import { Module } from '@/core/common';
+import { forwardRef } from '@/core/dependencies';
+
 import { CommonService } from './common.service';
-import { UserModule } from '../user/user.module.v2';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [CompanyModule, UserModule],
+  imports: [forwardRef<Type>(() => UserModule)],
   exports: [CommonService],
   providers: [
     {

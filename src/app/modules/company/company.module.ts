@@ -1,10 +1,10 @@
-import { Module } from '@/core/decorators/module.decorator.v2';
+import { Module } from '@/core/common/module.decorator';
 import { TokenModule } from '../token/token.module';
 import { CompanyService } from './company.service';
 
 @Module({
-  imports: [TokenModule],
-  exports: [TokenModule],
+  imports: [],
+  exports: [CompanyService],
   providers: [CompanyService],
 })
 export class CompanyModule {}

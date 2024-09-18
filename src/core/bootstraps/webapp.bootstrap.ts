@@ -8,19 +8,11 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 
-import { AbstractModule, errorHandler, ServerFactory } from '@/core/helpers';
+import { errorHandler } from '@/core/helpers';
 import { SystemException, successHandler } from '@/core/helpers';
 import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
-import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
-import { DEBUG_CODE, VERSION_API } from '@/core/constants/common.constant';
 
-export const webappRegister = ({
-  registryMap,
-  prefixBaseRoute,
-}: {
-  registryMap: Record<string, unknown>;
-  prefixBaseRoute: string;
-}) => {
+export function createApp() {
   const app = express();
 
   app.use(helmet());
@@ -33,20 +25,6 @@ export const webappRegister = ({
   );
   app.use(mongoSanitize());
   app.use(compression());
-
-  // TODO: Implement general API (health check, etc.)
-
-  for (const instance of Object.values(registryMap as Record<string, AbstractModule>)) {
-    const basePath = `${prefixBaseRoute}/${instance.version}/${instance.prefix}`;
-    if (instance instanceof AbstractModule && instance.modelHandler) {
-      app.use(basePath, instance.modelHandler(app, basePath));
-    }
-
-    if (instance instanceof AbstractModule && instance.customControllerHandler) {
-      app.use(basePath, instance.customControllerHandler(app, basePath));
-    }
-  }
-
   app.use((req, res, next) => {
     const isApiNotError: boolean = res.locals.isApiNotError;
     if (!isApiNotError) {
@@ -61,4 +39,4 @@ export const webappRegister = ({
   app.use(successHandler);
 
   return app;
-};
+}

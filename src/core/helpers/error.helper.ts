@@ -2,8 +2,7 @@ import debug from 'debug';
 import { Server } from 'http';
 import { ErrorRequestHandler } from 'express';
 
-import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { HTTP_RESPONSE_CODE } from '@/core/constants/http.constant';
+import { DEBUG_CODE, HTTP_RESPONSE_CODE } from '@/core/constants';
 
 import { BusinessException, SystemException } from './exception.helper';
 

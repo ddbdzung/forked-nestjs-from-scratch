@@ -2,7 +2,7 @@ import mongooseLeanGetters from 'mongoose-lean-getters';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 
 /** @public */
-export const MONGOOSE_LEAN_GETTERS = mongooseLeanGetters;
+export { mongooseLeanGetters as MONGOOSE_LEAN_GETTERS };
 
 /** @public */
-export const MONGOOSE_LEAN_VIRTUALS = mongooseLeanVirtuals;
+export { mongooseLeanVirtuals as MONGOOSE_LEAN_VIRTUALS };

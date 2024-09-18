@@ -4,10 +4,7 @@ import type { Document } from 'mongoose';
 import mongoose from 'mongoose';
 
 import { HTTP_RESPONSE_CODE, HTTP_RESPONSE_MESSAGE } from '@/core/constants/http.constant';
-import { DECORATOR_TYPE } from '@/core/constants/decorator.constant';
-import { IContextAPI, IPingResponse } from '@/core/interfaces/common.interface';
-
-import { Env } from '@/app/modules/env/env.service';
+import { ContextAPI, PingResponse } from '@/core/interfaces/common.interface';
 
 import { SystemException } from './exception.helper';
 import { APIResponse, APIResponseBuilder } from './api.helper';
@@ -42,7 +39,7 @@ export const controllerWrapper = (
 };
 
 /** @public */
-export function bindContextApi(ctx: IContextAPI) {
+export function bindContextApi(ctx: ContextAPI) {
   return (req: Request, res: Response, next: NextFunction) => {
     res.locals.ctx = ctx;
 
@@ -92,17 +89,13 @@ export class ControllerAPI {
   }
 
   async ping(_req: Request, _res: Response, _next: NextFunction) {
-    return new APIResponseBuilder<IPingResponse>(
-      HTTP_RESPONSE_CODE.OK,
-      HTTP_RESPONSE_MESSAGE[200],
-      {
-        msg: `pong from ${Env.getInstance().get('APP_SERVICE_NAME')}!`,
-      },
-    ).build();
+    return new APIResponseBuilder<PingResponse>(HTTP_RESPONSE_CODE.OK, HTTP_RESPONSE_MESSAGE[200], {
+      msg: `pong from core service}!`,
+    }).build();
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
-    const ctx = res.locals.ctx as IContextAPI | undefined;
+    const ctx = res.locals.ctx as ContextAPI | undefined;
     if (!ctx) {
       return next(new SystemException('[API_ERROR]: ContextAPI is required'));
     }
@@ -125,7 +118,7 @@ export class ControllerAPI {
   }
 
   async getList(req: Request, res: Response, next: NextFunction) {
-    const ctx = res.locals.ctx as IContextAPI | undefined;
+    const ctx = res.locals.ctx as ContextAPI | undefined;
     if (!ctx) {
       return next(new SystemException('[API_ERROR]: ContextAPI is required'));
     }
@@ -146,11 +139,4 @@ export class ControllerAPI {
       dataList,
     ).build();
   }
-}
-
-/** @public */
-export abstract class AbstractController {
-  public readonly decoratorType = DECORATOR_TYPE.CONTROLLER;
-  // abstract ping(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
-  // abstract getList(req: Request, res: Response, next: NextFunction): Promise<APIResponse>;
 }

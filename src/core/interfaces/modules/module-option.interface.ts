@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ForwardRefFn } from '@/core/dependencies/forward-ref';
-import { Provider, Type } from '../common.interface';
+import { Provider } from '../common.interface';
 
 export interface ModuleOptions {
-  imports?: (Type<any> | ForwardRefFn<Type<any>>)[];
+  imports?: (Type | ForwardRefFn<Type>)[];
   providers?: Provider[];
-  controllers?: Type<any>[];
-  exports?: Type<any>[];
-  model?: Type<any>;
+  controllers?: Type[];
+  exports?: Type[];
+  model?: Type;
 }

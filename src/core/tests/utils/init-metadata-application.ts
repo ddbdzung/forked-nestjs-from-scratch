@@ -1,4 +1,3 @@
-import { Type } from '@/core/interfaces/common.interface';
 import { ModuleFactory } from '@/core/module-factory';
 
 /**

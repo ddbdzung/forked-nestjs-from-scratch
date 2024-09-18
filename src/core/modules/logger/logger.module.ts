@@ -5,9 +5,7 @@ import winston from 'winston';
 import LogstashTransport from 'winston-logstash/lib/winston-logstash-latest';
 import debug from 'debug';
 
-import { Module } from '@/core/decorators';
-import { AbstractModule, ServerFactory } from '@/core/helpers';
-import { DEBUG_CODE } from '@/core/constants/common.constant';
+import { DEBUG_CODE } from '@/core/constants';
 import { safeStringify } from '@/core/utils/object.util';
 
 import { LoggerInterface, LoggerOptions } from './interfaces/logger.module.interface';
@@ -15,20 +13,12 @@ import { LoggerInterface, LoggerOptions } from './interfaces/logger.module.inter
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 const sysLogError = debug(DEBUG_CODE.APP_SYSTEM_ERROR);
 
-@Module()
-export class LoggerModule extends AbstractModule implements LoggerInterface {
+export class LoggerModule implements LoggerInterface {
   public logger: Logger | null = null;
   private static _transports: transport[] = [];
   public static onError: ((error: Error) => void) | null = null;
 
   constructor() {
-    const instance = ServerFactory.globalModuleRegistry[LoggerModule.name];
-    if (instance) {
-      return instance as LoggerModule;
-    }
-
-    super();
-
     if (!this.logger && LoggerModule._transports.length > 0) {
       const logger = winston.createLogger({
         transports: LoggerModule._transports,

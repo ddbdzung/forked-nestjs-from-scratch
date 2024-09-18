@@ -1,6 +1,6 @@
 import { getClassScope, InjectionToken } from './dependencies';
 import { InstanceWrapper } from './instance-wrapper';
-import { CustomProvider, Type, UseClassProvider } from './interfaces/common.interface';
+import { CustomProvider, UseClassProvider } from './interfaces/common.interface';
 import { ModuleTokenFactory } from './module-token-factory';
 import { ModuleUtil } from './module-util';
 import { isString } from './utils/validator.util';

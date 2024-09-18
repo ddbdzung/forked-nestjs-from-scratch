@@ -4,9 +4,8 @@ import { ApplicationConfig } from './application';
 import { ApplicationInterface } from './interfaces/application.interface';
 import { VERSION_API } from './constants/common.constant';
 import { InjectionToken } from './dependencies';
-import { Type } from './interfaces/common.interface';
 import { ModuleFactory } from './module-factory';
-import { CompanyService } from '@/app/modules/company/company.service';
+import { UserService } from '@/app/modules/user/user.service';
 
 export class Application implements ApplicationInterface {
   enableCors(options?: CorsOptions): void {
@@ -27,13 +26,12 @@ class ApplicationFactoryStatic {
     const moduleFactory = new ModuleFactory(module);
 
     // TODO: Add test
-    // TODO: Change interface to <Name>Interface
+    // TODO: Change interface to <Name>Interface if that interface will be implemented by class
     // TODO: Add @Controller() decorator
-    // TODO: Add @Model() decorator
-    // const companyService = moduleFactory.diContainer.getDependencyByToken<CompanyService>(
-    //   moduleFactory.moduleTokenFactory.getTokenByCtor(CompanyService) as InjectionToken,
+    // const userService = moduleFactory.diContainer.getDependencyByToken<UserService>(
+    //   moduleFactory.moduleTokenFactory.getTokenByCtor(UserService) as InjectionToken,
     // );
-    // companyService.getCompany();
+    // userService.getUser();
   }
 }
 

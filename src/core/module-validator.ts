@@ -1,6 +1,5 @@
 import { ForwardRefFn } from './dependencies/forward-ref';
-import { Type } from './interfaces/common.interface';
-import { MODULE_OPTION_KEYS as moduleOptionKeys } from './constants';
+import { MODULE_OPTION_KEYS as moduleOptionKeys } from './constants/common.constant';
 import { ModuleUtil } from './module-util';
 import { CONSTRUCTOR_PARAM_METADATA_KEY, InjectionToken } from './dependencies';
 import { Module } from './module';

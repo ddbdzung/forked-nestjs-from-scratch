@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 
-import { Module } from './module.decorator.v2';
+import { Module } from '../module.decorator';
 
 describe('Module Decorator', () => {
   it('should define module metadata', () => {

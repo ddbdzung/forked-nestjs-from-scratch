@@ -21,8 +21,6 @@ export const PROTOCOL = {
   WEB_SOCKET: 'ws',
 };
 
-export const MAIN_MODULE_NAME = 'MainModule';
-
 export enum VERSION_API {
   V1 = 'v1',
   V2 = 'v2',
@@ -37,3 +35,11 @@ export enum VERSION_API {
 }
 
 export const PREFIX_API = '/rest';
+
+export const MODULE_OPTION_KEYS = {
+  IMPORTS: 'imports',
+  EXPORTS: 'exports',
+  PROVIDERS: 'providers',
+  CONTROLLERS: 'controllers',
+  MODEL: 'model',
+};

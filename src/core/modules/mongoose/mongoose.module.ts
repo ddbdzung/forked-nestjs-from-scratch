@@ -1,18 +1,15 @@
 import mongoose, { connect } from 'mongoose';
 import debug from 'debug';
 
-import { Module } from '@/core/decorators';
-import { DEBUG_CODE } from '@/core/constants/common.constant';
-import { AbstractModule } from '@/core/helpers/abstract.helper';
+import type { RegisterOption } from './mongoose.interface';
 
-import { IRegisterOption } from './mongoose.interface';
+import { DEBUG_CODE } from '@/core/constants';
 import { MongodbConfigurationBuilder } from './mongoose.builder';
 
 const sysLogInfo = debug(DEBUG_CODE.APP_SYSTEM_INFO);
 
-@Module()
-export class MongooseModule extends AbstractModule {
-  public static register(options: IRegisterOption) {
+export class MongooseModule {
+  public static register(options: RegisterOption) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const { uriBuilder, isDebugMode = false, onSuccess = () => {}, onFail = () => {} } = options;
 

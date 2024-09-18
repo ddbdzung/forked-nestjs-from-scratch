@@ -1,15 +1,14 @@
 import { ForwardRefFn } from '@/core/dependencies/forward-ref';
 import { Module } from './module';
-import { Type } from './interfaces/common.interface';
 import { ModuleTokenFactory } from './module-token-factory';
 import { ModuleUtil } from './module-util';
 import { uid } from 'uid/secure';
 import { ModulesContainer } from './module-container';
 import { ModuleValidator } from './module-validator';
-import { MODULE_OPTION_KEYS } from './constants';
+import { MODULE_OPTION_KEYS } from './constants/common.constant';
 import { InstanceWrapper } from './instance-wrapper';
 import { DIContainer, InjectionToken, UncaughtDependencyException } from './dependencies';
-import { UserModule } from '@/app/modules/user/user.module.v2';
+import { UserModule } from '@/app/modules/user/user.module';
 
 export class ModuleFactory {
   private readonly _modules: ModulesContainer;

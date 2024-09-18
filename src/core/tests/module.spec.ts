@@ -1,6 +1,6 @@
 import { uid } from 'uid/secure';
 
-import { Module } from '../decorators/module.decorator.v2';
+import { Module } from '../common/module.decorator';
 import { Injectable, InjectionToken } from '../dependencies';
 import { Module as ModuleConstructor } from '../module';
 import { ModuleFactory } from '../module-factory';

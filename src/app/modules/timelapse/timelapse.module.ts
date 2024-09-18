@@ -1,4 +1,4 @@
-import { Module } from '@/core/decorators/module.decorator.v2';
+import { Module } from '@/core/common/module.decorator';
 import { TimelapseService } from './timelapse.service';
 import { TimelapseMethodService } from './timelapse-method.service';
 

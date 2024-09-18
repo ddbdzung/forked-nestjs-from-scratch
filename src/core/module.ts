@@ -48,6 +48,11 @@ export class Module {
    */
   private _level = 0;
 
+  /**
+   * Instance of the module
+   */
+  private _instance: unknown;
+
   constructor(
     /**
      * Class constructor reference of the module
@@ -113,6 +118,14 @@ export class Module {
 
   set isEntryProviderResolved(value: boolean) {
     this._isEntryProviderResolved = value;
+  }
+
+  get instance() {
+    return this._instance;
+  }
+
+  set instance(value: unknown) {
+    this._instance = value;
   }
 
   /**
@@ -190,7 +203,11 @@ export class Module {
   }
 
   /**
-   * Add an existing provider to the module.
+   * Existing providers are the providers that are already created somewhere else and being added to the module.
+   *
+   * So existing provider will never be in entry provider keys.
+   *
+   * @description Add an existing provider to the module.
    */
   public addExistingProvider(instanceWrapper: InstanceWrapper<Injectable>): void {
     const tokenValue = instanceWrapper.token.token;
